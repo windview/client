@@ -6,9 +6,7 @@
 import * as t from './actionTypes';
 
 const defaultValue = {
-  selectedFeature: {
-    name: "the whole balancing area."
-  }
+  selectedFeature: null
 }
 
 export default (state=defaultValue, action) => {
