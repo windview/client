@@ -1,0 +1,29 @@
+#app-navbar {
+    border-radius: 0;
+    -webkit-border-radius: 0;
+    margin-bottom: 12px;
+
+    .navbar-brand {
+        color: ghostwhite;
+        font-weight: bold;
+    }
+
+    li {
+        a {
+            padding-top: 10px;
+            padding-bottom: 10px;
+            color: ghostwhite;
+
+            &:hover {
+                color: #5998ff;
+             }
+
+            p {
+                vertical-align: middle;
+                display: inline-block;
+                margin-left: 8px;
+            }
+
+        }
+    }
+}

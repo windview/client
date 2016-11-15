@@ -1,0 +1,30 @@
+
+@import 'keen-dashboards';
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.stretch-v {
+  height: 100%;
+}
+
+.half-v {
+  height: 50%;
+}
+
+.main-content {
+  height: 90%;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.fade-enter, .fade-leave-active {
+  opacity: 0;
+}
