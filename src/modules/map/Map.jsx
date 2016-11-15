@@ -1,4 +1,5 @@
 import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { connect } from 'react-redux';
 import '../../../node_modules/leaflet/dist/leaflet.css';
 import L from '../../../node_modules/leaflet/dist/leaflet-src';
@@ -9,17 +10,51 @@ import './Map.scss';
 import { mapStateToProps, mapDispatchToProps } from './selectors';
 
 
+const getFeaturePopupMarkup = (feature) => {
+  const html = renderToStaticMarkup(
+    <div>
+      <strong>{feature.properties.site_name}</strong><br />
+      <table className="map-popup">
+        <tbody><tr>
+          <td>Total Capacity</td><td className="right">{feature.properties.total_cpcy}</td>
+        </tr><tr>
+          <td>Capacity per Turbine</td><td className="right">{feature.properties.MW_turbine}</td>
+        </tr></tbody>
+      </table>
+    </div>
+  );
+  return html;
+}
+
 export class Map extends React.Component {
 
   constructor(props) {
     super(props);
     this.whenFeatureClicked = this.whenFeatureClicked.bind(this);
+    this.whenFeatureMouseOver = this.whenFeatureMouseOver.bind(this)
+    this.whenFeatureMouseOut = this.whenFeatureMouseOut.bind(this);
   }
 
   whenFeatureClicked(e) {
     const feature = e.target.feature
     feature.name = e.target.feature.properties.site_name
     this.props.onSelectFeature(feature);
+  }
+
+  whenFeatureMouseOver(e) { 
+    if(this.map) {
+      this.layerPopup = L.popup()
+        .setLatLng(e.latlng)
+        .setContent(getFeaturePopupMarkup(e.target.feature))
+        .openOn(this.map);
+    }
+  }
+
+  whenFeatureMouseOut(e) {
+    if(this.layerPopup && this.map) {
+      this.map.closePopup(this.layerPopup);
+      this.layerPopup = null;
+    }
   }
 
   componentDidMount() {
@@ -38,14 +73,16 @@ export class Map extends React.Component {
         layers.push(L.geoJSON(geojsonData, {
           onEachFeature: (feature, layer) => {
             layer.on({
-              click: this.whenFeatureClicked
+              click: this.whenFeatureClicked,
+              mouseover: this.whenFeatureMouseOver,
+              mouseout: this.whenFeatureMouseOut,
             });
           }
         }));
       }
     }
 
-    L.map("wind-map", {
+    this.map = L.map("wind-map", {
       layers: layers,
       center: leafletConfig.initialCenter,
       zoom: leafletConfig.initialZoom,

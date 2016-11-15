@@ -5,6 +5,10 @@ import '../../styles/logo.scss';
 import logo from '../../images/logo.svg';
 import { mapStateToProps } from './selectors';
 
+// A couple of internal use only display components. One
+// would expect that in the fullness of time there would
+// be several of these nested in their own files as 
+// complexity grows
 function BaseElement(props) {
   return (
     <div id="forecast-chart" className="half-v">

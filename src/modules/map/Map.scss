@@ -1,3 +1,14 @@
 #wind-map {
   border: 1px solid #444;
 }
+
+.map-popup {
+  font-family: consolas;
+  td {
+    padding-right: 15px;
+    padding-top: 6px;
+  }
+  .right {
+    text-align: right;
+  }
+}
