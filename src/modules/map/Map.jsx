@@ -3,12 +3,13 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { connect } from 'react-redux';
 import '../../../node_modules/leaflet/dist/leaflet.css';
 import L from '../../../node_modules/leaflet/dist/leaflet-src';
+import wkt from 'wellknown';
 import * as topojson from '../../../node_modules/topojson/build/topojson';
 import windFarmData from '../../data/swpp-wind-farms-4326.topo.json';
 import leafletConfig from './leaflet-config';
 import './Map.scss';
 import { mapStateToProps, mapDispatchToProps } from './selectors';
-
+import Slider from './slider/Slider';
 
 const getFeaturePopupMarkup = (feature) => {
   const html = renderToStaticMarkup(
@@ -24,6 +25,17 @@ const getFeaturePopupMarkup = (feature) => {
     </div>
   );
   return html;
+}
+
+// eslint-disable-next-line
+const pukeWkt = (features) => {
+  console.log("Puking the first round");
+  let puke = '';
+  features.forEach((feature) => {
+    puke += wkt.stringify(feature)
+    puke += "\n";
+  });
+  console.log(puke);
 }
 
 export class Map extends React.Component {
@@ -70,6 +82,7 @@ export class Map extends React.Component {
     for (var obj in windFarmData.objects) {
       if(windFarmData.objects[obj]) {
         let geojsonData = topojson.feature(windFarmData, windFarmData.objects[obj]);
+        //pukeWkt(geojsonData.features);
         layers.push(L.geoJSON(geojsonData, {
           onEachFeature: (feature, layer) => {
             layer.on({
@@ -93,7 +106,10 @@ export class Map extends React.Component {
 
   render() {
     return (
-      <div id="wind-map" className="stretch-v"></div>
+      <span>
+        <div id="wind-map" className="stretch-v"></div>
+        <Slider />
+      </span>
     );
   }
 }
