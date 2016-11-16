@@ -7,16 +7,14 @@ import Help from '../help/Help';
 import { mapStateToProps } from './selectors';
 import { connect } from 'react-redux';
 import { NAV_BAR_BUTTONS } from './constants';
+import classNames from 'classnames';
 
 export const App = ({ activePane }) => {
-
-  // There are a few ways to perform conditional rendering. Read more at
-  // https://facebook.github.io/react/docs/conditional-rendering.html
-  let mainContent = null;
-  switch(activePane){
-    case 'map-view':
-      mainContent = (
-        <div className="row stretch-v">
+  return (
+    <div id="app" className="stretch-v">
+      <NavBar.component appTitle="Wind View" buttons={NAV_BAR_BUTTONS} />
+      <div className='container-fluid main-content'>
+        <div className={classNames('row', 'stretch-v', {'hidden': activePane!=='map-view'})}>
           <section className="main-pane-left col-md-8 stretch-v">
             <Map />
           </section>
@@ -24,29 +22,12 @@ export const App = ({ activePane }) => {
             <ForecastChart />
           </section>
         </div>
-      ) 
-      break;
-    case 'settings':
-      mainContent = (
-        <div className="row stretch-v">
+        <div className={classNames('row', 'stretch-v', {'hidden': activePane!=='settings'})}>
           <AppSettings />
         </div>
-      )
-      break; 
-    case 'help': 
-      mainContent = <div className="row stretch-v">
+        <div className={classNames('row', 'stretch-v', {'hidden': activePane!=='help'})}>
           <Help />
         </div>
-      break;
-    default:
-      mainContent = <div>Something went wrong!</div>
-  }
-
-  return (
-    <div id="app" className="stretch-v">
-      <NavBar.component appTitle="Wind View" buttons={NAV_BAR_BUTTONS} />
-      <div className="container-fluid main-content">
-        {mainContent}
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-//map/reducer.js
+// map/reducer.js
 
 // redux reducers 
 // http://redux.js.org/docs/basics/Reducers.html

@@ -2,4 +2,10 @@
 
 .slider {
   z-index: 1000;
+  width: 95%;
+  margin: auto;
+
+  .noUi-connect {
+    background-color: #428bca;
+  }
 }

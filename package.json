@@ -54,6 +54,7 @@
   },
   "dependencies": {
     "bootstrap": "3.2",
+    "classnames": "^2.2.5",
     "font-awesome": "^4.7.0",
     "jquery": "^3.1.1",
     "leaflet": "^1.0.1",

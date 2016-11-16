@@ -11,7 +11,7 @@ const getStartTime = () => {
   let startTime = new Date();
   let minute = startTime.getMinutes();
   let remainder = minute%5;
-  minute = minute-remainder;
+  minute -= remainder;
   startTime.setMinutes(minute);
   return startTime;
 }
