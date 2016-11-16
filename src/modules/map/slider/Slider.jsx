@@ -9,29 +9,25 @@ import './Slider.scss';
 // interval in the past
 const getStartTime = () => {
   let startTime = new Date();
-  console.log("The start time is", startTime.toUTCString());
   return startTime;
 }
 
-const getSliderDisplayFromValue = (rawValue, startTime) => {
-  rawValue = Math.round(rawValue);
-  console.log("This rawValue is", rawValue);
-  let retVal = '';
-  if(rawValue === 0) {
-    retVal = startTime.getTime();
-  } else {
-    retVal = new Date(startTime.getTime() + (rawValue*60*1000)).getTime();
-  }
-  return retVal;
+const padTime = (num) => {
+  num = "" + num;
+  return "00".substring(num.length) + num;
+}
+
+const getSliderDisplayFromValue = (rawValue) => {
+  let d = new Date(rawValue);
+  return padTime(d.getHours()) + ":" + padTime(d.getMinutes());
 }
 
 const getSliderValueFromDisplay = (displayValue, startTime) => {
-  console.log("The display value is", displayValue);
-  let retVal = 0;
-  if(displayValue !== startTime.getTime()) {
-    retVal = ((displayValue - startTime.getTime())/1000/60);   
-  }
-  return retVal;
+  let t = displayValue.split(':');
+  let d = new Date(startTime.getTime());
+  d.setHours(Number(t[0]));
+  d.setMinutes(Number(t[1]));
+  return d.getTime();
 }
 
 export class Slider extends React.Component {
@@ -39,26 +35,26 @@ export class Slider extends React.Component {
     const startTime = getStartTime();
     const sliderEl = document.getElementById('slider');
     noUiSlider.create(sliderEl, {
+      start: [startTime.getHours() + ":" + startTime.getMinutes()],
+      connect: [true, false],
+      tooltips: [true],
+      step: (1000*60*5), // 5 minute intervals
+      range: {
+        min: startTime.getTime(),
+        max: (startTime.getTime()+(1000*60*60*6)) // 6 hours
+      },
       format: {
         to: function(value) {
-          return getSliderDisplayFromValue(value, startTime);
+          return getSliderDisplayFromValue(value);
         },
         from: function(value) {
           return getSliderValueFromDisplay(value, startTime);
         }
       },
-      start: 0,
-      connect: [true, false],
-      tooltips: [true],
-      step: 5,
-      range: {
-        min: 0,
-        max: 360
-      }
     });
 
     sliderEl.noUiSlider.on('change', (valuesStr, handle, values) => {
-      console.log(valuesStr);
+      console.log(valuesStr[0], values[0]);
       //debugger;
     });
   }
