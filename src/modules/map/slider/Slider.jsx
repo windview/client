@@ -71,7 +71,7 @@ export class Slider extends React.Component {
       },
     });
 
-    sliderEl.noUiSlider.on('change', (valuesStr, handle, values) => {
+    sliderEl.noUiSlider.on('update', (valuesStr, handle, values) => {
       this.props.onChange(values[0]);
     });
   }

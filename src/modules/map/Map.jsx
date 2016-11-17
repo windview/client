@@ -11,9 +11,18 @@ import './Map.scss';
 import { mapStateToProps, mapDispatchToProps } from './selectors';
 import Slider from './slider/Slider';
 import { forecastValFarmStyle, augmentFeatures } from './featureUtils';
+import moment from 'moment';
 
 
 const getFeaturePopupMarkup = (feature) => {
+  let displayTime = "N/A", 
+        windSpeed = "Unavailable",
+        power = "Unavailable";
+  if(feature.properties.currentForecastVal) {
+    displayTime = moment(feature.properties.currentForecastVal.timestamp).format('h:mm a');
+    windSpeed = feature.properties.currentForecastVal.windSpeed + " m/s";
+    power = feature.properties.currentForecastVal.power + " MW";
+  }
   const html = renderToStaticMarkup(
     <div>
       <strong>{feature.properties.site_name}</strong><br />
@@ -22,6 +31,12 @@ const getFeaturePopupMarkup = (feature) => {
           <td>Total Capacity</td><td className="right">{feature.properties.total_cpcy}</td>
         </tr><tr>
           <td>Capacity per Turbine</td><td className="right">{feature.properties.MW_turbine}</td>
+        </tr><tr>
+          <td>Forecast Time</td><td className="right">{displayTime}</td>
+        </tr><tr>
+          <td>Forecast Windspeed (100m)</td><td className="right">{windSpeed}</td>
+        </tr><tr>
+          <td>Forecast Wind Power</td><td className="right">{power}</td>
         </tr></tbody>
       </table>
       <br />
@@ -67,10 +82,26 @@ export class Map extends React.Component {
     this.props.onSelectTimestamp(newTimestamp);
   }
 
+  // TODO this is a way of observing state changes. React style of doing things 
+  // discourages this kind of thing, but in order to update 3rd party things like
+  // the map and the slider we're going to do this for now
   componentWillReceiveProps(nextProps) {
-    debugger;
     if(this.props.selectedTimestamp !== nextProps.selectedTimestamp) {
-      console.log('the times they are a changin');
+      const windFarmLayer     = this.windFarmLayer,
+            selectedTimestamp = nextProps.selectedTimestamp;
+
+      // Update the current forecast val on each GeoJSON object 
+      windFarmLayer.eachLayer((layer) => {
+        if(layer.feature.properties.forecastData) {
+          let newForecastVal = layer.feature.properties.forecastData.filter((row) => {
+            return row.timestamp === selectedTimestamp;
+          })[0];
+          layer.feature.properties.currentForecastVal = newForecastVal;
+        }
+      });
+      
+      // trigger a style refresh to update map colors
+      windFarmLayer.setStyle(forecastValFarmStyle);
     }
   }
 
@@ -89,7 +120,7 @@ export class Map extends React.Component {
 
         augmentFeatures(geojsonData.features, this.props.selectedTimestamp);
 
-        layers.push(L.geoJSON(geojsonData, {
+        this.windFarmLayer = L.geoJSON(geojsonData, {
           style: forecastValFarmStyle,
           onEachFeature: (feature, layer) => {
             layer.on({
@@ -98,7 +129,9 @@ export class Map extends React.Component {
               mouseout: this.whenFeatureMouseOut,
             });
           }
-        }));
+        });
+
+        layers.push(this.windFarmLayer);
       }
     }
 

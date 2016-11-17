@@ -54,9 +54,9 @@ export const totalCapacityFarmStyle = (feature) => {
 
 export const forecastValFarmStyle = (feature) => {
   let style = {color: "grey"};
-  if(feature.properties.forecastVal) {
+  if(feature.properties.currentForecastVal) {
     const forecastVal = feature.properties.currentForecastVal.windSpeed;
-    if(forecastVal < 3) {
+    if(forecastVal < 1) {
       style = {
         "color": "white",
         "fillOpacity": .75,
@@ -64,7 +64,7 @@ export const forecastValFarmStyle = (feature) => {
         "weight": 3,
         "opacity": 1,
       }
-    } else if(forecastVal < 8) {
+    } else if(forecastVal < 3.5) {
       style = {
         "color": "blue",
         "fillOpacity": .75,
@@ -72,12 +72,12 @@ export const forecastValFarmStyle = (feature) => {
         "weight": 3,
         "opacity": 1,
       }
-    } else if(forecastVal < 11) {
+    } else if(forecastVal < 6) {
       style = {
         "color": "green",
         "fillOpacity": .75,
         //"color": "#000000",
-        "weight": 3,
+        "weight": 5,
         "opacity": 1,
       }
     } else {
@@ -85,7 +85,7 @@ export const forecastValFarmStyle = (feature) => {
         "color": "red",
         "fillOpacity": .75,
         //"color": "#000000",
-        "weight": 3,
+        "weight": 8,
         "opacity": 1,
       }
     }
@@ -104,7 +104,7 @@ export const augmentFeatures = (features, startTimestamp) => {
       const filePath = '/wtk-data/' + forecastDataId + '-2012.csv';
       csv(filePath, (data) => {
         let forecastData = [];
-        for(let x=0; x<sixHours; x++) {
+        for(let x=0; x<=sixHours; x++) {
           let row = data[x];
           let ts = new Date(startTimestamp + x*fiveMinutes).getTime();
           let power = Math.round(Number(row['power (MW)'])*1000)/1000;
