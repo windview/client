@@ -70,7 +70,6 @@ export class Map extends React.Component {
   }
 
   componentDidMount() {
-    console.log("Did mount again");
     let layers = [];
 
     // Add OSM base tiles

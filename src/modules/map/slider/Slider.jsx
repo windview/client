@@ -38,6 +38,13 @@ export class Slider extends React.Component {
   componentDidMount() {
     const startTime = getStartTime();
     const sliderEl = document.getElementById('slider');
+    let pipVals = [];
+    let oneHour = 1000*60*60;
+    let start = startTime.getTime();
+    [2,3,4,5].forEach(function(i){
+      pipVals.push(start+oneHour*i);
+    });
+
     noUiSlider.create(sliderEl, {
       start: [startTime.getHours() + ":" + startTime.getMinutes()],
       connect: [true, false],
@@ -55,16 +62,36 @@ export class Slider extends React.Component {
           return getSliderValueFromDisplay(value, startTime);
         }
       },
+      pips: {
+        mode: 'steps',
+        filter: function(val) {
+          let t = val - startTime.getTime();
+          let oneHour = 1000*60*30;
+          return t%oneHour === 0 ? 1:0
+        },
+        format: {
+          to: function(value) {
+            return getSliderDisplayFromValue(value);
+          },
+          from: function(value) {
+            return getSliderValueFromDisplay(value, startTime);
+          }
+        },
+      },
     });
 
     sliderEl.noUiSlider.on('change', (valuesStr, handle, values) => {
-      console.log(valuesStr[0], values[0]);
+      //console.log(valuesStr[0], values[0]);
       //debugger;
     });
   }
 
   render() {
-    return <div id="slider" className="slider"></div>
+    return (
+      <div className="">
+        <div id="slider" className="slider" />
+      </div>
+    )
   }
 }
 

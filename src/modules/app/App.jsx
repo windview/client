@@ -8,6 +8,7 @@ import { mapStateToProps } from './selectors';
 import { connect } from 'react-redux';
 import { NAV_BAR_BUTTONS } from './constants';
 import classNames from 'classnames';
+import './App.scss';
 
 export const App = ({ activePane }) => {
   return (
@@ -15,10 +16,10 @@ export const App = ({ activePane }) => {
       <NavBar.component appTitle="Wind View" buttons={NAV_BAR_BUTTONS} />
       <div className='container-fluid main-content'>
         <div className={classNames('row', 'stretch-v', {'hidden': activePane!=='map-view'})}>
-          <section className="main-pane-left col-md-8 stretch-v">
+          <section id="map-section" className="col-md-8 stretch-v main-pane-left">
             <Map />
           </section>
-          <section className="sidebar col-md-4 stretch-v">
+          <section id="chart-section" className="sidebar col-md-4 stretch-v main-pane-right">
             <ForecastChart />
           </section>
         </div>
