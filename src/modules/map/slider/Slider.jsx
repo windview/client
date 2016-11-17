@@ -88,7 +88,7 @@ export class Slider extends React.Component {
 
   render() {
     return (
-      <div className="">
+      <div className="slider-container">
         <div id="slider" className="slider" />
       </div>
     )

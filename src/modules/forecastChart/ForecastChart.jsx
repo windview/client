@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import './ForecastChart.scss';
 import '../../styles/logo.scss';
-import logo from '../../images/logo.svg';
+import logo from '../../images/windview-chart.png';
 import { mapStateToProps } from './selectors';
 
 // A couple of internal use only display components. One
@@ -11,7 +11,7 @@ import { mapStateToProps } from './selectors';
 // complexity grows
 function BaseElement(props) {
   return (
-    <div id="forecast-chart" className="half-v">
+    <div id="forecast-chart-container" className="half-v">
       {props.children}
     </div>
   )
@@ -21,7 +21,7 @@ function ChartElement(props) {
   return (
     <BaseElement>
       Forecast Chart for {props.feature.name}<br />
-      <img src={logo} className="App-logo" alt="logo" />
+      <img src={logo} className="forecast-chart" alt="logo" />
     </BaseElement>
   )
 }
