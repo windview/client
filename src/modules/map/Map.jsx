@@ -40,7 +40,7 @@ const getFeaturePopupMarkup = (feature) => {
         </tr></tbody>
       </table>
       <br />
-      <em>click to view detailed forecast analysis</em>
+      <em>click map to view detailed forecast analysis</em>
     </div>
   );
   return html;

@@ -6,23 +6,14 @@ import noUiSlider from 'nouislider';
 import './Slider.scss';
 import { mapStateToProps } from './selectors.js';
 import { connect } from 'react-redux';
-
-const padTime = (num) => {
-  num = "" + num;
-  return "00".substring(num.length) + num;
-}
+import moment from 'moment';
 
 const getSliderDisplayFromValue = (rawValue) => {
-  let d = new Date(rawValue);
-  return padTime(d.getHours()) + ":" + padTime(d.getMinutes());
+  return moment(rawValue).format('HH:mm');
 }
 
 const getSliderValueFromDisplay = (displayValue, startTime) => {
-  let t = displayValue.split(':');
-  let d = new Date(startTime.getTime());
-  d.setHours(Number(t[0]));
-  d.setMinutes(Number(t[1]));
-  return d.getTime();
+  return moment(displayValue, 'HH:mm').valueOf();
 }
 
 export class Slider extends React.Component {
