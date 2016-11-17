@@ -11,7 +11,7 @@ import { mapStateToProps } from './selectors';
 // complexity grows
 function BaseElement(props) {
   return (
-    <div id="forecast-chart-container" className="half-v">
+    <div id="chart-wrapper" className="chart-wrapper half-v">
       {props.children}
     </div>
   )
@@ -20,7 +20,7 @@ function BaseElement(props) {
 function ChartElement(props) {
   return (
     <BaseElement>
-      Forecast Chart for {props.feature.name}<br />
+      <div className='chart-title'>Forecast Chart for {props.feature.name}</div>
       <img src={logo} className="forecast-chart" alt="logo" />
     </BaseElement>
   )
