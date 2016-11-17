@@ -4,17 +4,8 @@ import React from 'react';
 import '../../../../node_modules/nouislider/distribute/nouislider.css';
 import noUiSlider from 'nouislider';
 import './Slider.scss';
-
-// The current time rounded down to the closest 5 minute
-// interval in the past
-const getStartTime = () => {
-  let startTime = new Date();
-  let minute = startTime.getMinutes();
-  let remainder = minute%5;
-  minute -= remainder;
-  startTime.setMinutes(minute);
-  return startTime;
-}
+import { mapStateToProps } from './selectors.js';
+import { connect } from 'react-redux';
 
 const padTime = (num) => {
   num = "" + num;
@@ -36,7 +27,7 @@ const getSliderValueFromDisplay = (displayValue, startTime) => {
 
 export class Slider extends React.Component {
   componentDidMount() {
-    const startTime = getStartTime();
+    const startTime = new Date(this.props.selectedTimestamp);
     const sliderEl = document.getElementById('slider');
     let pipVals = [];
     let oneHour = 1000*60*60;
@@ -67,7 +58,7 @@ export class Slider extends React.Component {
         filter: function(val) {
           let t = val - startTime.getTime();
           let oneHour = 1000*60*30;
-          return t%oneHour === 0 ? 1:0
+          return t % oneHour === 0 ? 1:0
         },
         format: {
           to: function(value) {
@@ -81,8 +72,7 @@ export class Slider extends React.Component {
     });
 
     sliderEl.noUiSlider.on('change', (valuesStr, handle, values) => {
-      //console.log(valuesStr[0], values[0]);
-      //debugger;
+      this.props.onChange(values[0]);
     });
   }
 
@@ -95,4 +85,4 @@ export class Slider extends React.Component {
   }
 }
 
-export default Slider;
+export default connect(mapStateToProps, null)(Slider);

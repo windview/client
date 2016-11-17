@@ -13,3 +13,8 @@ export const zoom = (bbox) => ({
   type: t.ZOOM,
   bbox: {bbox}
 });
+
+export const selectTimestamp = (timestamp) => ({
+    type: t.SELECT_TIME,
+    timestamp
+});

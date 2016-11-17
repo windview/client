@@ -3,13 +3,15 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { connect } from 'react-redux';
 import '../../../node_modules/leaflet/dist/leaflet.css';
 import L from '../../../node_modules/leaflet/dist/leaflet-src';
-import wkt from 'wellknown';
+// import wkt from 'wellknown';
 import * as topojson from '../../../node_modules/topojson/build/topojson';
-import windFarmData from '../../data/swpp-wind-farms-4326.topo.json';
+import windFarmData from '../../data/swpp-wind-farms-4326-augmented.topo.json';
 import leafletConfig from './leaflet-config';
 import './Map.scss';
 import { mapStateToProps, mapDispatchToProps } from './selectors';
 import Slider from './slider/Slider';
+import { forecastValFarmStyle, augmentFeatures } from './featureUtils';
+
 
 const getFeaturePopupMarkup = (feature) => {
   const html = renderToStaticMarkup(
@@ -22,20 +24,11 @@ const getFeaturePopupMarkup = (feature) => {
           <td>Capacity per Turbine</td><td className="right">{feature.properties.MW_turbine}</td>
         </tr></tbody>
       </table>
+      <br />
+      <em>click to view detailed forecast analysis</em>
     </div>
   );
   return html;
-}
-
-// eslint-disable-next-line
-const pukeWkt = (features) => {
-  console.log("Puking the first round");
-  let puke = '';
-  features.forEach((feature) => {
-    puke += wkt.stringify(feature)
-    puke += "\n";
-  });
-  console.log(puke);
 }
 
 export class Map extends React.Component {
@@ -43,13 +36,15 @@ export class Map extends React.Component {
   constructor(props) {
     super(props);
     this.whenFeatureClicked = this.whenFeatureClicked.bind(this);
-    this.whenFeatureMouseOver = this.whenFeatureMouseOver.bind(this)
+    this.whenFeatureMouseOver = this.whenFeatureMouseOver.bind(this);
     this.whenFeatureMouseOut = this.whenFeatureMouseOut.bind(this);
+    this.whenSliderMoved = this.whenSliderMoved.bind(this);  
   }
 
   whenFeatureClicked(e) {
-    const feature = e.target.feature
-    feature.name = e.target.feature.properties.site_name
+    const feature = e.target.feature;
+    feature.name = e.target.feature.properties.site_name;
+    debugger;
     this.props.onSelectFeature(feature);
   }
 
@@ -69,9 +64,12 @@ export class Map extends React.Component {
     }
   }
 
+  whenSliderMoved(e) {
+    this.props.onSelectTimestamp(e);
+  }
+
   componentDidMount() {
     let layers = [];
-
     // Add OSM base tiles
     layers.push(L.tileLayer(leafletConfig.basemapTileURL, {
       minZoom: leafletConfig.minZoom,
@@ -82,8 +80,11 @@ export class Map extends React.Component {
     for (var obj in windFarmData.objects) {
       if(windFarmData.objects[obj]) {
         let geojsonData = topojson.feature(windFarmData, windFarmData.objects[obj]);
-        //pukeWkt(geojsonData.features);
+
+        augmentFeatures(geojsonData.features, this.props.selectedTimestamp);
+
         layers.push(L.geoJSON(geojsonData, {
+          style: forecastValFarmStyle,
           onEachFeature: (feature, layer) => {
             layer.on({
               click: this.whenFeatureClicked,
@@ -108,7 +109,7 @@ export class Map extends React.Component {
     return (
       <span>
         <div id="wind-map" className="stretch-v"></div>
-        <Slider />
+        <Slider startTime={this.startTime} onChange={this.whenSliderMoved}/>
       </span>
     );
   }
