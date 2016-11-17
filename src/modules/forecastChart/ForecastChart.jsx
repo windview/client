@@ -11,7 +11,7 @@ import { mapStateToProps } from './selectors';
 // complexity grows
 function BaseElement(props) {
   return (
-    <div id="chart-wrapper" className="chart-wrapper half-v">
+    <div id="chart-wrapper" className="chart-wrapper">
       {props.children}
     </div>
   )
