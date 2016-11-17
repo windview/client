@@ -58,7 +58,7 @@ export const forecastValFarmStyle = (feature) => {
     const forecastVal = feature.properties.currentForecastVal.windSpeed;
     if(forecastVal < 1) {
       style = {
-        "color": "white",
+        "color": "yellow",
         "fillOpacity": .75,
         //"color": "#000000",
         "weight": 3,
@@ -66,7 +66,7 @@ export const forecastValFarmStyle = (feature) => {
       }
     } else if(forecastVal < 3.5) {
       style = {
-        "color": "blue",
+        "color": "rgb(128, 177, 211",
         "fillOpacity": .75,
         //"color": "#000000",
         "weight": 3,
@@ -74,7 +74,7 @@ export const forecastValFarmStyle = (feature) => {
       }
     } else if(forecastVal < 6) {
       style = {
-        "color": "green",
+        "color": "blue",
         "fillOpacity": .75,
         //"color": "#000000",
         "weight": 5,
@@ -93,9 +93,11 @@ export const forecastValFarmStyle = (feature) => {
   return style;
 }
 
-export const augmentFeatures = (features, startTimestamp) => {
+export const augmentFeatures = (features, startTimestamp, onComplete) => {
   let sixHours = (6*60/5); // # of 5 minute intervals in 6 hours
-  let fiveMinutes = (1000*60*5); // milliseconds in 5 minutes      
+  let fiveMinutes = (1000*60*5); // milliseconds in 5 minutes   
+  // rudimentary queue system   
+  let featuresRemaining = features.length;
   features.forEach((feature) => {
     if(feature.properties.wtk_site_data) {
       // get the wtk data site id
@@ -118,7 +120,16 @@ export const augmentFeatures = (features, startTimestamp) => {
         // assign the data and the default value (first time slice) to the feature
         feature.properties.forecastData = forecastData;
         feature.properties.currentForecastVal = forecastData[0];
+        featuresRemaining--;
+        if(featuresRemaining===0) {
+          onComplete();
+        }
       });
+    } else {
+      featuresRemaining--;
+      if(featuresRemaining===0) {
+        onComplete();
+      }
     }
   });
 }

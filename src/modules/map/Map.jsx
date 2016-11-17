@@ -100,9 +100,13 @@ export class Map extends React.Component {
         }
       });
       
-      // trigger a style refresh to update map colors
-      windFarmLayer.setStyle(forecastValFarmStyle);
+      this.refreshMapStyle();   
     }
+  }
+
+  // trigger a style refresh to update map colors
+  refreshMapStyle() {
+    this.windFarmLayer.setStyle(forecastValFarmStyle);    
   }
 
   componentDidMount() {
@@ -118,7 +122,7 @@ export class Map extends React.Component {
       if(windFarmData.objects[obj]) {
         let geojsonData = topojson.feature(windFarmData, windFarmData.objects[obj]);
 
-        augmentFeatures(geojsonData.features, this.props.selectedTimestamp);
+        augmentFeatures(geojsonData.features, this.props.selectedTimestamp, this.refreshMapStyle.bind(this));
 
         this.windFarmLayer = L.geoJSON(geojsonData, {
           style: forecastValFarmStyle,
