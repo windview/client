@@ -16,5 +16,5 @@ export const zoom = (bbox) => ({
 
 export const selectTimestamp = (timestamp) => ({
     type: t.SELECT_TIME,
-    timestamp
+    timestamp: timestamp
 });

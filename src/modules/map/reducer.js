@@ -26,10 +26,12 @@ export default (state=defaultValue, action) => {
   switch(action.type) {
     case t.SELECT_FEATURE:
       return {
+        ...state,
         selectedFeature: action.feature
       };
     case t.SELECT_TIME:
       return {
+        ...state,
         selectedTimestamp: action.timestamp
       }
     default:

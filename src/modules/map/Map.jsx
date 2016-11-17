@@ -44,7 +44,6 @@ export class Map extends React.Component {
   whenFeatureClicked(e) {
     const feature = e.target.feature;
     feature.name = e.target.feature.properties.site_name;
-    debugger;
     this.props.onSelectFeature(feature);
   }
 
@@ -64,8 +63,15 @@ export class Map extends React.Component {
     }
   }
 
-  whenSliderMoved(e) {
-    this.props.onSelectTimestamp(e);
+  whenSliderMoved(newTimestamp) {
+    this.props.onSelectTimestamp(newTimestamp);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    debugger;
+    if(this.props.selectedTimestamp !== nextProps.selectedTimestamp) {
+      console.log('the times they are a changin');
+    }
   }
 
   componentDidMount() {
