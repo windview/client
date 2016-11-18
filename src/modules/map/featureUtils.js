@@ -109,8 +109,8 @@ export const augmentFeatures = (features, startTimestamp, onComplete) => {
         for(let x=0; x<=sixHours; x++) {
           let row = data[x];
           let ts = new Date(startTimestamp + x*fiveMinutes).getTime();
-          let power = Math.round(Number(row['power (MW)'])*1000)/1000;
-          let windSpeed = Number(row['wind speed at 100m (m/s)']);
+          let power = Number(row['power (MW)']).toFixed(3);
+          let windSpeed = Number(row['wind speed at 100m (m/s)']).toFixed(2);
           forecastData.push({
             timestamp: ts,
             windSpeed: windSpeed,
