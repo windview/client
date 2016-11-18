@@ -33,3 +33,16 @@
   font-size: 12px;
   padding: 8px 10px 5px;
 }
+
+.chart-loader {
+  margin: auto;
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 50px;
+  animation: spinner-spin infinite 3s linear;
+}
+
+@keyframes spinner-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

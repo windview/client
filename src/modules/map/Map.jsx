@@ -57,8 +57,12 @@ export class Map extends React.Component {
   }
 
   whenFeatureClicked(e) {
-    this.props.onSelectFeature({name: "loading"});
-    this.props.onSelectFeature(e.target.feature);
+    const feature = e.target.feature;
+    feature.name = e.target.feature.properties.site_name;
+    this.props.onSelectFeature({name: feature.name, loading: true});
+    setTimeout(() => {
+      this.props.onSelectFeature(feature);  
+    }, 2000);
   }
 
   whenFeatureMouseOver(e) { 

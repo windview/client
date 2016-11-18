@@ -17,8 +17,18 @@ function BaseElement(props) {
   )
 }
 
-function ChartElement(props) {
+function LoadingElement(props) {
   return (
+    <BaseElement>
+      <div className='chart-title'>Loading Forecast Chart for {props.feature.name}</div>
+      <div className='chart-loader'><i className="fa fa-4x fa-spinner" aria-hidden="true"></i></div>
+    </BaseElement>
+  )
+}
+
+function ChartElement(props) {
+  console.log(props.feature.loading);
+  return props.feature.loading ? <LoadingElement feature={props.feature} /> : (
     <BaseElement>
       <div className='chart-title'>Forecast Chart for {props.feature.name}</div>
       <img src={logo} className="forecast-chart" alt="logo" />
