@@ -61,7 +61,7 @@ export const forecastValFarmStyle = (feature) => {
         "color": "yellow",
         "fillOpacity": .75,
         //"color": "#000000",
-        "weight": 3,
+        "weight": 6,
         "opacity": 1,
       }
     } else if(forecastVal < 3.5) {
@@ -77,7 +77,7 @@ export const forecastValFarmStyle = (feature) => {
         "color": "blue",
         "fillOpacity": .75,
         //"color": "#000000",
-        "weight": 5,
+        "weight": 3,
         "opacity": 1,
       }
     } else {
