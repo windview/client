@@ -1,11 +1,39 @@
 // map/slider/Slider.scss
 .slider-container {
-  
+
+  i {
+    border: 1px solid black;
+    padding: 2px;
+    border-radius: 5px;
+    width: 30px;
+
+    &:hover {
+      background-color: rgba(131, 218, 125, 0.15);
+    }
+  }
+
+  .backwards {
+    float: left;
+    margin-top: 5px;
+  }
+
+  .forwards {
+    float: right;
+    margin-top: -13px;
+  }
+
+  a {
+    color: #444444;
+
+    &:hover {
+        color: rgba(23, 130, 0, 1);
+     }
+  }
 }
 
 .slider {
   z-index: 1000;
-  width: 95%;
+  width: 90%;
   margin: auto;
 
   .noUi-base {

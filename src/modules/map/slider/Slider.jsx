@@ -12,14 +12,14 @@ const getSliderDisplayFromValue = (rawValue) => {
   return moment(rawValue).format('HH:mm');
 }
 
-const getSliderValueFromDisplay = (displayValue, startTime) => {
+const getSliderValueFromDisplay = (displayValue) => {
   return moment(displayValue, 'HH:mm').valueOf();
 }
 
 export class Slider extends React.Component {
   componentDidMount() {
     const startTime = new Date(this.props.selectedTimestamp);
-    const sliderEl = document.getElementById('slider');
+    this.sliderEl = document.getElementById('slider');
     let pipVals = [];
     let oneHour = 1000*60*60;
     let start = startTime.getTime();
@@ -27,8 +27,8 @@ export class Slider extends React.Component {
       pipVals.push(start+oneHour*i);
     });
 
-    noUiSlider.create(sliderEl, {
-      start: [startTime.getHours() + ":" + startTime.getMinutes()],
+    noUiSlider.create(this.sliderEl, {
+      start: [getSliderDisplayFromValue(startTime)],
       connect: [true, false],
       tooltips: [true],
       step: (1000*60*5), // 5 minute intervals
@@ -62,15 +62,34 @@ export class Slider extends React.Component {
       },
     });
 
-    sliderEl.noUiSlider.on('update', (valuesStr, handle, values) => {
+    this.sliderEl.noUiSlider.on('update', (valuesStr, handle, values) => {
       this.props.onChange(values[0]);
     });
+  }
+
+  moveSlider(direction) {
+    const sliderObj = this.sliderEl.noUiSlider;
+    const currentVal = sliderObj.get();
+    let timestamp = getSliderValueFromDisplay(currentVal);
+    const fiveMinutes = 1000*60*5;
+    switch(direction) {
+      case 'forwards':
+        sliderObj.set(getSliderDisplayFromValue(timestamp+fiveMinutes));
+        break;
+      case 'backwards':
+        sliderObj.set(getSliderDisplayFromValue(timestamp-fiveMinutes));
+        break;
+      default:
+        console.log("Called moveSlider with no direction");
+    }
   }
 
   render() {
     return (
       <div className="slider-container">
+        <a href="#" onClick={(e) => {e.preventDefault(); this.moveSlider.bind(this)('backwards');}}><i className="fa fa-play fa-rotate-180 fa-2x backwards" /></a>
         <div id="slider" className="slider" />
+        <a href="#" onClick={(e) => {e.preventDefault(); this.moveSlider.bind(this)('forwards');}}><i className="fa fa-play fa-2x forwards" /></a>
       </div>
     )
   }

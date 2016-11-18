@@ -20,8 +20,8 @@ const getFeaturePopupMarkup = (feature) => {
         power = "Unavailable";
   if(feature.properties.currentForecastVal) {
     displayTime = moment(feature.properties.currentForecastVal.timestamp).format('h:mm a');
-    windSpeed = feature.properties.currentForecastVal.windSpeed.toFixed(2) + " m/s";
-    power = feature.properties.currentForecastVal.power.toFixed(2) + " MW";
+    windSpeed = feature.properties.currentForecastVal.windSpeed + " m/s";
+    power = feature.properties.currentForecastVal.power + " MW";
   }
   const html = renderToStaticMarkup(
     <div>
