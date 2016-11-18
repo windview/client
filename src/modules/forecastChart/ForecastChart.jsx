@@ -21,7 +21,7 @@ function LoadingElement(props) {
   return (
     <BaseElement>
       <div className='chart-title'>Loading Forecast Chart for {props.feature.name}</div>
-      <div className='chart-loader'><i className="fa fa-4x fa-spinner" aria-hidden="true"></i></div>
+      <div className='chart-loader'><i className="fa fa-4x fa-circle-o-notch fa-spin" aria-hidden="true"></i></div>
     </BaseElement>
   )
 }
