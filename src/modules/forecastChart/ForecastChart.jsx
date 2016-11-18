@@ -27,7 +27,6 @@ function LoadingElement(props) {
 }
 
 function ChartElement(props) {
-  console.log(props.feature.loading);
   return props.feature.loading ? <LoadingElement feature={props.feature} /> : (
     <BaseElement>
       <div className='chart-title'>Forecast Chart for {props.feature.name}</div>
