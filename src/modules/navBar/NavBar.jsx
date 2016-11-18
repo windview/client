@@ -5,6 +5,16 @@ import { connect } from 'react-redux';
 
 export const NavBar = ({activePane, onClick, appTitle, buttons}) => {
 
+  const options = [
+    { value: 'anl', label: 'ARGUS-PRIMA' },
+    { value: 'nrel', label: 'NREL Wind Forecaster'},
+    { value: 'local', label: 'Local Forecast'}
+  ];
+
+  const optionElements = options.map((option) => 
+    <option key={option.value} value={option.value}>{option.label}</option>
+  );
+
   const buttonElements = buttons.map((btn) => 
     <li key={btn.id}><a href="#" key={btn.id} id={btn.id} onClick={e => {e.preventDefault(); onClick(btn.id);}}><i className={"fa " + btn.class + " fa-2x"} aria-hidden="true"></i><p>{btn.name}</p></a></li>
   );
@@ -23,7 +33,13 @@ export const NavBar = ({activePane, onClick, appTitle, buttons}) => {
           </div>
           <div className="collapse navbar-collapse" id="#wv-navbar-collapse-1">
               <ul className="nav navbar-nav">
-                {buttonElements}                    
+                {buttonElements}    
+                <li key="forecastModel">
+                  <p className="selectbox">Active Forecast Model</p>
+                  <select>
+                    {optionElements}
+                  </select>
+                </li>        
               </ul>
           </div>
       </div>
