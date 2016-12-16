@@ -139,7 +139,7 @@ export class Map extends React.Component {
       .data(geojsonData.features)
       .enter().append("path");
 
-    map.on("viewreset", reset);
+    map.on("zoomend", reset);
     reset();
 
     function reset() {
@@ -170,6 +170,7 @@ export class Map extends React.Component {
       minZoom: leafletConfig.minZoom,
       maxZoom: leafletConfig.maxZoom
     });
+    this.map = map;
 
     // Add OSM base layer
     L.tileLayer(leafletConfig.basemapTileURL, {
@@ -190,8 +191,6 @@ export class Map extends React.Component {
       // D3 farm layer
       this.getWindFarmLayerD3(geojsonData, map);
     }
-
-    this.map = map;
   }
 
   render() {
