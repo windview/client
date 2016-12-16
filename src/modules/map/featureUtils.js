@@ -96,6 +96,23 @@ export const forecastValFarmStyle = (feature) => {
   return style;
 }
 
+export const getFeatureFill = (feature) => {
+  if(feature.properties.currentForecastVal) {
+    const forecastVal = feature.properties.currentForecastVal.windSpeed;
+    if(forecastVal < 1) {
+      return 'yellow';
+    } else if(forecastVal < 3.5) {
+      return "rgb(128, 177, 211";
+    } else if(forecastVal < 6) {
+      return 'blue';
+    } else {
+      return 'red';
+    }
+  } else {
+    return 'black';
+  }
+}
+
 export const getGeoJsonFromTopo = (topoJsonData, dataKey) => {
   let geoJson = null;
   if(topoJsonData.objects[dataKey]) {
