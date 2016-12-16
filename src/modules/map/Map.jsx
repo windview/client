@@ -4,15 +4,14 @@ import { connect } from 'react-redux';
 import '../../../node_modules/leaflet/dist/leaflet.css';
 import L from '../../../node_modules/leaflet/dist/leaflet-src';
 // import wkt from 'wellknown';
-import * as topojson from '../../../node_modules/topojson/build/topojson';
 import windFarmData from '../../data/swpp-wind-farms-4326-augmented.topo.json';
 import leafletConfig from './leaflet-config';
 import './Map.scss';
 import { mapStateToProps, mapDispatchToProps } from './selectors';
 import Slider from './slider/Slider';
-import { forecastValFarmStyle, augmentFeatures } from './featureUtils';
+import * as featureUtils from './featureUtils';
 import moment from 'moment';
-
+import * as d3 from 'd3';
 
 const getFeaturePopupMarkup = (feature) => {
   let displayTime = "N/A", 
@@ -54,11 +53,13 @@ export class Map extends React.Component {
     this.whenFeatureMouseOver = this.whenFeatureMouseOver.bind(this);
     this.whenFeatureMouseOut = this.whenFeatureMouseOut.bind(this);
     this.whenSliderMoved = this.whenSliderMoved.bind(this);  
+    this.refreshMapStyle = this.refreshMapStyle.bind(this);
   }
 
   whenFeatureClicked(e) {
     const feature = e.target.feature;
     feature.name = e.target.feature.properties.site_name;
+    // This simulates a data loading pause to make obivous the chart loading
     this.props.onSelectFeature({name: feature.name, loading: true});
     setTimeout(() => {
       this.props.onSelectFeature(feature);  
@@ -85,9 +86,11 @@ export class Map extends React.Component {
     this.props.onSelectTimestamp(newTimestamp);
   }
 
-  // TODO this is a way of observing state changes. React style of doing things 
-  // discourages this kind of thing, but in order to update 3rd party things like
-  // the map and the slider we're going to do this for now
+  // TODO this is a way of observing state changes that is useful
+  // for integrating with 3rd party libraries. Since data binding
+  // between React and say Leaflet isn't possible, the approach is
+  // to intercept React component lifecycle events and manually
+  // attach any 3rd party lib binding therein
   componentWillReceiveProps(nextProps) {
     if(this.props.selectedTimestamp !== nextProps.selectedTimestamp) {
       const windFarmLayer     = this.windFarmLayer,
@@ -109,46 +112,86 @@ export class Map extends React.Component {
 
   // trigger a style refresh to update map colors
   refreshMapStyle() {
-    this.windFarmLayer.setStyle(forecastValFarmStyle);    
+    if(this.windFarmLayer) {
+      this.windFarmLayer.setStyle(featureUtils.forecastValFarmStyle);    
+    }
+  }
+
+  getWindFarmLayerLeaflet(geojsonData) {
+    return L.geoJSON(geojsonData, {
+      style: featureUtils.forecastValFarmStyle,
+      onEachFeature: (feature, layer) => {
+        layer.on({
+          click: this.whenFeatureClicked,
+          mouseover: this.whenFeatureMouseOver,
+          mouseout: this.whenFeatureMouseOut,
+        });
+      }
+    });
+  }
+
+  getWindFarmLayerD3(geojsonData, map) {
+    let svg = d3.select(map.getPanes().overlayPane).append("svg"),
+        g = svg.append("g").attr("class", "leaflet-zoom-hide"),
+        transform = d3.geoTransform({point: projectPoint}),
+        path = d3.geoPath().projection(transform);
+    let feature = g.selectAll("path")
+      .data(geojsonData.features)
+      .enter().append("path");
+
+    map.on("viewreset", reset);
+    reset();
+
+    function reset() {
+      var bounds = path.bounds(geojsonData),
+          topLeft = bounds[0],
+          bottomRight = bounds[1];
+      svg.attr("width", bottomRight[0] - topLeft[0])
+        .attr("height", bottomRight[1] - topLeft[1])
+        .style("left", topLeft[0] + "px")
+        .style("top", topLeft[1] + "px");
+      g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+      feature.attr("d", path);
+    }
+
+    // Use Leaflet to implement a D3 geometric transformation.
+    function projectPoint(x, y) {
+      const point = map.latLngToLayerPoint(new L.LatLng(y, x));
+      this.stream.point(point.x, point.y);
+    }
   }
 
   componentDidMount() {
-    let layers = [];
-    // Add OSM base tiles
-    layers.push(L.tileLayer(leafletConfig.basemapTileURL, {
-      minZoom: leafletConfig.minZoom,
-      maxZoom: leafletConfig.maxZoom,
-      attribution: leafletConfig.basemapTileAttrib
-    }));
 
-    for (var obj in windFarmData.objects) {
-      if(windFarmData.objects[obj]) {
-        let geojsonData = topojson.feature(windFarmData, windFarmData.objects[obj]);
-
-        augmentFeatures(geojsonData.features, this.props.selectedTimestamp, this.refreshMapStyle.bind(this));
-
-        this.windFarmLayer = L.geoJSON(geojsonData, {
-          style: forecastValFarmStyle,
-          onEachFeature: (feature, layer) => {
-            layer.on({
-              click: this.whenFeatureClicked,
-              mouseover: this.whenFeatureMouseOver,
-              mouseout: this.whenFeatureMouseOut,
-            });
-          }
-        });
-
-        layers.push(this.windFarmLayer);
-      }
-    }
-
-    this.map = L.map("wind-map", {
-      layers: layers,
+    //Create leaflet map
+    let map = L.map("wind-map", {
       center: leafletConfig.initialCenter,
       zoom: leafletConfig.initialZoom,
       minZoom: leafletConfig.minZoom,
       maxZoom: leafletConfig.maxZoom
-    })
+    });
+
+    // Add OSM base layer
+    L.tileLayer(leafletConfig.basemapTileURL, {
+      minZoom: leafletConfig.minZoom,
+      maxZoom: leafletConfig.maxZoom,
+      attribution: leafletConfig.basemapTileAttrib
+    }).addTo(map);
+
+    // Load windfarm data
+    let geojsonData = featureUtils.getGeoJsonFromTopo(windFarmData, "swpp-wind-farms-4326");
+    if(geojsonData) {
+      // Add simulated forecast data to features
+      featureUtils.augmentFeatures(geojsonData.features, this.props.selectedTimestamp, this.refreshMapStyle);
+      // Leaflet farm layer
+      //let windFarmLayer = this.getWindFarmLayerLeaflet(geojsonData);
+      //windFarmLayer.addTo(map);
+      //this.windFarmLayer = windFarmLayer;
+      // D3 farm layer
+      this.getWindFarmLayerD3(geojsonData, map);
+    }
+
+    this.map = map;
   }
 
   render() {
