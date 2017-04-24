@@ -57,7 +57,6 @@ export class Map extends React.Component {
   }
 
   whenFeatureClicked(e) {
-    debugger;
     const feature = e.target.feature;
     feature.name = e.target.feature.properties.site_name;
     // This simulates a data loading pause to make obivous the chart loading
@@ -95,7 +94,7 @@ export class Map extends React.Component {
   componentWillReceiveProps(nextProps) {
     if(this.props.selectedTimestamp !== nextProps.selectedTimestamp) {
       if(this.windFarmLayerL) {
-        const windFarmLayer     = this.windFarmLayer,
+        const windFarmLayer     = this.windFarmLayerL,
               selectedTimestamp = nextProps.selectedTimestamp;
 
         // Update the current forecast val on each GeoJSON object 
@@ -130,7 +129,7 @@ export class Map extends React.Component {
   // trigger a style refresh to update map colors
   refreshMapStyle() {
     if(this.windFarmLayerL) {
-      this.windFarmLayer.setStyle(featureUtils.forecastValFarmStyle);    
+      this.windFarmLayerL.setStyle(featureUtils.forecastValFarmStyle);    
     } else if(this.windFarmLayerD) {
       // not needed for d3
     }
@@ -213,15 +212,15 @@ export class Map extends React.Component {
     if(geojsonData) {
       // Add simulated forecast data to features
       // LEAFLET STYLE
-      //featureUtils.augmentFeatures(geojsonData.features, this.props.selectedTimestamp, this.refreshMapStyle);
+      featureUtils.augmentFeatures(geojsonData.features, this.props.selectedTimestamp, this.refreshMapStyle);
       // Leaflet farm layer
-      //let windFarmLayer = this.getWindFarmLayerLeaflet(geojsonData);
-      //windFarmLayer.addTo(map);
-      //this.windFarmLayerL = windFarmLayer;
+      let windFarmLayer = this.getWindFarmLayerLeaflet(geojsonData);
+      windFarmLayer.addTo(map);
+      this.windFarmLayerL = windFarmLayer;
       // D3 STYLE
-      featureUtils.augmentFeatures(geojsonData.features, this.props.selectedTimestamp, function() {
-        this.getWindFarmLayerD3(geojsonData, map);  
-      }.bind(this));
+      //featureUtils.augmentFeatures(geojsonData.features, this.props.selectedTimestamp, function() {
+      //  this.getWindFarmLayerD3(geojsonData, map);  
+      //}.bind(this));
     }
   }
 
