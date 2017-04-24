@@ -1,0 +1,573 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Aurora Wal-Mart",
+        "label": "Aurora Wal-Mart",
+        "manufacturers": [
+          "Bergey Energy"
+        ],
+        "models": [
+          "XL50"
+        ],
+        "total_capacity": 0.05
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -104.773089939186676,
+          39.76079356303547
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Boulder NREL Wind",
+        "label": "Boulder NREL Wind",
+        "manufacturers": [
+          "Alstrom",
+          "GE",
+          "Gamesa",
+          "Northern Power Systems",
+          "Siemens",
+          "Westinghouse",
+          "unknown"
+        ],
+        "models": [
+          "1.5SLE",
+          "ECO100",
+          "G97",
+          "NW100",
+          "SWT2.3_101",
+          "WWG0600",
+          "unknown"
+        ],
+        "total_capacity": -9999.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -105.22440231753427,
+          39.908681074154103
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Busch Ranch Wind",
+        "label": "Busch Ranch Wind",
+        "manufacturers": [
+          "Vestas"
+        ],
+        "models": [
+          "V100_1.8"
+        ],
+        "total_capacity": 460.8
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -104.471852722281,
+          37.781887575378065
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Cedar Creek 1",
+        "label": "Cedar Creek 1",
+        "manufacturers": [
+          "GE",
+          "Mitsubishi"
+        ],
+        "models": [
+          "1.5SLE",
+          "MWT1000A"
+        ],
+        "total_capacity": 82337.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -104.022276111160025,
+          40.884234961754402
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Cedar Creek 2",
+        "label": "Cedar Creek 2",
+        "manufacturers": [
+          "Nordex"
+        ],
+        "models": [
+          "N90"
+        ],
+        "total_capacity": 9000.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -103.778843367297156,
+          40.912806667863123
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Cedar Creek 2 (GE)",
+        "label": "Cedar Creek 2 (GE)",
+        "manufacturers": [
+          "GE"
+        ],
+        "models": [
+          "1.5SLE"
+        ],
+        "total_capacity": 5953.5
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -103.797186851602333,
+          40.940007617846511
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Cedar Point",
+        "label": "Cedar Point",
+        "manufacturers": [
+          "Vestas"
+        ],
+        "models": [
+          "V90_1.8"
+        ],
+        "total_capacity": 34777.8
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -103.670203182677952,
+          39.44677914340668
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Colorado Green",
+        "label": "Colorado Green",
+        "manufacturers": [
+          "GE"
+        ],
+        "models": [
+          "1.5S"
+        ],
+        "total_capacity": 17496.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -102.636655474742199,
+          37.700656686643399
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Colorado Highlands 1",
+        "label": "Colorado Highlands 1",
+        "manufacturers": [
+          "GE"
+        ],
+        "models": [
+          "1.6_100"
+        ],
+        "total_capacity": 2822.4
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -102.752406967456793,
+          40.743612332690205
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Colorado Highlands 2",
+        "label": "Colorado Highlands 2",
+        "manufacturers": [
+          "GE"
+        ],
+        "models": [
+          "1.7_100"
+        ],
+        "total_capacity": 333.2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -102.792018864112833,
+          40.731600432397805
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Colorado Pork Demonstration Turbine",
+        "label": "Colorado Pork Demonstration Turbine",
+        "manufacturers": [
+          "Vestas"
+        ],
+        "models": [
+          "E15"
+        ],
+        "total_capacity": 0.07
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -102.671190627932106,
+          37.94359368879946
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Huerfano River Wind Farm",
+        "label": "Huerfano River Wind Farm",
+        "manufacturers": [
+          "Sany"
+        ],
+        "models": [
+          "SE10020"
+        ],
+        "total_capacity": 32.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -104.830565140503467,
+          37.775143848961861
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Kit Carson Windpower",
+        "label": "Kit Carson Windpower",
+        "manufacturers": [
+          "GE"
+        ],
+        "models": [
+          "1.5SLE"
+        ],
+        "total_capacity": 1734.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -102.328846444043378,
+          39.367916983399773
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Lamar Wind Energy Project",
+        "label": "Lamar Wind Energy Project",
+        "manufacturers": [
+          "GE"
+        ],
+        "models": [
+          "1.5S"
+        ],
+        "total_capacity": 37.5
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -102.556990659296702,
+          37.898613688679454
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Limon Wind",
+        "label": "Limon Wind",
+        "manufacturers": [
+          "GE"
+        ],
+        "models": [
+          "1.6_100"
+        ],
+        "total_capacity": 100000.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -103.603374257872758,
+          39.365585539036552
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Logan Wind Energy",
+        "label": "Logan Wind Energy",
+        "manufacturers": [
+          "GE"
+        ],
+        "models": [
+          "1.5SLE"
+        ],
+        "total_capacity": 26934.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -103.244667769049215,
+          40.948520157076132
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Northeastern Colorado Wind Energy Center",
+        "label": "Northeastern Colorado Wind Energy Center",
+        "manufacturers": [
+          "GE",
+          "Siemens"
+        ],
+        "models": [
+          "1.5XLE",
+          "SWT2.3_93"
+        ],
+        "total_capacity": 14118.3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -102.871977897335569,
+          40.979296964300843
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Peetz Wind",
+        "label": "Peetz Wind",
+        "manufacturers": [
+          "GE"
+        ],
+        "models": [
+          "1.5SLE"
+        ],
+        "total_capacity": 26533.5
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -103.400370567571699,
+          40.975491795056399
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Ponnequin 1 and 2",
+        "label": "Ponnequin 1 and 2",
+        "manufacturers": [
+          "NEG Micon"
+        ],
+        "models": [
+          "NM48_750"
+        ],
+        "total_capacity": 630.75
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -104.824596673873629,
+          40.99333477865131
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Ponnequin 3",
+        "label": "Ponnequin 3",
+        "manufacturers": [
+          "Vestas"
+        ],
+        "models": [
+          "V47"
+        ],
+        "total_capacity": 148.5
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -104.802389782220416,
+          40.995626730748384
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Pueblo Towers",
+        "label": "Pueblo Towers",
+        "manufacturers": [
+          "Vestas"
+        ],
+        "models": [
+          "V90_1.8"
+        ],
+        "total_capacity": 1.8
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -104.621390149136644,
+          38.163393779189732
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Ridge Crest Wind",
+        "label": "Ridge Crest Wind",
+        "manufacturers": [
+          "NEG Micon"
+        ],
+        "models": [
+          "NM52_900"
+        ],
+        "total_capacity": 980.1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -103.160941692912004,
+          40.944117528465071
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Spring Canyon",
+        "label": "Spring Canyon",
+        "manufacturers": [
+          "GE"
+        ],
+        "models": [
+          "1.5SLE"
+        ],
+        "total_capacity": 2400.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -103.019960209331359,
+          40.963055773378031
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Twin Buttes",
+        "label": "Twin Buttes",
+        "manufacturers": [
+          "GE"
+        ],
+        "models": [
+          "1.5SLE"
+        ],
+        "total_capacity": 3750.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -102.859724609713581,
+          37.672877741586099
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "Wray School District",
+        "label": "Wray School District",
+        "manufacturers": [
+          "AWE"
+        ],
+        "models": [
+          "54_900"
+        ],
+        "total_capacity": 0.9
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -102.223290510659979,
+          40.050993347257311
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "unknown Prowers County",
+        "label": "unknown Prowers County",
+        "manufacturers": [
+          "unknown"
+        ],
+        "models": [
+          "unknown"
+        ],
+        "total_capacity": -9999.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -102.685290612395164,
+          38.066293671081276
+        ]
+      }
+    }
+  ]
+}

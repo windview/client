@@ -1,6 +1,6 @@
 import React from 'react';
 import NavBar from '../navBar/index';
-import Map from '../map/Map';
+import MapGl from '../mapGl/Map';
 import ForecastChart from '../forecastChart/ForecastChart';
 import AppSettings from '../appSettings/AppSettings';
 import Help from '../help/Help';
@@ -17,7 +17,7 @@ export const App = ({ activePane }) => {
       <div className='container-fluid main-content'>
         <div className={classNames('row', 'stretch-v', {'hidden': activePane!=='map-view'})}>
           <section id="map-section" className="col-md-8 stretch-v main-pane-left">
-            <Map />
+            <MapGl />
           </section>
           <section id="chart-section" className="sidebar col-md-4 stretch-v main-pane-right">
             <ForecastChart />
