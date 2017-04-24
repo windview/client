@@ -28,9 +28,9 @@ const getFeaturePopupMarkup = (feature) => {
         <tbody><tr>
           <td>Total Capacity</td><td className="right">{feature.properties.total_capacity}</td>
         </tr><tr>
-          <td>Manufacturer(s)</td><td className="right">{feature.properties.manufacturers.join(', ')}</td>
+          <td>Manufacturer(s)</td><td className="right">{feature.properties.manufacturers}</td>
         </tr><tr>
-          <td>Models</td><td className="right">{feature.properties.models.join(', ')}</td>
+          <td>Models</td><td className="right">{feature.properties.models}</td>
         </tr><tr>
           <td>Forecast Time</td><td className="right">{displayTime}</td>
         </tr><tr>
@@ -57,31 +57,32 @@ export class Map extends React.Component {
   }
 
   whenFeatureClicked(e) {
-    const feature = e.target.feature;
-    feature.name = e.target.feature.properties.label;
+    const feature = e.features[0];
+    feature.name = feature.properties.label;
     // This simulates a data loading pause to make obivous the chart loading
     this.props.onSelectFeature({name: feature.name, loading: true});
     setTimeout(() => {
       this.props.onSelectFeature(feature);  
-    }, 2000);
+    }, 1000);
   }
 
   whenFeatureMouseOver(e) { 
     if(this.map) {
-      console.log("Implement popup");
-      /*
-      this.layerPopup = L.popup()
-        .setLatLng(e.latlng)
-        .setContent(getFeaturePopupMarkup(e.target.feature))
-        .openOn(this.map);
-      */
+      this.map.getCanvas().style.cursor = 'pointer';
+      this.layerPopup = new mapboxgl.Popup()
+            .setLngLat(e.features[0].geometry.coordinates)
+            .setHTML(getFeaturePopupMarkup(e.features[0]))
+            .addTo(this.map);
     }
   }
 
   whenFeatureMouseOut(e) {
-    if(this.layerPopup && this.map) {
-      this.map.closePopup(this.layerPopup);
-      this.layerPopup = null;
+    if(this.map) {
+      this.map.getCanvas().style.cursor = '';
+      if(this.layerPopup) {
+        this.layerPopup.remove();
+        this.layerPopup = null;
+      }
     }
   }
 
@@ -114,7 +115,7 @@ export class Map extends React.Component {
         });
         this.refreshMapStyle();   
       } else if(this.windFarmLayerD) {
-        const features          = this.geojsonData.features,
+        const features          = this.windFarmData.features,
               windFarmLayer     = this.windFarmLayerD,
               selectedTimestamp = nextProps.selectedTimestamp;
 
@@ -133,7 +134,6 @@ export class Map extends React.Component {
   }
 
   componentDidMount() {
-
     //Create map
     let map = new mapboxgl.Map({
       container: 'wind-map', // container id
@@ -142,11 +142,12 @@ export class Map extends React.Component {
       zoom: 6.5, // starting zoom
       hash: false
     });
+    this.map = map;
 
     // Add zoom and rotation controls to the map.
     map.addControl(new mapboxgl.NavigationControl());
-    this.map = map;
-
+    
+    // initialize animation properties
     let framesPerSecond = 15,
         initialOpacity = 1,
         opacity = initialOpacity,
@@ -154,8 +155,16 @@ export class Map extends React.Component {
         radius = initialRadius,
         maxRadius = 38;
 
-    map.on('load', () => {
-      // Add translines
+    // initialize windfarm data
+    if(windFarmData) {
+      // Add simulated forecast data to features
+      featureUtils.augmentFeatures(windFarmData.features, this.props.selectedTimestamp);
+      this.windFarmData = windFarmData;
+    }
+
+    // after map initializes itself, go to work adding all the things
+    map.on('load', function(){
+      // Add translines layer
       map.addSource('translines', {
           type: "vector",
           url: "http://localhost:8084/translines/metadata.json"
@@ -189,10 +198,16 @@ export class Map extends React.Component {
         }
       });
 
+      // Add windfarms as a collection of layers. Each layer
+      // represents a different display aspect... in some 
+      // cases layering to create a total effect, and in 
+      // other cases adding highlights indicative of certian 
+      // properties.
       map.addSource('windfarms', {
         type: "geojson",
         data: windFarmData
       });
+      // Green halo when all is well
       map.addLayer({
         id: 'windfarms-g-halo',
         type: 'circle',
@@ -204,6 +219,7 @@ export class Map extends React.Component {
         },
         filter: ["<", "total_capacity", 10000]
       });
+      // Yellow halo when things are getting dicey
       map.addLayer({
         id: 'windfarms-y-halo',
         type: 'circle',
@@ -219,6 +235,7 @@ export class Map extends React.Component {
           ["<", "total_capacity", 30000]
         ]
       });
+      // Red halo when it's going down right now
       map.addLayer({
         id: 'windfarms-r-halo',
         type: 'circle',
@@ -251,6 +268,7 @@ export class Map extends React.Component {
         }
       });
 
+      // This function causes the red halo to blip
       function animateMarker(timestamp) {
         setTimeout(function(){
           requestAnimationFrame(animateMarker);
@@ -271,20 +289,17 @@ export class Map extends React.Component {
 
       // Start the animation.
       animateMarker(0);
-    });
 
-    // Load windfarm data
-    let geojsonData = {};
-    this.geojsonData = geojsonData;
-    if(geojsonData) {
-      // Add simulated forecast data to features
-      //featureUtils.augmentFeatures(geojsonData.features, this.props.selectedTimestamp, this.refreshMapStyle);
-      
-      // Leaflet farm layer
-      //let windFarmLayer = this.getWindFarmLayerLeaflet(geojsonData);
-      //windFarmLayer.addTo(map);
-      //this.windFarmLayerL = windFarmLayer;
-    }
+      // Handle the relevant events on the windfarms layer
+      map.on('click', 'windfarms-symbol', this.whenFeatureClicked);
+
+      // Change the cursor to a pointer when the mouse is over the places layer.
+      map.on('mouseenter', 'windfarms-symbol', this.whenFeatureMouseOver);
+
+      // Change it back to a pointer when it leaves.
+      map.on('mouseleave', 'windfarms-symbol', this.whenFeatureMouseOut);
+
+    }.bind(this));  
   }
 
   render() {

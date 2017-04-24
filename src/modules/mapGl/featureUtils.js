@@ -1,10 +1,8 @@
 import { csv } from 'd3';
 
-export const augmentFeatures = (features, startTimestamp, onComplete) => {
+export const augmentFeatures = (features, startTimestamp) => {
   let sixHours = (6*60/5); // # of 5 minute intervals in 6 hours
   let fiveMinutes = (1000*60*5); // milliseconds in 5 minutes   
-  // rudimentary queue system   
-  let featuresRemaining = features.length;
   features.forEach((feature) => {
     if(feature.properties.wtk_site_data) {
       // get the wtk data site id
@@ -27,16 +25,7 @@ export const augmentFeatures = (features, startTimestamp, onComplete) => {
         // assign the data and the default value (first time slice) to the feature
         feature.properties.forecastData = forecastData;
         feature.properties.currentForecastVal = forecastData[0];
-        featuresRemaining--;
-        if(featuresRemaining===0) {
-          onComplete();
-        }
       });
-    } else {
-      featuresRemaining--;
-      if(featuresRemaining===0) {
-        onComplete();
-      }
     }
   });
 }
