@@ -58,6 +58,10 @@ export class Map extends React.Component {
 
   whenFeatureClicked(e) {
     const feature = e.features[0];
+    this.layerPopup = new mapboxgl.Popup()
+            .setLngLat(e.features[0].geometry.coordinates)
+            .setHTML(getFeaturePopupMarkup(e.features[0]))
+            .addTo(this.map);
     feature.name = feature.properties.label;
     // This simulates a data loading pause to make obivous the chart loading
     this.props.onSelectFeature({name: feature.name, loading: true});
@@ -69,10 +73,6 @@ export class Map extends React.Component {
   whenFeatureMouseOver(e) { 
     if(this.map) {
       this.map.getCanvas().style.cursor = 'pointer';
-      this.layerPopup = new mapboxgl.Popup()
-            .setLngLat(e.features[0].geometry.coordinates)
-            .setHTML(getFeaturePopupMarkup(e.features[0]))
-            .addTo(this.map);
     }
   }
 
