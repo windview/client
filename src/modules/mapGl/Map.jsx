@@ -3,19 +3,31 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { connect } from 'react-redux';
 import '../../../node_modules/mapbox-gl/dist/mapbox-gl.css';
 import mapboxgl from '../../../node_modules/mapbox-gl/dist/mapbox-gl.js'
-// import wkt from 'wellknown';
-import windFarmData from '../../data/usgs_wind_farms.geo.json';
 import windFarmIcon from '../../images/windfarm.png';
 import './Map.scss';
 import { mapStateToProps, mapDispatchToProps } from './selectors';
 import Slider from './slider/Slider';
+import Store from '../../data/store';
 import * as featureUtils from './featureUtils';
 import moment from 'moment';
+import * as tlinesStyle from './mapStyles/transmissionLines';
+import * as wfActualStyle from './mapStyles/windFarmActual';
+import * as wfForecastStyle from './mapStyles/windFarmForecast';
+import * as wfRampStyle from './mapStyles/windFarmRamp';
+import * as wfSizeStyle from './mapStyles/windFarmSize';
+
 
 const getFeaturePopupMarkup = (feature) => {
   let displayTime = "N/A", 
-        windSpeed = "Unavailable",
-        power = "Unavailable";
+      windSpeed = "Unavailable",
+      power = "Unavailable",
+      firstRow = "";
+  if(feature.properties.hasRamp) {
+    const ts = feature.properties.rampStart.timestamp,
+          rampStart = moment(ts).format('HH:mm (Z)'),
+          severity = feature.properties.hasDoubleRamp ? "severe ramp" : "ramp";
+    firstRow = (<tr className="warning"><td>RAMP ALERT</td><td className="right">A {severity} event is forecast beginning at {rampStart}</td></tr>);
+  } 
   if(feature.properties.currentForecastVal) {
     displayTime = moment(feature.properties.currentForecastVal.timestamp).format('h:mm a');
     windSpeed = feature.properties.currentForecastVal.windSpeed + " m/s";
@@ -25,12 +37,14 @@ const getFeaturePopupMarkup = (feature) => {
     <div>
       <strong>{feature.properties.label}</strong><br />
       <table className="map-popup">
-        <tbody><tr>
+        <tbody>
+        {firstRow}
+        <tr>
           <td>Total Capacity</td><td className="right">{feature.properties.total_capacity}</td>
         </tr><tr>
-          <td>Manufacturer(s)</td><td className="right">{feature.properties.manufacturers}</td>
+          <td>Manufacturer(s)</td><td className="right">{feature.properties.manufacturers.join(', ')}</td>
         </tr><tr>
-          <td>Models</td><td className="right">{feature.properties.models}</td>
+          <td>Models</td><td className="right">{feature.properties.models.join(', ')}</td>
         </tr><tr>
           <td>Forecast Time</td><td className="right">{displayTime}</td>
         </tr><tr>
@@ -39,8 +53,6 @@ const getFeaturePopupMarkup = (feature) => {
           <td>Forecast Wind Power</td><td className="right">{power}</td>
         </tr></tbody>
       </table>
-      <br />
-      <em>click map to view detailed forecast analysis</em>
     </div>
   );
   return html;
@@ -48,49 +60,22 @@ const getFeaturePopupMarkup = (feature) => {
 
 export class Map extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this.whenFeatureClicked = this.whenFeatureClicked.bind(this);
-    this.whenFeatureMouseOver = this.whenFeatureMouseOver.bind(this);
-    this.whenFeatureMouseOut = this.whenFeatureMouseOut.bind(this);
-    this.whenSliderMoved = this.whenSliderMoved.bind(this);  
+  componentDidMount() {
+    let self = this;
+    // initialize windfarm data
+    Store.getWindFarms()
+      .done((data) => {
+        Store.getBatchForecast(data.features, () => {
+          self.windFarmData = data;
+          self.renderMap();
+        }, self);
+      })
+      .fail((xhr, status, error) => {
+        self.renderMap();
+      });
   }
 
-  whenFeatureClicked(e) {
-    const feature = e.features[0];
-    this.layerPopup = new mapboxgl.Popup()
-            .setLngLat(e.features[0].geometry.coordinates)
-            .setHTML(getFeaturePopupMarkup(e.features[0]))
-            .addTo(this.map);
-    feature.name = feature.properties.label;
-    // This simulates a data loading pause to make obivous the chart loading
-    this.props.onSelectFeature({name: feature.name, loading: true});
-    setTimeout(() => {
-      this.props.onSelectFeature(feature);  
-    }, 1000);
-  }
-
-  whenFeatureMouseOver(e) { 
-    if(this.map) {
-      this.map.getCanvas().style.cursor = 'pointer';
-    }
-  }
-
-  whenFeatureMouseOut(e) {
-    if(this.map) {
-      this.map.getCanvas().style.cursor = '';
-      if(this.layerPopup) {
-        this.layerPopup.remove();
-        this.layerPopup = null;
-      }
-    }
-  }
-
-  whenSliderMoved(newTimestamp) {
-    this.props.onSelectTimestamp(newTimestamp);
-  }
-
-  // TODO this is a way of observing state changes that is useful
+  // This is a way of observing state changes that is useful
   // for integrating with 3rd party libraries. Since data binding
   // between React and say Leaflet isn't possible, the approach is
   // to intercept React component lifecycle events and manually
@@ -98,8 +83,12 @@ export class Map extends React.Component {
   // that wrap integration do this under the covers. e.g.
   //https://github.com/PaulLeCam/react-leaflet
   componentWillReceiveProps(nextProps) {
-    if(this.props.selectedTimestamp !== nextProps.selectedTimestamp) {
-      console.log("TODO implement map styles on timestamp change");
+    if(this.props.selectedStyle !== nextProps.selectedStyle) {
+      // Turn one off and the other on
+      this.toggleStyle(this.props.selectedStyle);
+      this.toggleStyle(nextProps.selectedStyle);
+    } else if(this.props.selectedTimestamp !== nextProps.selectedTimestamp) {
+      console.log("TODO implement map styles on timestamp change", nextProps.selectedTimestamp);
       if(this.windFarmLayerL) {
         const windFarmLayer     = this.windFarmLayerL,
               selectedTimestamp = nextProps.selectedTimestamp;
@@ -119,7 +108,7 @@ export class Map extends React.Component {
               windFarmLayer     = this.windFarmLayerD,
               selectedTimestamp = nextProps.selectedTimestamp;
 
-        features.forEach((feature)=>{
+        features.forEach((feature) => {
           if(feature.properties.forecastData) {
             let newForecastVal = feature.properties.forecastData.filter((row) => {
               return row.timestamp === selectedTimestamp;
@@ -133,7 +122,37 @@ export class Map extends React.Component {
     }
   }
 
-  componentDidMount() {
+  constructor(props) {
+    super(props);
+    this.whenFeatureClicked = this.whenFeatureClicked.bind(this);
+    this.whenFeatureMouseOver = this.whenFeatureMouseOver.bind(this);
+    this.whenFeatureMouseOut = this.whenFeatureMouseOut.bind(this);
+    this.whenSliderMoved = this.whenSliderMoved.bind(this);
+    this.whenStyleChecked = this.whenStyleChecked.bind(this);
+  }
+
+  render() {
+    return (
+      <span>
+        <div id="style-menu">
+          <input id='ramp' type='radio' name='rtoggle' value='ramp' checked={this.props.selectedStyle === 'ramp'} onChange={this.whenStyleChecked}></input>
+          <label>Potential Ramp Events</label><br/>
+          <input id='forecast' type='radio' name='rtoggle' value='forecast' checked={this.props.selectedStyle === 'forecast'} onChange={this.whenStyleChecked}></input>
+          <label>Forecast at Selected Time</label><br/>
+          <input id='actual' type='radio' name='rtoggle' value='actual' checked={this.props.selectedStyle === 'actual'} onChange={this.whenStyleChecked}></input>
+          <label>Actual at Selected Time</label><br/>
+          <input id='size' type='radio' name='rtoggle' value='size' checked={this.props.selectedStyle === 'size'} onChange={this.whenStyleChecked}></input>
+          <label>Wind Farm Capacity (MW)</label><br/>
+        </div>
+        <div id="wind-map" className="stretch-v"></div>
+        <Slider startTime={this.startTime} onChange={this.whenSliderMoved}/>
+      </span>
+    );
+  }
+
+  renderMap() {
+    let windFarmData = this.windFarmData;
+    
     //Create map
     let map = new mapboxgl.Map({
       container: 'wind-map', // container id
@@ -146,113 +165,41 @@ export class Map extends React.Component {
 
     // Add zoom and rotation controls to the map.
     map.addControl(new mapboxgl.NavigationControl());
-    
-    // initialize animation properties
-    let framesPerSecond = 15,
-        initialOpacity = 1,
-        opacity = initialOpacity,
-        initialRadius = 8,
-        radius = initialRadius,
-        maxRadius = 38;
-
-    // initialize windfarm data
-    if(windFarmData) {
-      // Add simulated forecast data to features
-      featureUtils.augmentFeatures(windFarmData.features, this.props.selectedTimestamp);
-      this.windFarmData = windFarmData;
-    }
 
     // after map initializes itself, go to work adding all the things
     map.on('load', function(){
-      // Add translines layer
-      map.addSource('translines', {
-          type: "vector",
-          url: "http://localhost:8084/translines/metadata.json"
-      });
-      map.addLayer({
-        'id': 'translines',
-        'type': 'line',
-        'source': 'translines',
-        'source-layer': 'translines',
-        "layout": {
-            "line-join": "bevel"
-        },
-        "paint": {
-          "line-color": {
-            property: "voltage",
-            type: "exponential",
-            stops: [
-              [0, "hsla(26%, 100%, 90%, 0.1)"],
-              [800, "hsla(15%, 100%, 43%, 1)"]
-            ]
-          },
-          "line-width": {
-            "base": 1,
-            "stops": [
-              [0, .3],
-              [5, 1], 
-              [8, 3], 
-              [20, 20]
-            ]
-          }
-        }
-      });
 
-      // Add windfarms as a collection of layers. Each layer
-      // represents a different display aspect... in some 
-      // cases layering to create a total effect, and in 
-      // other cases adding highlights indicative of certian 
-      // properties.
-      map.addSource('windfarms', {
-        type: "geojson",
-        data: windFarmData
-      });
-      // Green halo when all is well
-      map.addLayer({
-        id: 'windfarms-g-halo',
-        type: 'circle',
-        source: 'windfarms',
-        paint: {
-          'circle-radius': initialRadius+6,
-          'circle-color': '#0F0',
-          'circle-opacity': 0.5
-        },
-        filter: ["<", "total_capacity", 10000]
-      });
-      // Yellow halo when things are getting dicey
-      map.addLayer({
-        id: 'windfarms-y-halo',
-        type: 'circle',
-        source: 'windfarms',
-        paint: {
-          'circle-radius': initialRadius+6,
-          'circle-color': '#FB1',
-          'circle-opacity': 0.7
-        },
-        filter: [ 
-          "all",
-          [">=", "total_capacity", 10000],
-          ["<", "total_capacity", 30000]
-        ]
-      });
-      // Red halo when it's going down right now
-      map.addLayer({
-        id: 'windfarms-r-halo',
-        type: 'circle',
-        source: 'windfarms',
-        paint: {
-          'circle-radius': initialRadius,
-          'circle-color': '#B00',
-          "circle-radius-transition": {duration: 0},
-          "circle-opacity-transition": {duration: 0},
-        },
-        filter: [">=", "total_capacity", 30000]
-      });
-      // Custom image icon for wind farms
+      // Add the custom image icon for wind farms to use later
       map.loadImage(windFarmIcon, (err, image) => {
         if(err) return;
         map.addImage('windfarm', image);
       });
+      
+      // Add translines 
+      map.addSource('translines', {
+          type: "vector",
+          url: "http://localhost:8084/osm-translines/metadata.json"
+      });
+      
+      // Add windfarms 
+      map.addSource('windfarms', {
+        type: "geojson",
+        data: windFarmData
+      });
+
+      // Initialize all of the layers
+      tlinesStyle.initializeStyle(map, 'translines');
+      wfSizeStyle.initializeStyle(map, 'windfarms');
+      wfActualStyle.initializeStyle(map, 'windfarms');
+      wfForecastStyle.initializeStyle(map, 'windfarms');
+      wfRampStyle.initializeStyle(map, 'windfarms');
+
+      // Show these layers
+      this.toggleStyle('tlines');
+      this.toggleStyle(this.props.selectedStyle);
+
+      // The icon layer is always present, and needs to be for all the
+      // event handlers so add it outside of the specific styles above
       map.addLayer({
         id: 'windfarms-symbol',
         type: 'symbol',
@@ -268,28 +215,6 @@ export class Map extends React.Component {
         }
       });
 
-      // This function causes the red halo to blip
-      function animateMarker(timestamp) {
-        setTimeout(function(){
-          requestAnimationFrame(animateMarker);
-
-          radius += (maxRadius - radius) / framesPerSecond;
-          opacity -= ( .9 / framesPerSecond );
-          opacity = opacity < 0 ? 0 : opacity;
-
-          map.setPaintProperty('windfarms-r-halo', 'circle-radius', radius);
-          map.setPaintProperty('windfarms-r-halo', 'circle-opacity', opacity);
-
-          if (opacity <= 0) {
-            radius = initialRadius;
-            opacity = initialOpacity;
-          } 
-        }, 1000 / framesPerSecond); 
-      }
-
-      // Start the animation.
-      animateMarker(0);
-
       // Handle the relevant events on the windfarms layer
       map.on('click', 'windfarms-symbol', this.whenFeatureClicked);
 
@@ -302,13 +227,67 @@ export class Map extends React.Component {
     }.bind(this));  
   }
 
-  render() {
-    return (
-      <span>
-        <div id="wind-map" className="stretch-v"></div>
-        <Slider startTime={this.startTime} onChange={this.whenSliderMoved}/>
-      </span>
-    );
+  toggleStyle(styleName) {
+    switch(styleName) {
+      case "size":
+        wfSizeStyle.toggleVisibility(this.map);
+        break;
+      case "ramp":
+        wfRampStyle.toggleVisibility(this.map);
+        break;
+      case "forecast":
+        wfForecastStyle.toggleVisibility(this.map);
+        break;
+      case "actual":
+        wfActualStyle.toggleVisibility(this.map);
+        break;
+      case "tlines":
+        tlinesStyle.toggleVisibility(this.map);
+        break;
+      default:
+        break;
+    }
+  }
+
+  whenFeatureClicked(e) {
+    // The click event has a feature wherein the properties have been turned into strings.
+    // Need to supply the proper object form so we find it in our local copy of the data
+    const feature = Store.getWindFarmById(e.features[0].properties.fid, this.windFarmData.features);
+    this.layerPopup = new mapboxgl.Popup()
+            .setLngLat(feature.geometry.coordinates)
+            .setHTML(getFeaturePopupMarkup(feature))
+            .addTo(this.map);
+
+    // This simulates a data loading pause to make obivous the chart loading
+    feature.name = feature.properties.label;
+    this.props.onSelectFeature({name: feature.properties.label, loading: true});
+    setTimeout(() => {
+      this.props.onSelectFeature(feature);  
+    }, 1000);
+  }
+
+  whenFeatureMouseOut(e) {
+    if(this.map) {
+      this.map.getCanvas().style.cursor = '';
+      /*if(this.layerPopup) {
+        this.layerPopup.remove();
+        this.layerPopup = null;
+      }*/
+    }
+  }
+
+  whenFeatureMouseOver(e) { 
+    if(this.map) {
+      this.map.getCanvas().style.cursor = 'pointer';
+    }
+  }
+
+  whenSliderMoved(newTimestamp) {
+    this.props.onSelectTimestamp(newTimestamp);
+  }
+
+  whenStyleChecked(e) {
+    this.props.onSelectStyle(e.target.value);
   }
 }
 

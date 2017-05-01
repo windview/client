@@ -3,17 +3,17 @@ import './NavBar.scss';
 import { mapStateToProps, mapDispatchToProps} from './selectors';
 import { connect } from 'react-redux';
 
-export const NavBar = ({activePane, onClick, appTitle, buttons}) => {
+export const NavBar = ({activePane, onClick, appTitle, buttons, styleOptions}) => {
 
-  const options = [
+  const modelOptions = [
     { value: 'anl', label: 'ARGUS-PRIMA' },
     { value: 'nrel', label: 'NREL Wind Forecaster'},
     { value: 'local', label: 'Local Forecast'}
   ];
 
-  const optionElements = options.map((option) => 
+  const modelOptionElements = modelOptions.map((option) => 
     <option key={option.value} value={option.value}>{option.label}</option>
-  );
+  ); 
 
   const buttonElements = buttons.map((btn) => 
     <li key={btn.id}><a href="#" key={btn.id} id={btn.id} onClick={e => {e.preventDefault(); onClick(btn.id);}}><i className={"fa " + btn.class + " fa-2x"} aria-hidden="true"></i><p>{btn.name}</p></a></li>
@@ -37,9 +37,9 @@ export const NavBar = ({activePane, onClick, appTitle, buttons}) => {
                 <li key="forecastModel">
                   <p className="selectbox">Active Forecast Model</p>
                   <select>
-                    {optionElements}
+                    {modelOptionElements}
                   </select>
-                </li>        
+                </li>       
               </ul>
           </div>
       </div>

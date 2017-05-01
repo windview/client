@@ -1,7 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import './ForecastChart.scss';
-import '../../styles/logo.scss';
 import logo from '../../images/windview-chart.png';
 import { mapStateToProps } from './selectors';
 

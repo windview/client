@@ -57,6 +57,7 @@
     "classnames": "^2.2.5",
     "d3": "^4.3.0",
     "font-awesome": "^4.7.0",
+    "highcharts": "^5.0.10",
     "jquery": "^3.1.1",
     "leaflet": "^1.0.1",
     "mapbox-gl": "^0.36.0",
@@ -98,6 +99,9 @@
     ]
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "env": {
+      "jquery": true
+    }
   }
 }

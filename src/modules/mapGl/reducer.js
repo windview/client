@@ -5,7 +5,6 @@
 
 import * as t from './actionTypes';
 
-
 // The current time rounded down to the closest 5 minute
 // interval in the past
 const getStartTime = () => {
@@ -20,6 +19,7 @@ const getStartTime = () => {
 const defaultValue = {
   selectedFeature: null,
   selectedTimestamp: getStartTime(),
+  selectedStyle: 'ramp'
 }
 
 export default (state=defaultValue, action) => {
@@ -33,7 +33,12 @@ export default (state=defaultValue, action) => {
       return {
         ...state,
         selectedTimestamp: action.timestamp
-      }
+      };
+    case t.SELECT_STYLE:
+      return {
+        ...state,
+        selectedStyle: action.style
+      };
     default:
       return state;
   }

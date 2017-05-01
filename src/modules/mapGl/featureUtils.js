@@ -1,34 +1,4 @@
-import { csv } from 'd3';
-
-export const augmentFeatures = (features, startTimestamp) => {
-  let sixHours = (6*60/5); // # of 5 minute intervals in 6 hours
-  let fiveMinutes = (1000*60*5); // milliseconds in 5 minutes   
-  features.forEach((feature) => {
-    if(feature.properties.wtk_site_data) {
-      // get the wtk data site id
-      const forecastDataId = feature.properties.wtk_site_data.forecastDataId;
-      // load the file
-      const filePath = '/wtk-data/' + forecastDataId + '-2012.csv';
-      csv(filePath, (data) => {
-        let forecastData = [];
-        for(let x=0; x<=sixHours; x++) {
-          let row = data[x];
-          let ts = new Date(startTimestamp + x*fiveMinutes).getTime();
-          let power = Number(row['power (MW)']).toFixed(3);
-          let windSpeed = Number(row['wind speed at 100m (m/s)']).toFixed(2);
-          forecastData.push({
-            timestamp: ts,
-            windSpeed: windSpeed,
-            power: power
-          });
-        }
-        // assign the data and the default value (first time slice) to the feature
-        feature.properties.forecastData = forecastData;
-        feature.properties.currentForecastVal = forecastData[0];
-      });
-    }
-  });
-}
+//import { csv } from 'd3';
 
 export const exploreData = (features) => {
   let capacity = [];

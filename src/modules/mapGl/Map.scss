@@ -4,11 +4,34 @@
 
 .map-popup {
   font-family: consolas;
+  width: 400px;
+
   td {
+    padding-left: 2px;
     padding-right: 15px;
     padding-top: 6px;
+    vertical-align: top;
+    border-top: 1px solid #ddd;
   }
   .right {
     text-align: right;
+  }
+  .warning {
+    background-color: red;
+    font-weight: bold;
+    color: #fffac2;
+  }
+}
+
+#style-menu {
+
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  z-index: 20000;
+  color: white;
+
+  input {
+    margin: 0px 5px;
   }
 }

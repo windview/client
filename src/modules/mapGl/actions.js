@@ -18,3 +18,8 @@ export const selectTimestamp = (timestamp) => ({
     type: t.SELECT_TIME,
     timestamp: timestamp
 });
+
+export const selectStyle = (style) => ({
+  type: t.SELECT_STYLE,
+  style: style
+});

@@ -6,3 +6,4 @@
 export const SELECT_FEATURE = 'map/SELECT_FEATURE';
 export const ZOOM = 'map/ZOOM';
 export const SELECT_TIME = 'map/SELECT_TIME';
+export const SELECT_STYLE = 'map/SELECT_STYLE';
