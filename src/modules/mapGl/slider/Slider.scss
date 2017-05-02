@@ -5,7 +5,7 @@
     border: 1px solid black;
     padding: 2px;
     border-radius: 5px;
-    width: 30px;
+    width: 20px;
 
     &:hover {
       background-color: rgba(131, 218, 125, 0.15);
@@ -33,8 +33,9 @@
 
 .slider {
   z-index: 1000;
-  width: 90%;
+  width: 94%;
   margin: auto;
+  margin-top: 10px;
 
   .noUi-base {
     border: 1px solid black;
@@ -57,4 +58,25 @@
   .noUi-pips-horizontal {
     height: 50px;
   }
+
+  .noUi-handle {
+    width: 27px;
+    height:20px;
+    left: -14px;
+    top: -5px;
+  }
+
+  .noUi-handle:before {
+    left: 10px;
+    top: 3px;
+  }
+
+  .noUi-handle:after {
+    left: 14px;
+    top: 3px;
+  }  
 }
+.noUi-horizontal {
+  height: 14px;
+}
+

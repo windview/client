@@ -17,6 +17,7 @@ const getStartTime = () => {
 }
 
 const defaultValue = {
+  windFarmData: null,
   selectedFeature: null,
   selectedTimestamp: getStartTime(),
   selectedStyle: 'ramp'
@@ -24,6 +25,11 @@ const defaultValue = {
 
 export default (state=defaultValue, action) => {
   switch(action.type) {
+    case t.LOAD_WIND_FARM_DATA:
+      return {
+        ...state,
+        windFarmData: action.data
+      };
     case t.SELECT_FEATURE:
       return {
         ...state,

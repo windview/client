@@ -17,21 +17,94 @@ const getSliderValueFromDisplay = (displayValue) => {
 }
 
 export class Slider extends React.Component {
-  componentDidMount() {
-    const startTime = new Date(this.props.selectedTimestamp);
-    this.sliderEl = document.getElementById('slider');
-    let pipVals = [];
-    let oneHour = 1000*60*60;
+
+  componentWillReceiveProps(nextProps) {
+    if(this.props.windFarmData == null && nextProps.windFarmData !== null) {
+      this.renderSlider(nextProps.windFarmData);
+    }
+  }
+
+  // The latest timestamp in all the data for all the farms
+  getDataEnd(data, interval) {
+    let ts = 0;
+    data.features.forEach(function(feature){
+      feature.properties.forecastData.data.forEach(function(row) {
+        ts = row.timestamp.getTime() > ts ? row.timestamp.getTime() : ts;
+      });
+    });
+    
+    let dataEnd = new Date(ts),
+        minute = dataEnd.getMinutes(),
+        remainder = minute >= interval ? minute%interval : interval-minute;
+    dataEnd.setMinutes(minute+=remainder);
+    dataEnd.setSeconds(0);
+    return dataEnd;
+  }
+
+  // The earliest timestamp in all the data for all the farms
+  getDataStart(data, interval) {
+    let ts = new Date().getTime() + (1000*60*60*24*365); //1 year in the future
+    data.features.forEach(function(feature){
+      feature.properties.forecastData.data.forEach(function(row) {
+        ts = row.timestamp.getTime() < ts ? row.timestamp.getTime() : ts;
+      });
+    });
+
+    let dataStart = new Date(ts),
+        minute = dataStart.getMinutes(),
+        remainder = minute >= interval ? minute%interval : minute;
+    dataStart.setMinutes(minute-=remainder);
+    dataStart.setSeconds(0);
+    return dataStart;
+  }
+
+  moveSlider(direction) {
+    const sliderObj = this.sliderEl.noUiSlider;
+    const currentVal = sliderObj.get();
+    let timestamp = getSliderValueFromDisplay(currentVal);
+    const interval = 1000*60*15;
+    switch(direction) {
+      case 'forwards':
+        sliderObj.set(getSliderDisplayFromValue(timestamp+interval));
+        break;
+      case 'backwards':
+        sliderObj.set(getSliderDisplayFromValue(timestamp-interval));
+        break;
+      default:
+        console.log("Called moveSlider with no direction");
+    }
+  }
+
+  render() {
+    return (
+      <div className="slider-container">
+        <a href="#" onClick={(e) => {e.preventDefault(); this.moveSlider.bind(this)('backwards');}}><i className="fa fa-play fa-rotate-180 fa-1x backwards" /></a>
+        <div id="slider" className="slider" />
+        <a href="#" onClick={(e) => {e.preventDefault(); this.moveSlider.bind(this)('forwards');}}><i className="fa fa-play fa-1x forwards" /></a>
+      </div>
+    )
+  }
+
+  renderSlider(windFarmData) {
+    const sliderEl = document.getElementById('slider'),
+          interval = 15,
+          startTime = this.getDataStart(windFarmData, interval),
+          endTime = this.getDataEnd(windFarmData, interval),
+          intervalMs = (1000*60*interval),
+          oneHour = 1000*60*60,
+          pipVals = [];
+
+    this.sliderEl = sliderEl;
     let start = startTime.getTime();
     [2,3,4,5].forEach(function(i){
       pipVals.push(start+oneHour*i);
     });
 
-    noUiSlider.create(this.sliderEl, {
+    noUiSlider.create(sliderEl, {
       start: [getSliderDisplayFromValue(startTime)],
       connect: [true, false],
       tooltips: [true],
-      step: (1000*60*5), // 5 minute intervals
+      step: (1000*60*15), // 5 minute intervals
       range: {
         min: startTime.getTime(),
         max: (startTime.getTime()+(1000*60*60*6)) // 6 hours
@@ -62,36 +135,9 @@ export class Slider extends React.Component {
       },
     });
 
-    this.sliderEl.noUiSlider.on('update', (valuesStr, handle, values) => {
+    sliderEl.noUiSlider.on('update', (valuesStr, handle, values) => {
       this.props.onChange(values[0]);
     });
-  }
-
-  moveSlider(direction) {
-    const sliderObj = this.sliderEl.noUiSlider;
-    const currentVal = sliderObj.get();
-    let timestamp = getSliderValueFromDisplay(currentVal);
-    const fiveMinutes = 1000*60*5;
-    switch(direction) {
-      case 'forwards':
-        sliderObj.set(getSliderDisplayFromValue(timestamp+fiveMinutes));
-        break;
-      case 'backwards':
-        sliderObj.set(getSliderDisplayFromValue(timestamp-fiveMinutes));
-        break;
-      default:
-        console.log("Called moveSlider with no direction");
-    }
-  }
-
-  render() {
-    return (
-      <div className="slider-container">
-        <a href="#" onClick={(e) => {e.preventDefault(); this.moveSlider.bind(this)('backwards');}}><i className="fa fa-play fa-rotate-180 fa-2x backwards" /></a>
-        <div id="slider" className="slider" />
-        <a href="#" onClick={(e) => {e.preventDefault(); this.moveSlider.bind(this)('forwards');}}><i className="fa fa-play fa-2x forwards" /></a>
-      </div>
-    )
   }
 }
 

@@ -28,6 +28,10 @@ class ChartElement extends React.Component {
           actuals = data[4].slice(0, 59),
           now = data[4][59];
 
+    if(this.chart) {
+      this.chart.destroy();
+    }
+
     let chart = Highcharts.chart('forecast-chart', {
       title: {
         text: ''
@@ -153,7 +157,7 @@ class ChartElement extends React.Component {
       }
       
       if(redrawChart) {
-        console.log("Update the chart with fresh data");
+        this.chartIt();
       }
     }
   }

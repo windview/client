@@ -8,7 +8,6 @@ import './Map.scss';
 import { mapStateToProps, mapDispatchToProps } from './selectors';
 import Slider from './slider/Slider';
 import Store from '../../data/store';
-import * as featureUtils from './featureUtils';
 import moment from 'moment';
 import * as tlinesStyle from './mapStyles/transmissionLines';
 import * as wfActualStyle from './mapStyles/windFarmActual';
@@ -72,8 +71,7 @@ export class Map extends React.Component {
     Store.getWindFarms()
       .done((data) => {
         Store.getBatchForecast(data.features, () => {
-          self.windFarmData = data;
-          self.renderMap();
+          self.props.onLoadWindFarmData(data);
         }, self);
       })
       .fail((xhr, status, error) => {
@@ -93,38 +91,12 @@ export class Map extends React.Component {
       // Turn one off and the other on
       this.toggleStyle(this.props.selectedStyle);
       this.toggleStyle(nextProps.selectedStyle);
-    } else if(this.props.selectedTimestamp !== nextProps.selectedTimestamp) {
-      console.log("TODO implement map styles on timestamp change", nextProps.selectedTimestamp);
-      if(this.windFarmLayerL) {
-        const windFarmLayer     = this.windFarmLayerL,
-              selectedTimestamp = nextProps.selectedTimestamp;
-
-        // Update the current forecast val on each GeoJSON object 
-        windFarmLayer.eachLayer((layer) => {
-          if(layer.feature.properties.forecastData) {
-            let newForecastVal = layer.feature.properties.forecastData.filter((row) => {
-              return row.timestamp === selectedTimestamp;
-            })[0];
-            layer.feature.properties.currentForecastVal = newForecastVal;
-          }
-        });
-        this.refreshMapStyle();   
-      } else if(this.windFarmLayerD) {
-        const features          = this.windFarmData.features,
-              windFarmLayer     = this.windFarmLayerD,
-              selectedTimestamp = nextProps.selectedTimestamp;
-
-        features.forEach((feature) => {
-          if(feature.properties.forecastData) {
-            let newForecastVal = feature.properties.forecastData.filter((row) => {
-              return row.timestamp === selectedTimestamp;
-            })[0];
-            feature.properties.currentForecastVal = newForecastVal;
-          }
-        });
-
-        windFarmLayer.selectAll("path").data(features).attr('fill', featureUtils.getFeatureFill);
-      }        
+    } 
+    if(this.props.selectedTimestamp !== nextProps.selectedTimestamp) {
+      console.log("TODO implement map styles on timestamp change", nextProps.selectedTimestamp);        
+    } 
+    if(this.props.windFarmData === null && nextProps.windFarmData !== null) {
+      this.renderMap(nextProps.windFarmData);
     }
   }
 
@@ -151,13 +123,12 @@ export class Map extends React.Component {
           <label>Wind Farm Capacity (MW)</label><br/>
         </div>
         <div id="wind-map" className="stretch-v"></div>
-        <Slider startTime={this.startTime} onChange={this.whenSliderMoved}/>
+        <Slider onChange={this.whenSliderMoved}/>
       </span>
     );
   }
 
-  renderMap() {
-    let windFarmData = this.windFarmData;
+  renderMap(windFarmData) {
     
     //Create map
     let map = new mapboxgl.Map({
@@ -258,7 +229,7 @@ export class Map extends React.Component {
   whenFeatureClicked(e) {
     // The click event has a feature wherein the properties have been turned into strings.
     // Need to supply the proper object form so we find it in our local copy of the data
-    const feature = Store.getWindFarmById(e.features[0].properties.fid, this.windFarmData.features);
+    const feature = Store.getWindFarmById(e.features[0].properties.fid, this.props.windFarmData.features);
     this.layerPopup = new mapboxgl.Popup()
             .setLngLat(feature.geometry.coordinates)
             .setHTML(getFeaturePopupMarkup(feature))
