@@ -27,9 +27,10 @@ let Store = new function() {
         if(status === "success") {
           const forecastData = WindFarm.postProcessForecastData(data);
           farm.properties.forecastData = forecastData;
-          farm.properties.rampStart = WindFarm.getFirstRamp(farm);
+          farm.properties.rampStart = WindFarm.getFirstRampStart(farm);
           farm.properties.hasRamp = WindFarm.hasRamp(farm);
-          farm.properties.hasDoubleRamp = WindFarm.hasDoubleRamp(farm);
+          farm.properties.maxRampSeverity = WindFarm.getMaxRampSeverity(farm);
+          farm.properties.rampBins = WindFarm.calculateRampBins(farm);
         }
         queueCount--;
         if(queueCount === 0) {

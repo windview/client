@@ -21,7 +21,7 @@ export const initializeStyle = (map, layerSource) => {
       'circle-color': '#0F0',
       'circle-opacity': 0.5
     },
-    filter: ["<", "total_capacity", 10000],
+    filter: ["!has", "hasRamp"],
     layout: {
       visibility: 'none'
     }
@@ -39,11 +39,7 @@ export const initializeStyle = (map, layerSource) => {
       'circle-color': 'hsla(53, 100%, 54%, 0.8)',
       'circle-opacity': 0.5
     },
-    filter: [ 
-      "all",
-      ["has", "hasRamp"],
-      ["!has", "hasDoubleRamp"]
-    ],
+    filter: ["==", "maxRampSeverity", 1],
     layout: {
       visibility: 'none'
     }
@@ -61,7 +57,7 @@ export const initializeStyle = (map, layerSource) => {
       "circle-radius-transition": {duration: 0},
       "circle-opacity-transition": {duration: 0},
     },
-    filter: ["has", "hasDoubleRamp"],
+    filter: [">=", "maxRampSeverity", 2],
     layout: {
       visibility: 'none'
     }

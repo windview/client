@@ -21,13 +21,19 @@ const getFeaturePopupMarkup = (feature) => {
   let displayTime = "N/A", 
       windSpeed = "Unavailable",
       power = "Unavailable",
-      firstRow = "";
+      firstRow = [];
+  
   if(feature.properties.hasRamp) {
-    const ts = feature.properties.rampStart.timestamp,
-          rampStart = moment(ts).format('HH:mm (Z)'),
-          severity = feature.properties.hasDoubleRamp ? "severe ramp" : "ramp";
-    firstRow = (<tr className="warning"><td>RAMP ALERT</td><td className="right">A {severity} event is forecast beginning at {rampStart}</td></tr>);
+    firstRow = feature.properties.rampBins.map((rampBin) => {
+      
+      const startTime = moment.utc(rampBin.startTime).format('HH:mm UTC'),
+            endTime = moment.utc(rampBin.endTime).format('HH:mm UTC'),
+            severity = rampBin.severity > 1 ? "severe ramp" : "moderate ramp",
+            className = rampBin.severity > 1 ? "severe" : "moderate";
+      return <tr key={rampBin.startTime.getTime()} className={className}><td>RAMP ALERT</td><td className="right">A {severity} event is forecast starting at {startTime} and ending at {endTime}</td></tr>;
+    });
   } 
+
   if(feature.properties.currentForecastVal) {
     displayTime = moment(feature.properties.currentForecastVal.timestamp).format('h:mm a');
     windSpeed = feature.properties.currentForecastVal.windSpeed + " m/s";
@@ -257,13 +263,7 @@ export class Map extends React.Component {
             .setLngLat(feature.geometry.coordinates)
             .setHTML(getFeaturePopupMarkup(feature))
             .addTo(this.map);
-
-    // This simulates a data loading pause to make obivous the chart loading
-    feature.name = feature.properties.label;
-    this.props.onSelectFeature({name: feature.properties.label, loading: true});
-    setTimeout(() => {
-      this.props.onSelectFeature(feature);  
-    }, 1000);
+    this.props.onSelectFeature(feature);
   }
 
   whenFeatureMouseOut(e) {

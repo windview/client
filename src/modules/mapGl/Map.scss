@@ -8,7 +8,7 @@
 
   td {
     padding-left: 2px;
-    padding-right: 15px;
+    padding-right: 5px;
     padding-top: 6px;
     vertical-align: top;
     border-top: 1px solid #ddd;
@@ -16,10 +16,15 @@
   .right {
     text-align: right;
   }
-  .warning {
+  .severe {
     background-color: red;
     font-weight: bold;
     color: #fffac2;
+  }
+  .moderate {
+    background-color: #fffac2;
+    font-weight: bold;
+    color: red; 
   }
 }
 

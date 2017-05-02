@@ -1,19 +1,75 @@
 
 let WindFarm = new function() {
 
-  this.hasRamp = (windFarm) => {
+  /* Calculate the start and end of each ramp event as
+   * well as any interesting details related to each. This
+   * method is quite leaky as it assumes a good bit of knowledge 
+   * about the array of forecast data that is included in the 
+   * provided windFarm. Output is an array of these:
+   *  {
+        startTime: Date,
+        endTime: Date,
+        severity: integer,
+        increments: Array of ints 
+      }
+   */
+  this.calculateRampBins = (windFarm) => {
     const forecastData = windFarm.properties.forecastData.data;
-    return forecastData.find((timeslice)=>{ return timeslice.upRamp || timeslice.downRamp; }) !== undefined;
-  }
-
-  this.hasDoubleRamp = (windFarm) => {
-    const forecastData = windFarm.properties.forecastData.data;
-    return forecastData.find((timeslice)=>{ return timeslice.doubleRamp; }) !== undefined;
+    let rampBins = [];
+    // Old school for loop so we can adjust i from within the loop
+    for( let i=0; i<forecastData.length; i++ ) {
+      let rampBin = null,
+          timeslice = forecastData[i];
+      if(timeslice.ramp) {
+        // define the base rampBin object. We know that 
+        // the first ramp timeslice is the beginning of
+        // an event, so has no severity or increments
+        rampBin = {
+          startTime: timeslice.timestamp,
+          endTime: null,
+          severity: 0,
+          increments: [0]
+        }
+        // now the sneaky part... hijack the value for i and loop through subsequent
+        // timeslices to find each increment and eventualy the end of the ramp event
+        let nextTimeslice = forecastData[++i];
+        while(nextTimeslice.ramp) {
+          // TODO If the ramp changes direction between consecutive slices, treat
+          // that as a new rampBin
+          rampBin.increments.push(nextTimeslice.forecastMW - timeslice.forecastMW);
+          rampBin.severity = rampBin.severity < nextTimeslice.rampSeverity ? nextTimeslice.rampSeverity : rampBin.severity;
+          timeslice = nextTimeslice;
+          nextTimeslice = forecastData[++i]; 
+        }
+        rampBin.endTime = timeslice.timestamp;
+        rampBins.push(rampBin);
+      }
+    }
+    return rampBins;
   }
 
   this.getFirstRamp = (windFarm) => {
     const forecastData = windFarm.properties.forecastData.data;
-    return forecastData.find((timeslice)=>{ return timeslice.upRamp || timeslice.downRamp; });
+    return forecastData.find((timeslice)=>{ return timeslice.ramp === true; });
+  }
+
+  this.getFirstRampStart = (windFarm) => {
+    return this.getFirstRamp(windFarm).timestamp; 
+  }
+
+  this.getMaxRampSeverity = (windFarm) => {
+    let maxSeverity = 0;
+    const forecastData = windFarm.properties.forecastData.data,
+          rampEvents = forecastData.filter(function(timeslice){ return timeslice.ramp;});
+    rampEvents.forEach(function(r){
+      maxSeverity = r.rampSeverity > maxSeverity ? r.rampSeverity : maxSeverity;
+    });
+    return maxSeverity;
+  }
+
+  this.hasRamp = (windFarm) => {
+    const forecastData = windFarm.properties.forecastData.data;
+    return forecastData.find((timeslice)=>{ return timeslice.ramp; }) !== undefined;
   }
 
   this.postProcessForecastData = (forecast) => {
@@ -23,38 +79,39 @@ let WindFarm = new function() {
     forecast.data.forEach(function(timeslice){
       let formattedSlice = {
         timestamp: this._convertTimestampToDate(timeslice[0]),
-        forecastMW: timeslice[1],
-        forecast25MW: timeslice[2],
-        forecast75MW: timeslice[3],
-        upRamp: false,
-        downRamp: false,
-        doubleRamp: false
+        forecastMW: Math.round(timeslice[1]*1000)/1000,
+        forecast25MW: Math.round(timeslice[2]*1000)/1000,
+        forecast75MW: Math.round(timeslice[3]*1000)/1000,
+        actual: Math.round(timeslice[4]*1000)/1000,
+        ramp: false,
+        rampSeverity: null
       };
       formattedData.push(formattedSlice);
     }, this);
-    forecast.data = this._detectRamps(formattedData);
+    forecast.data = this._detectRampsInForecast(formattedData);
     return forecast;
   }
 
   this._convertTimestampToDate  = function(ts) {
-    return new Date(ts);
+    const d = new Date(ts);
+    return d;
   }
 
-  this._detectRamps = function(timeslices) {
-    let previousVal = timeslices[0].forecastMW,
+  this._detectRampsInForecast = function(timeslices) {
+    let previous = timeslices[0],
         r = 5; // ramping threshold
     timeslices.forEach(function(timeslice, i) {
-      const val = timeslice.forecastMW,
-            diff = val - previousVal;
+      const diff = timeslice.forecastMW - previous.forecastMW;
+      // if the change in power is greater than r going up or down
       if(diff >= r || diff <= (r*-1)) {
-        timeslice.upRamp   = diff > 0 ? diff : false;
-        timeslice.downRamp = diff < 0 ? diff : false;
-        if((timeslice.downRamp && timeslices[i-1].downRamp) 
-            || (timeslice.upRamp && timeslices[i-1].upRamp)){
-          timeslice.doubleRamp = true;
-        }
+        timeslice.ramp = true;
+        // two ramps in a row constitute a severe ramping event
+        timeslice.rampSeverity = previous.ramp ? 2 : 1;
+        // the previous timeslice represents the beginning of the ramp event
+        // Make sure and set this after the above to avoid false severity 
+        previous.ramp = true;
       }
-      previousVal = val;
+      previous = timeslice;
     }, this);
     return timeslices;
   }
