@@ -28,7 +28,7 @@ class ChartElement extends React.Component {
           actuals = data[4].slice(0, 59),
           now = data[4][59];
 
-    Highcharts.chart('forecast-chart', {
+    let chart = Highcharts.chart('forecast-chart', {
       title: {
         text: ''
       },
@@ -118,20 +118,19 @@ class ChartElement extends React.Component {
       }]
     });
 
-    /*
-    const rampBins = this.props.feature.properties.rampBins
-    xAxis plotBands: [{
-          color: "rgba(205, 186, 45, 0.63)",
-          from: rampup[0][0],
-          to: rampup[1][0],
-          zIndex: 2
-        },{
-          color: "rgba(117, 140, 225, 0.53)",
-          from: rampdown[0][0],
-          to: rampdown[1][0],
-          zIndex: 2
-        }]
-    */
+    const rampBins = this.props.feature.properties.rampBins;
+    rampBins.forEach((bin)=>{
+      //rampdown color
+      //color: "rgba(117, 140, 225, 0.53)",
+      chart.xAxis[0].addPlotBand({
+        color: "rgba(205, 186, 45, 0.63)",
+        from: bin.startTime,
+        to: bin.endTime,
+        zIndex: 2
+      });
+    }, this);
+
+    this.chart = chart;
   }
 
   componentDidMount() {
