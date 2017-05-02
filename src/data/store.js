@@ -1,7 +1,7 @@
 import WindFarm from './wind-farm';
 
 let Store = new function() {
-  this.apiBaseUrl = "http://localhost:8088/data";
+  this.apiBaseUrl = window.location.protocol + "//" + window.location.host + "/data";
 
   // Returns a JQuery promise
   this.getWindFarms = function() {
