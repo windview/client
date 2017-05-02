@@ -6,8 +6,7 @@ import { connect } from 'react-redux';
 export const NavBar = ({activePane, onClick, appTitle, buttons, styleOptions}) => {
 
   const modelOptions = [
-    { value: 'anl', label: 'ARGUS-PRIMA' },
-    { value: 'nrel', label: 'NREL Wind Forecaster'},
+    { value: 'one', label: 'Forecast One'},
     { value: 'local', label: 'Local Forecast'}
   ];
 

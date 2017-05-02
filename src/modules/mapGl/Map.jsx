@@ -17,14 +17,11 @@ import * as wfSizeStyle from './mapStyles/windFarmSize';
 
 
 const getFeaturePopupMarkup = (feature) => {
-  let displayTime = "N/A", 
-      windSpeed = "Unavailable",
-      power = "Unavailable",
-      firstRow = [];
+  let prependRows = [],
+      appendRows = [];
   
   if(feature.properties.hasRamp) {
-    firstRow = feature.properties.rampBins.map((rampBin) => {
-      
+    prependRows = feature.properties.rampBins.map((rampBin) => {
       const startTime = moment.utc(rampBin.startTime).format('HH:mm UTC'),
             endTime = moment.utc(rampBin.endTime).format('HH:mm UTC'),
             severity = rampBin.severity > 1 ? "severe ramp" : "moderate ramp",
@@ -34,29 +31,28 @@ const getFeaturePopupMarkup = (feature) => {
   } 
 
   if(feature.properties.currentForecastVal) {
-    displayTime = moment(feature.properties.currentForecastVal.timestamp).format('h:mm a');
-    windSpeed = feature.properties.currentForecastVal.windSpeed + " m/s";
-    power = feature.properties.currentForecastVal.power + " MW";
+    const displayTime = moment.utc(feature.properties.currentForecastVal.timestamp).format('HH:mm M/D'),
+          windSpeed = feature.properties.currentForecastVal.windSpeed + " m/s",
+          power = feature.properties.currentForecastVal.power + " MW";
+    appendRows.push(<tr><td>Forecast Time</td><td className="right">{displayTime}</td></tr>)
+    appendRows.push(<tr><td>Forecast Windspeed (100m)</td><td className="right">{windSpeed}</td></tr>);
+    appendRows.push(<tr><td>Forecast Wind Power</td><td className="right">{power}</td></tr>);    
   }
   const html = renderToStaticMarkup(
     <div>
       <strong>{feature.properties.label}</strong><br />
       <table className="map-popup">
         <tbody>
-        {firstRow}
+        {prependRows}
         <tr>
           <td>Total Capacity</td><td className="right">{feature.properties.total_capacity}</td>
         </tr><tr>
           <td>Manufacturer(s)</td><td className="right">{feature.properties.manufacturers.join(', ')}</td>
         </tr><tr>
           <td>Models</td><td className="right">{feature.properties.models.join(', ')}</td>
-        </tr><tr>
-          <td>Forecast Time</td><td className="right">{displayTime}</td>
-        </tr><tr>
-          <td>Forecast Windspeed (100m)</td><td className="right">{windSpeed}</td>
-        </tr><tr>
-          <td>Forecast Wind Power</td><td className="right">{power}</td>
-        </tr></tbody>
+        </tr>
+        {appendRows}
+        </tbody>
       </table>
     </div>
   );
@@ -109,16 +105,18 @@ export class Map extends React.Component {
     this.whenStyleChecked = this.whenStyleChecked.bind(this);
   }
 
+  /*  <input id='actual' type='radio' name='rtoggle' value='actual' checked={this.props.selectedStyle === 'actual'} onChange={this.whenStyleChecked}></input>
+      <label>Actual at Selected Time</label><br/>
+  */
+
   render() {
     return (
       <span>
         <div id="style-menu">
           <input id='ramp' type='radio' name='rtoggle' value='ramp' checked={this.props.selectedStyle === 'ramp'} onChange={this.whenStyleChecked}></input>
-          <label>Potential Ramp Events</label><br/>
+          <label>Alerts</label><br/>
           <input id='forecast' type='radio' name='rtoggle' value='forecast' checked={this.props.selectedStyle === 'forecast'} onChange={this.whenStyleChecked}></input>
           <label>Forecast at Selected Time</label><br/>
-          <input id='actual' type='radio' name='rtoggle' value='actual' checked={this.props.selectedStyle === 'actual'} onChange={this.whenStyleChecked}></input>
-          <label>Actual at Selected Time</label><br/>
           <input id='size' type='radio' name='rtoggle' value='size' checked={this.props.selectedStyle === 'size'} onChange={this.whenStyleChecked}></input>
           <label>Wind Farm Capacity (MW)</label><br/>
         </div>

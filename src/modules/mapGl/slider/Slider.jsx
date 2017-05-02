@@ -9,11 +9,11 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 
 const getSliderDisplayFromValue = (rawValue) => {
-  return moment(rawValue).format('HH:mm');
+  return moment.utc(rawValue).format('HH:mm M/D');
 }
 
 const getSliderValueFromDisplay = (displayValue) => {
-  return moment(displayValue, 'HH:mm').valueOf();
+  return moment.utc(displayValue, 'HH:mm M/D').valueOf();
 }
 
 export class Slider extends React.Component {
@@ -59,20 +59,24 @@ export class Slider extends React.Component {
   }
 
   moveSlider(direction) {
-    const sliderObj = this.sliderEl.noUiSlider;
-    const currentVal = sliderObj.get();
-    let timestamp = getSliderValueFromDisplay(currentVal);
-    const interval = 1000*60*15;
+    const sliderObj = this.sliderEl.noUiSlider,
+          currentVal = sliderObj.get(),
+          timestamp = getSliderValueFromDisplay(currentVal),
+          interval = 1000*60*15;
+    let   newVal = '';
+
     switch(direction) {
       case 'forwards':
-        sliderObj.set(getSliderDisplayFromValue(timestamp+interval));
+        newVal = getSliderDisplayFromValue(timestamp+interval);        
         break;
       case 'backwards':
-        sliderObj.set(getSliderDisplayFromValue(timestamp-interval));
+        newVal = getSliderDisplayFromValue(timestamp-interval);
         break;
       default:
         console.log("Called moveSlider with no direction");
     }
+
+    sliderObj.set(newVal);
   }
 
   render() {
@@ -90,46 +94,40 @@ export class Slider extends React.Component {
           interval = 15,
           startTime = this.getDataStart(windFarmData, interval),
           endTime = this.getDataEnd(windFarmData, interval),
-          intervalMs = (1000*60*interval),
-          oneHour = 1000*60*60,
-          pipVals = [];
+          stepInterval = (1000*60*interval),
+          pipInterval = 1000*60*60*3;
 
     this.sliderEl = sliderEl;
-    let start = startTime.getTime();
-    [2,3,4,5].forEach(function(i){
-      pipVals.push(start+oneHour*i);
-    });
-
+    
     noUiSlider.create(sliderEl, {
       start: [getSliderDisplayFromValue(startTime)],
       connect: [true, false],
       tooltips: [true],
-      step: (1000*60*15), // 5 minute intervals
+      step: stepInterval,
       range: {
         min: startTime.getTime(),
-        max: (startTime.getTime()+(1000*60*60*6)) // 6 hours
+        max: endTime.getTime()
       },
       format: {
         to: function(value) {
           return getSliderDisplayFromValue(value);
         },
         from: function(value) {
-          return getSliderValueFromDisplay(value, startTime);
+          return getSliderValueFromDisplay(value);
         }
       },
       pips: {
         mode: 'steps',
         filter: function(val) {
           let t = val - startTime.getTime();
-          let oneHour = 1000*60*30;
-          return t % oneHour === 0 ? 1:0
+          return t % pipInterval === 0 ? 1:0
         },
         format: {
           to: function(value) {
             return getSliderDisplayFromValue(value);
           },
           from: function(value) {
-            return getSliderValueFromDisplay(value, startTime);
+            return getSliderValueFromDisplay(value);
           }
         },
       },

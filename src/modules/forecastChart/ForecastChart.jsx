@@ -25,8 +25,8 @@ class ChartElement extends React.Component {
           range = data[1],
           twentyFive = data[2],
           seventyFive = data[3],
-          actuals = data[4].slice(0, 59),
-          now = data[4][59];
+          actuals = data[4].slice(0, 89),
+          now = data[4][89];
 
     if(this.chart) {
       this.chart.destroy();

@@ -94,6 +94,7 @@ let WindFarm = new function() {
 
   this._convertTimestampToDate  = function(ts) {
     const d = new Date(ts);
+    d.setMonth(new Date().getMonth());
     return d;
   }
 
