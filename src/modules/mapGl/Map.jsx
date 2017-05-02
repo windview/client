@@ -153,7 +153,7 @@ export class Map extends React.Component {
       // Add translines 
       map.addSource('translines', {
           type: "vector",
-          url: "http://localhost:8084/osm-translines/metadata.json"
+          url: "http://maps-dev-db.nrel.gov:8084/osm-translines/metadata.json"
       });
       
       // Add windfarms 

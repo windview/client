@@ -31,7 +31,7 @@
   "sources": {
     "openmaptiles": {
       "type": "vector",
-      "url": "http://localhost:8084/united_states_of_america/metadata.json"
+      "url": "http://maps-dev-db.nrel.gov:8084/united_states_of_america/metadata.json"
     }
   },
   "sprite": "https://openmaptiles.github.io/dark-matter-gl-style/sprite",
