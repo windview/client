@@ -120,10 +120,12 @@ class ChartElement extends React.Component {
 
     const rampBins = this.props.feature.properties.rampBins;
     rampBins.forEach((bin)=>{
-      //rampdown color
-      //color: "rgba(117, 140, 225, 0.53)",
+      const color = bin.increments[bin.increments.length-1] > 0 ? "rgba(205, 186, 45, 0.63)" : "rgba(117, 140, 225, 0.53)",
+            borderColor = bin.severity > 1 ? "rgba(255, 0, 0, 0.7" : color;
       chart.xAxis[0].addPlotBand({
-        color: "rgba(205, 186, 45, 0.63)",
+        color: color,
+        borderColor: borderColor,
+        borderWidth: 2,
         from: bin.startTime,
         to: bin.endTime,
         zIndex: 2
