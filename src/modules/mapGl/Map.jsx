@@ -53,11 +53,11 @@ const getFeaturePopupMarkup = (feature) => {
         <tbody>
         {prependRows}
         <tr>
-          <td>Total Capacity</td><td className="right">{feature.properties.total_capacity} MW</td>
+          <td>Total Farm Capacity</td><td className="right">{feature.properties.total_capacity} MW</td>
         </tr><tr>
-          <td>Manufacturer(s)</td><td className="right">{feature.properties.manufacturers.join(', ')}</td>
+          <td>Turbine Manufacturer(s)</td><td className="right">{feature.properties.manufacturers.join(', ')}</td>
         </tr><tr>
-          <td>Models</td><td className="right">{feature.properties.models.join(', ')}</td>
+          <td>Turbine Models</td><td className="right">{feature.properties.models.join(', ')}</td>
         </tr>
         {appendRows}
         </tbody>
@@ -68,6 +68,12 @@ const getFeaturePopupMarkup = (feature) => {
 }
 
 export class Map extends React.Component {
+
+  bumpMapFarms() {
+    if(this.map && this.props.windFarmData) {
+      this.map.getSource('windfarms').setData(this.props.windFarmData);
+    }
+  }
 
   componentDidMount() {
     let self = this;
@@ -97,17 +103,9 @@ export class Map extends React.Component {
       this.toggleStyle(this.props.selectedStyle);
     } 
     if(prevProps.selectedTimestamp !== this.props.selectedTimestamp) {
-      try {
-        console.log("Initial val", this.props.windFarmData.features[0].properties.currentForecast.forecastMW);
-      } catch(err) {}
       if(this.props.windFarmData) {
         WindFarm.setCurrentForecastByTimestamp(this.props.selectedTimestamp, this.props.windFarmData.features);
-        try {
-          console.log("Updated val", this.props.windFarmData.features[0].properties.currentForecast.forecastMW);
-        } catch(err) {}
-        if(this.map){
-          this.map.getSource('windfarms').setData(this.props.windFarmData);
-        }
+        this.bumpMapFarms();
       }
     } 
     if(prevProps.windFarmData === null && this.props.windFarmData !== null) {
@@ -220,6 +218,23 @@ export class Map extends React.Component {
         }
       });
 
+      // Thisicon layer shows a bigger icon for the selected farm
+      map.addLayer({
+        id: 'windfarms-selected-symbol',
+        type: 'symbol',
+        source: 'windfarms',
+        layout: {
+          'icon-image': 'windfarm',
+          'icon-size': .28,
+          'icon-allow-overlap': true,
+          'icon-keep-upright': true
+        },
+        filter: ['==', 'selected', true],
+        paint: {
+          'icon-opacity': 1
+        }
+      });
+
       // Handle the relevant events on the windfarms layer
       map.on('click', 'windfarms-symbol', this.whenFeatureClicked);
 
@@ -258,6 +273,8 @@ export class Map extends React.Component {
     // The click event has a feature wherein the properties have been turned into strings.
     // Need to supply the proper object form so we find it in our local copy of the data
     const feature = Store.getWindFarmById(e.features[0].properties.fid, this.props.windFarmData.features);
+    WindFarm.setSelectedFeature(feature, this.props.windFarmData.features);
+    this.bumpMapFarms();
     this.layerPopup = new mapboxgl.Popup()
             .setLngLat(feature.geometry.coordinates)
             .setHTML(getFeaturePopupMarkup(feature))

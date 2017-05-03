@@ -1,17 +1,6 @@
 
 let WindFarm = new function() {
 
-  /* Set the currentForecast property of each provided farm to the value at
-   * or soonest after (within 15 minutes of) the provided timestamp
-   */
-  this.setCurrentForecast = (ts, farms) => {
-    farms.forEach(farm=>{
-      farm.properties.currentForecast = farm.properties.forecastData.data.find(data=>{
-        return (data.timestamp.getTime() >= ts) && (data.timestamp.getTime()-ts < 1000*60*15);
-      });
-    });
-  }
-
   /* Calculate the start and end of each ramp event as
    * well as any interesting details related to each. This
    * method is quite leaky as it assumes a good bit of knowledge 
@@ -126,6 +115,23 @@ let WindFarm = new function() {
       }
       Object.assign(farm.properties, currentForecast);
     });
+  }
+
+
+  /* Set the currentForecast property of each provided farm to the value at
+   * or soonest after (within 15 minutes of) the provided timestamp
+   */
+  this.setCurrentForecast = (ts, farms) => {
+    farms.forEach(farm=>{
+      farm.properties.currentForecast = farm.properties.forecastData.data.find(data=>{
+        return (data.timestamp.getTime() >= ts) && (data.timestamp.getTime()-ts < 1000*60*15);
+      });
+    });
+  }
+
+  this.setSelectedFeature = (feature, features) => {
+    features.forEach(f=>{f.properties.selected = false});
+    feature.properties.selected = true;
   }
 
   // Private methods

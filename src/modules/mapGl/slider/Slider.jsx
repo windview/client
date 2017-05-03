@@ -32,13 +32,12 @@ export class Slider extends React.Component {
   }
 
   toggleAnimation(direction) {
-    console.log("Toggle animation", direction);
     if(this.animate) {
       if(this.animationDirection === direction) {
         this.animate = false; //stop the current animation
         this.animationDirection = 'none';
-        // bump one more time to trigger the element styles to update
-        this.moveSlider(direction);
+        // trigger the element styles to update
+        this.forceUpdate();
       } else {
         this.animationDirection = direction; // switch direction
       }
@@ -125,10 +124,10 @@ export class Slider extends React.Component {
   render() {
     return (
       <div className="slider-container">
-        <a href="#" onClick={(e) => {e.preventDefault(); this.toggleAnimation('backwards');}}><i className={ (this.animationDirection == "backwards" ? "fa-pause" : "fa-play") + " fa fa-rotate-180 fa-1x backwards"} /></a>
+        <a href="#" onClick={(e) => {e.preventDefault(); this.toggleAnimation('backwards');}}><i className={ (this.animationDirection === "backwards" ? "fa-pause" : "fa-play") + " fa fa-rotate-180 fa-1x backwards"} /></a>
         <a href="#" onClick={(e) => {e.preventDefault(); this.moveSlider('backwards');}}><i className="fa fa-step-forward fa-rotate-180 fa-1x backwards" /></a>
         <div id="slider" className="slider" />
-        <a href="#" onClick={(e) => {e.preventDefault(); this.toggleAnimation('forwards');}}><i className={ (this.animationDirection == "forwards" ? "fa-pause" : "fa-play") + " fa fa-1x forwards"} /></a>
+        <a href="#" onClick={(e) => {e.preventDefault(); this.toggleAnimation('forwards');}}><i className={ (this.animationDirection === "forwards" ? "fa-pause" : "fa-play") + " fa fa-1x forwards"} /></a>
         <a href="#" onClick={(e) => {e.preventDefault(); this.moveSlider('forwards');}}><i className="fa fa-step-forward fa-1x forwards" /></a>
       </div>
     )
@@ -187,7 +186,7 @@ export class Slider extends React.Component {
 }
 Slider.defaultProps = {
   interval: 15,
-  framesPerSecond: 3
+  framesPerSecond: 2
 };
 
 export default connect(mapStateToProps, null)(Slider);

@@ -1,9 +1,6 @@
 // forecastChart/index.js
 
-import selectors from './selectors';
 import ForecastChart from './ForecastChart';
+import * as selectors from './selectors'
 
-export default {
-  component: ForecastChart,
-  selectors
-};
+export default { ForecastChart, selectors };

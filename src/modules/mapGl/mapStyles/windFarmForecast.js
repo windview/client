@@ -18,7 +18,7 @@ export const initializeStyle = (map, layerSource) => {
     paint: {
       'circle-radius': initialRadius+15,
       'circle-stroke-width': 2,
-      'circle-stroke-color': 'hsla(152, 64%, 67%, 0.73)',
+      'circle-stroke-color': 'hsla(152, 64%, 99%, 0.81)',
     },
     filter: [">=", "forecastMW", 20],
     layout: {
@@ -35,7 +35,7 @@ export const initializeStyle = (map, layerSource) => {
     paint: {
       'circle-radius': initialRadius+10,
       'circle-stroke-width': 2,
-      'circle-stroke-color': 'hsla(219, 100%, 88%, 1)',
+      'circle-stroke-color': 'hsla(219, 100%, 88%, .7)',
     },
     filter: [">=", "forecastMW", 10],
     layout: {
@@ -52,7 +52,7 @@ export const initializeStyle = (map, layerSource) => {
     paint: {
       'circle-radius': initialRadius+5,
       'circle-stroke-width': 2,
-      'circle-stroke-color': 'hsla(219, 100%, 79%, 1)',
+      'circle-stroke-color': 'hsla(219, 100%, 79%, .7)',
     },
     filter: [">=", "forecastMW", 3],
     layout: {
@@ -69,7 +69,7 @@ export const initializeStyle = (map, layerSource) => {
     paint: {
       'circle-radius': initialRadius,
       'circle-stroke-width': 2,
-      'circle-stroke-color': 'hsla(219, 100%, 70%, 1)',
+      'circle-stroke-color': 'hsla(219, 100%, 70%, .7)',
     },
     filter: [">", "forecastMW", 0],
     layout: {
