@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import '../../../node_modules/mapbox-gl/dist/mapbox-gl.css';
 import mapboxgl from '../../../node_modules/mapbox-gl/dist/mapbox-gl.js'
 import windFarmIcon from '../../images/windfarm.png';
+import windFarmDisabledIcon from '../../images/windfarm-disabled.png';
+import windFarmSelectedIcon from '../../images/windfarm-selected.png';
 import './Map.scss';
 import mapboxStyle from '../../styles/dark-matter-style';
 import { mapStateToProps, mapDispatchToProps } from './selectors';
@@ -173,6 +175,16 @@ export class Map extends React.Component {
         if(err) return;
         map.addImage('windfarm', image);
       });
+      // Add the custom image icon for wind farms to use later
+      map.loadImage(windFarmSelectedIcon, (err, image) => {
+        if(err) return;
+        map.addImage('windfarm-selected', image);
+      });
+      // Add the custom image icon for wind farms to use later
+      map.loadImage(windFarmDisabledIcon, (err, image) => {
+        if(err) return;
+        map.addImage('windfarm-disabled', image);
+      });
       
       // Add translines 
       map.addSource('translines', {
@@ -214,23 +226,53 @@ export class Map extends React.Component {
           'icon-allow-overlap': true,
           'icon-keep-upright': true
         },
+        filter: [
+          'all',
+          ['!=', 'selected', true],
+          ['!=', 'disabled', true],
+        ],
         paint: {
           'icon-opacity': 1
         }
       });
 
-      // Thisicon layer shows a bigger icon for the selected farm
+      // Thisicon layer shows a different icon for the selected farm
       map.addLayer({
         id: 'windfarms-selected-symbol',
         type: 'symbol',
         source: 'windfarms',
         layout: {
-          'icon-image': 'windfarm',
-          'icon-size': .28,
+          'icon-image': 'windfarm-selected',
+          'icon-size': .24,
           'icon-allow-overlap': true,
           'icon-keep-upright': true
         },
-        filter: ['==', 'selected', true],
+        filter: [
+          'all',
+          ['==', 'selected', true],
+          ['!=', 'disabled', true],
+        ],
+        paint: {
+          'icon-opacity': 1
+        }
+      });
+
+      // Thisicon layer shows a different icon for the selected farm
+      map.addLayer({
+        id: 'windfarms-disabled-symbol',
+        type: 'symbol',
+        source: 'windfarms',
+        layout: {
+          'icon-image': 'windfarm-disabled',
+          'icon-size': .18,
+          'icon-allow-overlap': true,
+          'icon-keep-upright': true
+        },
+        filter: [
+          'all',
+          ['!=', 'selected', true],
+          ['==', 'disabled', true],
+        ],
         paint: {
           'icon-opacity': 1
         }
@@ -238,12 +280,15 @@ export class Map extends React.Component {
 
       // Handle the relevant events on the windfarms layer
       map.on('click', 'windfarms-symbol', this.whenFeatureClicked);
+      map.on('click', 'windfarms-selected-symbol', this.whenFeatureClicked);
 
       // Change the cursor to a pointer when the mouse is over the places layer.
       map.on('mouseenter', 'windfarms-symbol', this.whenFeatureMouseOver);
+      map.on('mouseenter', 'windfarms-selected-symbol', this.whenFeatureMouseOver);
 
       // Change it back to a pointer when it leaves.
       map.on('mouseleave', 'windfarms-symbol', this.whenFeatureMouseOut);
+      map.on('mouseleave', 'windfarms-selected-symbol', this.whenFeatureMouseOut);
 
     }.bind(this));  
   }

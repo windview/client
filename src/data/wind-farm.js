@@ -110,8 +110,11 @@ let WindFarm = new function() {
           forecast75MW: null,
           actual: null,
           ramp: false,
-          rampSeverity: null
+          rampSeverity: null,
+          disabled: true
         }
+      } else {
+        currentForecast.disabled = false;
       }
       Object.assign(farm.properties, currentForecast);
     });
@@ -126,6 +129,7 @@ let WindFarm = new function() {
       farm.properties.currentForecast = farm.properties.forecastData.data.find(data=>{
         return (data.timestamp.getTime() >= ts) && (data.timestamp.getTime()-ts < 1000*60*15);
       });
+      farm.properties.disabled = true; //farm.properties.currentForecast ? false : true;
     });
   }
 
