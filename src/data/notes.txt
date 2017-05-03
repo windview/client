@@ -1,5 +1,7 @@
 BY FRIDAY
 
+show that given farm has no data at a given point
+
 show farms with rings for current power across time
 - color for up and down
 - show ramp alert on top of power rings
@@ -26,11 +28,10 @@ Turbine Models
 DONE
 
 
-
-
 MAYBE BY FRIDAY
 
 Grey out slider when in alerts view
+
 Add some filtering functionality allowing 
   Users to choose plants above a certain size
 
@@ -45,4 +46,11 @@ Aggregate automatically when zooming way out
 Most of the time users are going to be looking at the next 24 to 36 hours
 
 Add some help text
+
+Show ramp warnings proportionate to the size of the wind farm
+
+Show ramp warnings going from small to big to show an up ramp
+Show ramp warnings going from big to small to show a down ramp
+
+Perhaps scroll a chart showing a subset of the total time in the 'window' at any given moment
 

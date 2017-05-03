@@ -16,6 +16,7 @@ import * as wfActualStyle from './mapStyles/windFarmActual';
 import * as wfForecastStyle from './mapStyles/windFarmForecast';
 import * as wfRampStyle from './mapStyles/windFarmRamp';
 import * as wfSizeStyle from './mapStyles/windFarmSize';
+import commafy from 'commafy';
 
 
 const getFeaturePopupMarkup = (feature) => {
@@ -34,16 +35,16 @@ const getFeaturePopupMarkup = (feature) => {
 
   if(feature.properties.timestamp) {
     const displayTime = moment.utc(feature.properties.timestamp).format('HH:mm M/D UTC'),
-          forecastMW = feature.properties.forecastMW + " MW",
-          forecast25MW = feature.properties.forecast25MW + " MW",
-          forecast75MW = feature.properties.forecast75MW + " MW",
+          forecastMW = commafy(feature.properties.forecastMW) + " MW",
+          forecast25MW = commafy(feature.properties.forecast25MW) + " MW",
+          forecast75MW = commafy(feature.properties.forecast75MW) + " MW",
           actual = feature.properties.actual + " MW";
-    appendRows.push(<tr><td>Forecast Time</td><td className="right">{displayTime}</td></tr>)
-    appendRows.push(<tr><td>Forecast Power</td><td className="right">{forecastMW}</td></tr>);
-    appendRows.push(<tr><td>Forecast Power 25th Percentile</td><td className="right">{forecast25MW}</td></tr>);    
-    appendRows.push(<tr><td>Forecast Power 75th Percentile</td><td className="right">{forecast75MW}</td></tr>); 
+    appendRows.push(<tr key={feature.properties.fid + "-ts"}><td>Forecast Time</td><td className="right">{displayTime}</td></tr>)
+    appendRows.push(<tr key={feature.properties.fid + "-fcst"}><td>Forecast Power</td><td className="right">{forecastMW}</td></tr>);
+    appendRows.push(<tr key={feature.properties.fid + "-25"}><td>Forecast Power 25th Percentile</td><td className="right">{forecast25MW}</td></tr>);    
+    appendRows.push(<tr key={feature.properties.fid + "-75"}><td>Forecast Power 75th Percentile</td><td className="right">{forecast75MW}</td></tr>); 
     if(actual) {
-      appendRows.push(<tr><td>Actual Power</td><td className="right">{actual}</td></tr>); 
+      appendRows.push(<tr key={feature.properties.fid + "-actl"}><td>Actual Power</td><td className="right">{actual}</td></tr>); 
     }
   }
   const html = renderToStaticMarkup(
@@ -53,7 +54,7 @@ const getFeaturePopupMarkup = (feature) => {
         <tbody>
         {prependRows}
         <tr>
-          <td>Total Farm Capacity</td><td className="right">{feature.properties.total_capacity} MW</td>
+          <td>Total Farm Capacity</td><td className="right">{commafy(feature.properties.total_capacity)} MW</td>
         </tr><tr>
           <td>Turbine Manufacturer(s)</td><td className="right">{feature.properties.manufacturers.join(', ')}</td>
         </tr><tr>

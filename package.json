@@ -55,6 +55,7 @@
   "dependencies": {
     "bootstrap": "3.2",
     "classnames": "^2.2.5",
+    "commafy": "^0.0.5",
     "d3": "^4.3.0",
     "font-awesome": "^4.7.0",
     "highcharts": "^5.0.10",
