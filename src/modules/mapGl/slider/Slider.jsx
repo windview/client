@@ -37,6 +37,8 @@ export class Slider extends React.Component {
       if(this.animationDirection === direction) {
         this.animate = false; //stop the current animation
         this.animationDirection = 'none';
+        // bump one more time to trigger the element styles to update
+        this.moveSlider(direction);
       } else {
         this.animationDirection = direction; // switch direction
       }
