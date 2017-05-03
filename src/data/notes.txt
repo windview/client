@@ -1,0 +1,44 @@
+BY FRIDAY
+
+show farms with rings for current power across time
+- color for up and down
+- show ramp alert on top of power rings
+
+Set now at 1800
+set now 2 at 2330
+set now 3 at 0230
+
+Add a legend for map and chart in the UI interface
+
+Implement a zoom in/zoom out in time feature to allow users to select
+  6 hour
+  1 day
+  1 week
+  
+Deploy it somewhere in NREL where we can see it from a browser
+
+Add units to popup
+Total Cap MW
+Windspeed M/S
+Forecast Wind Power MW
+Turbine Models
+
+
+MAYBE BY FRIDAY
+
+Grey out slider when in alerts view
+Add some filtering functionality allowing 
+  Users to choose plants above a certain size
+
+
+NOT BY FRIDAY
+
+Aggregate data for the chart and them map by predefined polygons or by drawing a shape on the map
+ - no aggregatino algorithm for probabalistic
+
+Aggregate automatically when zooming way out
+
+Most of the time users are going to be looking at the next 24 to 36 hours
+
+Add some help text
+

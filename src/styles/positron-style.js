@@ -1,4 +1,4 @@
-{
+export default {
   "version": 8,
   "name": "Positron",
   "metadata": {
@@ -31,10 +31,10 @@
   "sources": {
     "openmaptiles": {
       "type": "vector",
-      "url": "http://localhost:8084/united_states_of_america/metadata.json"
+      "url": process.env.TILE_SERVER_URL + "/united_states_of_america/metadata.json"
     }
   },
-  "sprite": "http://localhost:8088/images/positron-windview",
+  "sprite": "https://openmaptiles.github.io/positron-gl-style/sprite",
   "glyphs": "https://free.tilehosting.com/fonts/{fontstack}/{range}.pbf",
   "layers": [
     {

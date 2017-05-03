@@ -1,7 +1,7 @@
 import WindFarm from './wind-farm';
 
 let Store = new function() {
-  this.apiBaseUrl = window.location.protocol + "//" + window.location.host + "/data";
+  this.apiBaseUrl = process.env.API_URL + "/data";
 
   // Returns a JQuery promise
   this.getWindFarms = function() {
@@ -27,6 +27,7 @@ let Store = new function() {
         if(status === "success") {
           const forecastData = WindFarm.postProcessForecastData(data);
           farm.properties.forecastData = forecastData;
+          farm.properties.currentForecast = forecastData.data[0];
           farm.properties.rampStart = WindFarm.getFirstRampStart(farm);
           farm.properties.hasRamp = WindFarm.hasRamp(farm);
           farm.properties.maxRampSeverity = WindFarm.getMaxRampSeverity(farm);

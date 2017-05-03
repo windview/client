@@ -13,4 +13,5 @@ build
 .DS_Store
 .env
 npm-debug.log
-src/data/notes.txt
+public/data/notes.txt
+settings.env

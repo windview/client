@@ -1,4 +1,4 @@
-{
+export default {
   "version": 8,
   "name": "Dark Matter",
   "metadata": {
@@ -31,7 +31,7 @@
   "sources": {
     "openmaptiles": {
       "type": "vector",
-      "url": "http://localhost:8084/united_states_of_america/metadata.json"
+      "url": process.env.TILE_SERVER_URL + "/united_states_of_america/metadata.json"
     }
   },
   "sprite": "https://openmaptiles.github.io/dark-matter-gl-style/sprite",
@@ -1734,4 +1734,4 @@
     }
   ],
   "id": "ciwf4jmfe00882qmzvu5vh0zx"
-}
+};

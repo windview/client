@@ -5,6 +5,7 @@ import '../../../node_modules/mapbox-gl/dist/mapbox-gl.css';
 import mapboxgl from '../../../node_modules/mapbox-gl/dist/mapbox-gl.js'
 import windFarmIcon from '../../images/windfarm.png';
 import './Map.scss';
+import mapboxStyle from '../../styles/dark-matter-style';
 import { mapStateToProps, mapDispatchToProps } from './selectors';
 import Slider from './slider/Slider';
 import Store from '../../data/store';
@@ -110,15 +111,26 @@ export class Map extends React.Component {
   */
 
   render() {
+
+    const styleSelectors = [{
+      id: 'ramp',
+      label: "Alerts"
+    }, {
+      id: 'forecast',
+      label: 'Forecast at Selected Time'
+    }, {
+      id: 'size',
+      label: 'Wind Farm Capacity (MW)'
+    }];
+    const els = styleSelectors.map(s=>{
+      return (<span key={s.id}><input id={s.id} type='radio' name='rtoggle' value={s.id} checked={this.props.selectedStyle === s.id} onChange={this.whenStyleChecked}></input>
+              <label>{s.label}</label><br/></span>)
+    });
+
     return (
       <span>
         <div id="style-menu">
-          <input id='ramp' type='radio' name='rtoggle' value='ramp' checked={this.props.selectedStyle === 'ramp'} onChange={this.whenStyleChecked}></input>
-          <label>Alerts</label><br/>
-          <input id='forecast' type='radio' name='rtoggle' value='forecast' checked={this.props.selectedStyle === 'forecast'} onChange={this.whenStyleChecked}></input>
-          <label>Forecast at Selected Time</label><br/>
-          <input id='size' type='radio' name='rtoggle' value='size' checked={this.props.selectedStyle === 'size'} onChange={this.whenStyleChecked}></input>
-          <label>Wind Farm Capacity (MW)</label><br/>
+          {els}
         </div>
         <div id="wind-map" className="stretch-v"></div>
         <Slider onChange={this.whenSliderMoved}/>
@@ -131,7 +143,7 @@ export class Map extends React.Component {
     //Create map
     let map = new mapboxgl.Map({
       container: 'wind-map', // container id
-      style: 'mapstyles/dark-matter-style.json',
+      style: mapboxStyle,
       center: [-104.247, 39.344], // starting position
       zoom: 6.5, // starting zoom
       hash: false
@@ -153,7 +165,7 @@ export class Map extends React.Component {
       // Add translines 
       map.addSource('translines', {
           type: "vector",
-          url: "http://maps-dev-db.nrel.gov:8084/osm-translines/metadata.json"
+          url: process.env.TILE_SERVER_URL + "/osm-translines/metadata.json"
       });
       
       // Add windfarms 

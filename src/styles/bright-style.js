@@ -1,4 +1,4 @@
-{
+export default {
   "version": 8,
   "name": "OSM Bright",
   "metadata": {
@@ -48,7 +48,7 @@
   "sources": {
     "openmaptiles": {
       "type": "vector",
-      "url": "http://localhost:8082/data/v3.json"
+      "url": process.env.TILE_SERVER_URL + "/united_states_of_america/metadata.json"
     }
   },
   "sprite": "https://openmaptiles.github.io/osm-bright-gl-style/sprite",

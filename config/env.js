@@ -6,7 +6,9 @@ var REACT_APP = /^REACT_APP_/i;
 function getClientEnvironment(publicUrl) {
   var processEnv = Object
     .keys(process.env)
-    .filter(key => REACT_APP.test(key))
+    // this line strips out all process.env values that dont' begin with REACT_APP
+    // not a big fan of this, so get rid of it unless it becomes necessary later
+    //.filter(key => REACT_APP.test(key))
     .reduce((env, key) => {
       env[key] = JSON.stringify(process.env[key]);
       return env;
@@ -20,8 +22,7 @@ function getClientEnvironment(publicUrl) {
       // For example, <img src={process.env.PUBLIC_URL + '/img/logo.png'} />.
       // This should only be used as an escape hatch. Normally you would put
       // images into the `src` and `import` them in code to get their paths.
-      'PUBLIC_URL': JSON.stringify(publicUrl),
-      'TILE_SERVER_URL': JSON.stringify("http://maps-dev-db.nrel.gov:8084")
+      'PUBLIC_URL': JSON.stringify(publicUrl)
     });
   return {'process.env': processEnv};
 }
