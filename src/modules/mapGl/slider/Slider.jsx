@@ -9,11 +9,11 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 
 const getSliderDisplayFromValue = (rawValue) => {
-  return moment.utc(rawValue).format('HH:mm M/D');
+  return moment.utc(rawValue).format('H:mm M/D');
 }
 
 const getSliderValueFromDisplay = (displayValue) => {
-  return moment.utc(displayValue, 'HH:mm M/D').valueOf();
+  return moment.utc(displayValue, 'H:mm M/D').valueOf();
 }
 
 export class Slider extends React.Component {
@@ -124,11 +124,13 @@ export class Slider extends React.Component {
   render() {
     return (
       <div className="slider-container">
-        <a href="#" onClick={(e) => {e.preventDefault(); this.toggleAnimation('backwards');}}><i className={ (this.animationDirection === "backwards" ? "fa-pause" : "fa-play") + " fa fa-rotate-180 fa-1x backwards"} /></a>
-        <a href="#" onClick={(e) => {e.preventDefault(); this.moveSlider('backwards');}}><i className="fa fa-step-forward fa-rotate-180 fa-1x backwards" /></a>
         <div id="slider" className="slider" />
-        <a href="#" onClick={(e) => {e.preventDefault(); this.toggleAnimation('forwards');}}><i className={ (this.animationDirection === "forwards" ? "fa-pause" : "fa-play") + " fa fa-1x forwards"} /></a>
-        <a href="#" onClick={(e) => {e.preventDefault(); this.moveSlider('forwards');}}><i className="fa fa-step-forward fa-1x forwards" /></a>
+        <div className="slider-control">
+          <a href="#" onClick={(e) => {e.preventDefault(); this.moveSlider('backwards');}}><i className="fa fa-step-forward fa-rotate-180 fa-1x backwards" /></a>
+          <a href="#" onClick={(e) => {e.preventDefault(); this.toggleAnimation('backwards');}}><i className={ (this.animationDirection === "backwards" ? "fa-pause" : "fa-play") + " fa fa-rotate-180 fa-1x backwards"} /></a>
+          <a href="#" onClick={(e) => {e.preventDefault(); this.toggleAnimation('forwards');}}><i className={ (this.animationDirection === "forwards" ? "fa-pause" : "fa-play") + " fa fa-1x forwards"} /></a>
+          <a href="#" onClick={(e) => {e.preventDefault(); this.moveSlider('forwards');}}><i className="fa fa-step-forward fa-1x forwards" /></a>
+        </div>
       </div>
     )
   }

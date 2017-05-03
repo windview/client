@@ -4,37 +4,34 @@
   i {
     border: 1px solid black;
     padding: 2px;
+    margin-left: 1px;
     border-radius: 5px;
-    width: 17px;
-
-    &:hover {
-      background-color: rgba(131, 218, 125, 0.15);
-    }
-  }
-
-  .backwards {
-    float: left;
-    margin-top: 5px;
-  }
-
-  .forwards {
-    float: right;
-    margin-top: -13px;
+    width: 18px;
   }
 
   a {
     color: #444444;
+    background-color: #fff;
 
     &:hover {
-        color: rgba(23, 130, 0, 1);
+        color: rgba(0, 77, 41, 1);
      }
   }
+}
+
+.slider-control {
+  width: 85px;
+  padding: 3px;
+  background-color: #bbb;
+  float: right;
+  margin-top: -17px;
+  border-radius: 4px;
 }
 
 .slider {
   z-index: 1000;
   width: 88%;
-  margin: auto;
+  margin-left: 20px;
   margin-top: 10px;
 
   .noUi-base {
