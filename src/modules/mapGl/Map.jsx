@@ -9,6 +9,7 @@ import mapboxStyle from '../../styles/dark-matter-style';
 import { mapStateToProps, mapDispatchToProps } from './selectors';
 import Slider from './slider/Slider';
 import Store from '../../data/store';
+import WindFarm from '../../data/wind-farm';
 import moment from 'moment';
 import * as tlinesStyle from './mapStyles/transmissionLines';
 import * as wfActualStyle from './mapStyles/windFarmActual';
@@ -31,13 +32,19 @@ const getFeaturePopupMarkup = (feature) => {
     });
   } 
 
-  if(feature.properties.currentForecastVal) {
-    const displayTime = moment.utc(feature.properties.currentForecastVal.timestamp).format('HH:mm M/D'),
-          windSpeed = feature.properties.currentForecastVal.windSpeed + " m/s",
-          power = feature.properties.currentForecastVal.power + " MW";
+  if(feature.properties.timestamp) {
+    const displayTime = moment.utc(feature.properties.timestamp).format('HH:mm M/D UTC'),
+          forecastMW = feature.properties.forecastMW + " MW",
+          forecast25MW = feature.properties.forecast25MW + " MW",
+          forecast75MW = feature.properties.forecast75MW + " MW",
+          actual = feature.properties.actual + " MW";
     appendRows.push(<tr><td>Forecast Time</td><td className="right">{displayTime}</td></tr>)
-    appendRows.push(<tr><td>Forecast Windspeed (100m)</td><td className="right">{windSpeed}</td></tr>);
-    appendRows.push(<tr><td>Forecast Wind Power</td><td className="right">{power}</td></tr>);    
+    appendRows.push(<tr><td>Forecast Power</td><td className="right">{forecastMW}</td></tr>);
+    appendRows.push(<tr><td>Forecast Power 25th Percentile</td><td className="right">{forecast25MW}</td></tr>);    
+    appendRows.push(<tr><td>Forecast Power 75th Percentile</td><td className="right">{forecast75MW}</td></tr>); 
+    if(actual) {
+      appendRows.push(<tr><td>Actual Power</td><td className="right">{actual}</td></tr>); 
+    }
   }
   const html = renderToStaticMarkup(
     <div>
@@ -46,7 +53,7 @@ const getFeaturePopupMarkup = (feature) => {
         <tbody>
         {prependRows}
         <tr>
-          <td>Total Capacity</td><td className="right">{feature.properties.total_capacity}</td>
+          <td>Total Capacity</td><td className="right">{feature.properties.total_capacity} MW</td>
         </tr><tr>
           <td>Manufacturer(s)</td><td className="right">{feature.properties.manufacturers.join(', ')}</td>
         </tr><tr>
@@ -83,17 +90,28 @@ export class Map extends React.Component {
   // attach any 3rd party lib binding therein. React libraries
   // that wrap integration do this under the covers. e.g.
   //https://github.com/PaulLeCam/react-leaflet
-  componentWillReceiveProps(nextProps) {
-    if(this.props.selectedStyle !== nextProps.selectedStyle) {
+  componentDidUpdate(prevProps) {
+    if(prevProps.selectedStyle !== this.props.selectedStyle) {
       // Turn one off and the other on
+      this.toggleStyle(prevProps.selectedStyle);
       this.toggleStyle(this.props.selectedStyle);
-      this.toggleStyle(nextProps.selectedStyle);
     } 
-    if(this.props.selectedTimestamp !== nextProps.selectedTimestamp) {
-      console.log("TODO implement map styles on timestamp change", nextProps.selectedTimestamp);        
+    if(prevProps.selectedTimestamp !== this.props.selectedTimestamp) {
+      try {
+        console.log("Initial val", this.props.windFarmData.features[0].properties.currentForecast.forecastMW);
+      } catch(err) {}
+      if(this.props.windFarmData) {
+        WindFarm.setCurrentForecastByTimestamp(this.props.selectedTimestamp, this.props.windFarmData.features);
+        try {
+          console.log("Updated val", this.props.windFarmData.features[0].properties.currentForecast.forecastMW);
+        } catch(err) {}
+        if(this.map){
+          this.map.getSource('windfarms').setData(this.props.windFarmData);
+        }
+      }
     } 
-    if(this.props.windFarmData === null && nextProps.windFarmData !== null) {
-      this.renderMap(nextProps.windFarmData);
+    if(prevProps.windFarmData === null && this.props.windFarmData !== null) {
+      this.renderMap();
     }
   }
 
@@ -106,15 +124,11 @@ export class Map extends React.Component {
     this.whenStyleChecked = this.whenStyleChecked.bind(this);
   }
 
-  /*  <input id='actual' type='radio' name='rtoggle' value='actual' checked={this.props.selectedStyle === 'actual'} onChange={this.whenStyleChecked}></input>
-      <label>Actual at Selected Time</label><br/>
-  */
-
   render() {
 
     const styleSelectors = [{
       id: 'ramp',
-      label: "Alerts"
+      label: "All Forthcoming Alerts"
     }, {
       id: 'forecast',
       label: 'Forecast at Selected Time'
@@ -138,8 +152,7 @@ export class Map extends React.Component {
     );
   }
 
-  renderMap(windFarmData) {
-    
+  renderMap() {
     //Create map
     let map = new mapboxgl.Map({
       container: 'wind-map', // container id
@@ -168,16 +181,21 @@ export class Map extends React.Component {
           url: process.env.TILE_SERVER_URL + "/osm-translines/metadata.json"
       });
       
+      // TODO move app alerting to own module 
+      if(!this.props.windFarmData) {
+        alert("Wind farm data could not be loaded.");
+        return;
+      }
+
       // Add windfarms 
       map.addSource('windfarms', {
         type: "geojson",
-        data: windFarmData
+        data: this.props.windFarmData
       });
-
+        
       // Initialize all of the layers
       tlinesStyle.initializeStyle(map, 'translines');
       wfSizeStyle.initializeStyle(map, 'windfarms');
-      wfActualStyle.initializeStyle(map, 'windfarms');
       wfForecastStyle.initializeStyle(map, 'windfarms');
       wfRampStyle.initializeStyle(map, 'windfarms');
 

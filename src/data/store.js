@@ -16,18 +16,20 @@ let Store = new function() {
   // Returns a JQuery promise
   this.getForecast = function(windFarmFID) {
     const forecastUrl = this.apiBaseUrl + "/" + windFarmFID + ".json"
+    // TODO return own promise, capturing the jquery result and
+    // performing post processing
     return $.getJSON(forecastUrl);
   }
 
   this.getBatchForecast = function(windFarms, callback, callbackScope) {
     let queueCount = windFarms.length;
+    // TODO move post processing routine into getForecast method
     windFarms.forEach(function(farm) {
       this.getForecast(farm.properties.fid)
       .always(function(data, status) {
         if(status === "success") {
           const forecastData = WindFarm.postProcessForecastData(data);
           farm.properties.forecastData = forecastData;
-          farm.properties.currentForecast = forecastData.data[0];
           farm.properties.rampStart = WindFarm.getFirstRampStart(farm);
           farm.properties.hasRamp = WindFarm.hasRamp(farm);
           farm.properties.maxRampSeverity = WindFarm.getMaxRampSeverity(farm);
