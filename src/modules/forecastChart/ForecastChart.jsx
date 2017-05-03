@@ -140,26 +140,27 @@ class ChartElement extends React.Component {
   }
 
   componentDidMount() {
-    this.chartIt();
+    if(this.props.feature) {
+      this.chartIt();
+    }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if(nextProps.feature) {
-      let redrawChart = false;
-      if(this.props.feature) {
+  componentDidUpdate(prevProps) {
+    let redrawChart = false;
+    if(this.props.feature) {
+      if(prevProps.feature) {
         // if the currently selected feature is not the same as the previously selected
-        if(this.props.feature.properties.fid !== nextProps.feature.properties.fid) {
+        if(this.props.feature.properties.fid !== prevProps.feature.properties.fid) {
           redrawChart = true;
         }
       } else {
         // there was no feature selected previously
         redrawChart = true;
       }
-      
-      if(redrawChart) {
-        this.chartIt();
-      }
     }
+    if(redrawChart) {
+      this.chartIt();
+    } 
   }
 
   /* 
