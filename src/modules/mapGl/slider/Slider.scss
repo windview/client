@@ -55,6 +55,7 @@
 
   .noUi-pips-horizontal {
     height: 50px;
+    overflow: hidden;
   }
 
   .noUi-handle {
@@ -73,6 +74,13 @@
     left: 14px;
     top: 3px;
   }  
+
+  .noUi-tooltip {
+    width: 80px;
+    height: 21px;
+    padding: 0px;
+    bottom: -37px;
+  }
 }
 .noUi-horizontal {
   height: 14px;

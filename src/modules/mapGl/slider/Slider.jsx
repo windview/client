@@ -126,13 +126,24 @@ export class Slider extends React.Component {
           interval = this.props.interval,
           startTime = this.getDataStart(windFarmData, interval),
           endTime = this.getDataEnd(windFarmData, interval),
-          stepInterval = (1000*60*interval),
           timezoom = this.props.timezoom,
-          pipInterval = (timezoom/3)*60*60*1000;
+          stepInterval = (1000*60*interval);
+    let   pipInterval = 0;
 
     this.sliderEl = sliderEl;
     if(sliderEl.noUiSlider) {
       sliderEl.noUiSlider.destroy();
+    }
+
+    switch(timezoom) {
+      case '8':
+        pipInterval = 1000*60*60*1.5;
+        break;
+      case '16':
+        pipInterval = 1000*60*60*2;
+        break;
+      default:
+        pipInterval = 1000*60*60*3;
     }
     
     noUiSlider.create(sliderEl, {
@@ -140,7 +151,7 @@ export class Slider extends React.Component {
       animationDuration: (1000/this.props.framesPerSecond),
       start: [getSliderDisplayFromValue(startTime)],
       connect: [true, false],
-      tooltips: [false],
+      tooltips: [true],
       step: stepInterval,
       range: {
         min: startTime.getTime(),
@@ -155,11 +166,8 @@ export class Slider extends React.Component {
         }
       },
       pips: {
-        mode: 'steps',
-        filter: function(val) {
-          let t = val - startTime.getTime();
-          return t % pipInterval === 0 ? 1:0
-        },
+        mode: 'positions',
+        values: [4, 12, 22, 32, 42, 52, 62, 72, 82, 92],
         format: {
           to: function(value) {
             return getSliderDisplayFromValue(value);

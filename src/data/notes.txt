@@ -24,8 +24,6 @@ Add hacky "now"
   set now 3 at 0230
 
 
-
-
 MAYBE BY FRIDAY
 
 Grey out slider when in alerts view
