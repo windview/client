@@ -2,12 +2,6 @@ BY FRIDAY
 
 Style farms with color for up and down
 
-Set now at 1800
-set now 2 at 2330
-set now 3 at 0230
-
-
-
 Implement a zoom in/zoom out in time feature to allow users to select
   6 hour
   1 day
@@ -26,6 +20,10 @@ Add units to popup
   Windspeed M/S
   Forecast Wind Power MW
   Turbine Models
+Add hacky "now"
+  Set now at 1800
+  set now 2 at 2330
+  set now 3 at 0230
 
 
 

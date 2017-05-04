@@ -31,26 +31,11 @@ export class Slider extends React.Component {
     animateMarker.bind(this)(0);
   }
 
-  toggleAnimation(direction) {
-    if(this.animate) {
-      if(this.animationDirection === direction) {
-        this.animate = false; //stop the current animation
-        this.animationDirection = 'none';
-        // trigger the element styles to update
-        this.forceUpdate();
-      } else {
-        this.animationDirection = direction; // switch direction
-      }
-    } else {
-      this.animate = true;
-      this.animationDirection = direction;
-      this.animateSlider(direction);
-    }
-  }
-
   componentWillReceiveProps(nextProps) {
     if(this.props.windFarmData == null && nextProps.windFarmData !== null) {
       this.renderSlider(nextProps.windFarmData);
+      // Hacky for demo May 5 2017
+      this.sliderEl.noUiSlider.set(getSliderDisplayFromValue(window.fakeNow));
     }
   }
 
@@ -184,6 +169,23 @@ export class Slider extends React.Component {
     sliderEl.noUiSlider.on('update', (valuesStr, handle, values) => {
       this.props.onChange(values[0]);
     });
+  }
+
+  toggleAnimation(direction) {
+    if(this.animate) {
+      if(this.animationDirection === direction) {
+        this.animate = false; //stop the current animation
+        this.animationDirection = 'none';
+        // trigger the element styles to update
+        this.forceUpdate();
+      } else {
+        this.animationDirection = direction; // switch direction
+      }
+    } else {
+      this.animate = true;
+      this.animationDirection = direction;
+      this.animateSlider(direction);
+    }
   }
 }
 Slider.defaultProps = {

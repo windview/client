@@ -73,16 +73,25 @@ let WindFarm = new function() {
   }
 
   this.postProcessForecastData = (forecast) => {
+    const fakeNow = window.fakeNow;
+    let formattedData = [],
+        actual = null,
+        ts = null;
     //remove the header row 
     forecast.data.shift();
-    let formattedData = [];
     forecast.data.forEach(function(timeslice){
+      ts = this._convertTimestampToDate(timeslice[0]);
+      if(fakeNow) {
+        actual = ts.getTime() > fakeNow ? null : Math.round(timeslice[4]*1000)/1000;
+      } else {
+        actual = Math.round(timeslice[4]*1000)/1000;
+      }
       let formattedSlice = {
-        timestamp: this._convertTimestampToDate(timeslice[0]),
+        timestamp: ts,
         forecastMW: Math.round(timeslice[1]*1000)/1000,
         forecast25MW: Math.round(timeslice[2]*1000)/1000,
         forecast75MW: Math.round(timeslice[3]*1000)/1000,
-        actual: Math.round(timeslice[4]*1000)/1000,
+        actual: actual,
         ramp: false,
         rampSeverity: null
       };

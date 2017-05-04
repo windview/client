@@ -16,8 +16,8 @@ export class ChartElement extends React.Component {
           range = data[1],
           twentyFive = data[2],
           seventyFive = data[3],
-          actuals = data[4].slice(0, 89),
-          now = data[4][89];
+          actuals = data[4],
+          now = window.fakeNow;
 
     if(this.chart) {
       this.chart.destroy();
@@ -35,7 +35,7 @@ export class ChartElement extends React.Component {
         plotLines: [{
           id: 'now',
           color: "#000",
-          value: now[0],
+          value: now,
           width: 2,
           zIndex: 5,
           dashStyle: "Solid"
@@ -134,6 +134,9 @@ export class ChartElement extends React.Component {
   componentDidMount() {
     if(this.props.feature) {
       this.chartIt();
+      if(this.props.selectedTimestamp) {
+        this.drawPlotLine(this.props.selectedTimestamp);
+      }
     }
   }
 
@@ -159,7 +162,7 @@ export class ChartElement extends React.Component {
       this.chart.xAxis[0].removePlotLine('selectedTimestamp');
       this.chart.xAxis[0].addPlotLine({
         id: 'selectedTimestamp',
-        color: "#bbb",
+        color: "#666",
         value: timestamp,
         width: 2,
         zIndex: 5,

@@ -3,24 +3,6 @@ import WindFarm from './wind-farm';
 let Store = new function() {
   this.apiBaseUrl = process.env.API_URL + "/data";
 
-  // Returns a JQuery promise
-  this.getWindFarms = function() {
-    const windFarmUrl = this.apiBaseUrl + "/usgs_wind_farms.geo.json";
-    return $.getJSON(windFarmUrl);
-  }
-
-  this.getWindFarmById = (fid, farms) => {
-    return farms.find((farm)=>{ return farm.properties.fid === fid; });
-  }
-
-  // Returns a JQuery promise
-  this.getForecast = function(windFarmFID) {
-    const forecastUrl = this.apiBaseUrl + "/" + windFarmFID + ".json"
-    // TODO return own promise, capturing the jquery result and
-    // performing post processing
-    return $.getJSON(forecastUrl);
-  }
-
   this.getBatchForecast = function(windFarms, callback, callbackScope) {
     let queueCount = windFarms.length;
     // TODO move post processing routine into getForecast method
@@ -41,6 +23,57 @@ let Store = new function() {
         }
       });
     }, this);
+  }
+
+  // Returns a JQuery promise
+  this.getForecast = (windFarmFID) => {
+    const forecastUrl = this.apiBaseUrl + "/" + windFarmFID + ".json"
+    // TODO return own promise, capturing the jquery result and
+    // performing post processing
+    return $.getJSON(forecastUrl);
+  }
+
+  this.getQueryParam = (paramName) => {
+    let parts = window.location.href.split("?"),
+        retval = null;
+    if(parts.length > 1) {
+      parts = parts[1].split("&");
+      if(parts.length > 0) {
+        retval = parts.find(p=>{return p.split("=")[0] === paramName})
+        retval = retval ? retval.split("=")[1] : null;
+      }
+    }
+    return retval;
+  }
+
+  // Returns a JQuery promise
+  this.getWindFarms = function() {
+    const windFarmUrl = this.apiBaseUrl + "/usgs_wind_farms.geo.json";
+    return $.getJSON(windFarmUrl);
+  }
+
+  this.getWindFarmById = (fid, farms) => {
+    return farms.find((farm)=>{ return farm.properties.fid === fid; });
+  }
+
+  // Super hacky just for hte demo on May 5, 2017
+  this.setGlobalFakeNow = () => {
+    let n = this.getQueryParam("n"),
+        now = 0;
+    switch(n) {
+      case '1':
+        now = 1492192800000;
+        break;
+      case '2':
+        now = 1492209000000;
+        break;
+      case '3':
+        now = 1492219800000;
+        break;
+      default:
+        now = 1492168500000;
+    }
+    window.fakeNow = now;
   }
 }();
 

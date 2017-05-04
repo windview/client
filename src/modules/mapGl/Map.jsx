@@ -74,13 +74,16 @@ const getFeaturePopupMarkup = (feature) => {
 export class Map extends React.Component {
 
   bumpMapFarms() {
-    if(this.map && this.props.windFarmData) {
+    if(this.map && this.map.getSource('windfarms') && this.props.windFarmData) {
       this.map.getSource('windfarms').setData(this.props.windFarmData);
     }
   }
 
   componentDidMount() {
     let self = this;
+
+    Store.setGlobalFakeNow();
+
     // initialize windfarm data
     Store.getWindFarms()
       .done((data) => {
