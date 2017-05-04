@@ -1,15 +1,13 @@
 BY FRIDAY
 
-Style farms with color for up and down
+Style farms with color for up and down  
+
+DONE
 
 Implement a zoom in/zoom out in time feature to allow users to select
   6 hour
   1 day
   1 week
-  
-
-DONE
-
 Add a legend for map and chart in the UI interface
 show farms with rings for current power across time
 show ramp alert on top of power rings

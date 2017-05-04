@@ -127,7 +127,8 @@ export class Slider extends React.Component {
           startTime = this.getDataStart(windFarmData, interval),
           endTime = this.getDataEnd(windFarmData, interval),
           stepInterval = (1000*60*interval),
-          pipInterval = 1000*60*60*3;
+          timezoom = this.props.timezoom,
+          pipInterval = (timezoom/3)*60*60*1000;
 
     this.sliderEl = sliderEl;
     if(sliderEl.noUiSlider) {
