@@ -3,7 +3,7 @@ import './NavBar.scss';
 import { mapStateToProps, mapDispatchToProps} from './selectors';
 import { connect } from 'react-redux';
 
-export const NavBar = ({activePane, onClick, appTitle, buttons, styleOptions}) => {
+export const NavBar = ({activePane, onClick, appTitle, buttons}) => {
 
   const modelOptions = [
     { value: 'one', label: 'Forecast One'},

@@ -24,6 +24,11 @@ export const selectTimestamp = (timestamp) => ({
     timestamp: timestamp
 });
 
+export const selectTimezoom = (timezoom) => ({
+  type: t.SELECT_TIME_ZOOM,
+  timezoom: timezoom
+});
+
 export const zoom = (bbox) => ({
   type: t.ZOOM,
   bbox: {bbox}

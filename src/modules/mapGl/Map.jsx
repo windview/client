@@ -73,9 +73,30 @@ const getFeaturePopupMarkup = (feature) => {
 
 export class Map extends React.Component {
 
+  applySelectedFeature(feature, forcePopup) {
+    WindFarm.setSelectedFeature(feature, this.props.windFarmData.features);
+    this.bumpMapFarms();
+    if(forcePopup || this.layerPopup) {
+      this.closePopup();
+      let self = this;
+      this.layerPopup = new mapboxgl.Popup()
+        .on('close', ()=>{ self.layerPopup = null; })
+        .setLngLat(feature.geometry.coordinates)
+        .setHTML(getFeaturePopupMarkup(feature))
+        .addTo(this.map);
+    }
+  }
+
   bumpMapFarms() {
     if(this.map && this.map.getSource('windfarms') && this.props.windFarmData) {
       this.map.getSource('windfarms').setData(this.props.windFarmData);
+    }
+  }
+
+  closePopup() {
+    if(this.layerPopup) {
+      this.layerPopup.remove();
+      this.layerPopup = null;
     }
   }
 
@@ -87,7 +108,7 @@ export class Map extends React.Component {
     // initialize windfarm data
     Store.getWindFarms()
       .done((data) => {
-        Store.getBatchForecast(data.features, () => {
+        Store.getBatchForecast(data.features, null, () => {
           self.props.onLoadWindFarmData(data);
         }, self);
       })
@@ -115,8 +136,25 @@ export class Map extends React.Component {
         this.bumpMapFarms();
       }
     } 
-    if(prevProps.windFarmData === null && this.props.windFarmData !== null) {
+    if(prevProps.windFarmData === null && this.props.windFarmData !== null && !this.map) {
       this.renderMap();
+    }
+    if(prevProps.timezoom !== this.props.timezoom) {
+      let data =  this.props.windFarmData,
+          timezoom = this.props.timezoom;
+      Store.getBatchForecast(data.features, timezoom, () => {
+        this.bumpMapFarms();
+        // this double tap triggers rerendering of slider component
+        this.props.onLoadWindFarmData(null);
+        this.props.onLoadWindFarmData(data);
+        let feature = this.props.feature;
+        if(feature) {
+          this.props.onSelectFeature(null);
+          this.applySelectedFeature(feature);
+          this.props.onSelectFeature(feature);  
+        }
+        
+      }, this);
     }
   }
 
@@ -127,6 +165,7 @@ export class Map extends React.Component {
     this.whenFeatureMouseOut = this.whenFeatureMouseOut.bind(this);
     this.whenSliderMoved = this.whenSliderMoved.bind(this);
     this.whenStyleChecked = this.whenStyleChecked.bind(this);
+    this.whenTimezoomChanged = this.whenTimezoomChanged.bind(this);
   }
 
   render() {
@@ -145,6 +184,7 @@ export class Map extends React.Component {
       return (<span key={s.id}><input id={s.id} type='radio' name='rtoggle' value={s.id} checked={this.props.selectedStyle === s.id} onChange={this.whenStyleChecked}></input>
               <label>{s.label}</label><br/></span>)
     });
+    els.push(<span id='timezoom' key='timezoom'><input type='range' min="8" max="24" step="8" value={this.props.timezoom} onChange={this.whenTimezoomChanged}></input><div>{this.props.timezoom} Hours Ahead</div></span>)
 
     return (
       <span>
@@ -320,12 +360,7 @@ export class Map extends React.Component {
     // The click event has a feature wherein the properties have been turned into strings.
     // Need to supply the proper object form so we find it in our local copy of the data
     const feature = Store.getWindFarmById(e.features[0].properties.fid, this.props.windFarmData.features);
-    WindFarm.setSelectedFeature(feature, this.props.windFarmData.features);
-    this.bumpMapFarms();
-    this.layerPopup = new mapboxgl.Popup()
-            .setLngLat(feature.geometry.coordinates)
-            .setHTML(getFeaturePopupMarkup(feature))
-            .addTo(this.map);
+    this.applySelectedFeature(feature, true);
     this.props.onSelectFeature(feature);
   }
 
@@ -351,6 +386,10 @@ export class Map extends React.Component {
 
   whenStyleChecked(e) {
     this.props.onSelectStyle(e.target.value);
+  }
+
+  whenTimezoomChanged(e) {
+    this.props.onSelectTimezoom(e.target.value);
   }
 }
 

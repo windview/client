@@ -20,7 +20,8 @@ const defaultValue = {
   windFarmData: null,
   selectedFeature: null,
   selectedTimestamp: getStartTime(),
-  selectedStyle: 'ramp'
+  selectedStyle: 'ramp',
+  timezoom: 24
 }
 
 export default (state=defaultValue, action) => {
@@ -35,15 +36,20 @@ export default (state=defaultValue, action) => {
         ...state,
         selectedFeature: action.feature
       };
+    case t.SELECT_STYLE:
+      return {
+        ...state,
+        selectedStyle: action.style
+      };
     case t.SELECT_TIME:
       return {
         ...state,
         selectedTimestamp: action.timestamp
       };
-    case t.SELECT_STYLE:
+    case t.SELECT_TIME_ZOOM:
       return {
         ...state,
-        selectedStyle: action.style
+        timezoom: action.timezoom
       };
     default:
       return state;

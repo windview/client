@@ -3,7 +3,25 @@
 }
 
 .mapboxgl-popup {
-  z-index: 10000;
+  z-index: 100000;
+}
+
+#timezoom {
+  input {
+    margin: 0px;
+    padding: 0px;
+    width: 80px;
+    display: inline;
+    vertical-align: middle;
+  }
+
+  div {
+    padding: 0px;
+    margin: 0px;
+    display: inherit;
+    vertical-align: top;
+    text-align: right;
+  }
 }
 
 .map-popup {

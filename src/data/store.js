@@ -3,14 +3,14 @@ import WindFarm from './wind-farm';
 let Store = new function() {
   this.apiBaseUrl = process.env.API_URL + "/data";
 
-  this.getBatchForecast = function(windFarms, callback, callbackScope) {
+  this.getBatchForecast = function(windFarms, timezoom, callback, callbackScope) {
     let queueCount = windFarms.length;
     // TODO move post processing routine into getForecast method
     windFarms.forEach(function(farm) {
       this.getForecast(farm.properties.fid)
       .always(function(data, status) {
         if(status === "success") {
-          const forecastData = WindFarm.postProcessForecastData(data);
+          const forecastData = WindFarm.postProcessForecastData(data, timezoom);
           farm.properties.forecastData = forecastData;
           farm.properties.rampStart = WindFarm.getFirstRampStart(farm);
           farm.properties.hasRamp = WindFarm.hasRamp(farm);
@@ -44,6 +44,14 @@ let Store = new function() {
       }
     }
     return retval;
+  }
+
+  /* Assuming that farm features are already fully loaded
+   * and processed... we just slice out the appropriate 
+   * amount of data and apply it to the object. 
+   */
+  this.getDataForTimezoom = (timezoom, farmFeatures) => {
+
   }
 
   // Returns a JQuery promise

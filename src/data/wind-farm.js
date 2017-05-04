@@ -54,7 +54,8 @@ let WindFarm = new function() {
   }
 
   this.getFirstRampStart = (windFarm) => {
-    return this.getFirstRamp(windFarm).timestamp; 
+    const firstRamp = this.getFirstRamp(windFarm);
+    return firstRamp ? firstRamp.timestamp : null; 
   }
 
   this.getMaxRampSeverity = (windFarm) => {
@@ -72,20 +73,26 @@ let WindFarm = new function() {
     return forecastData.find((timeslice)=>{ return timeslice.ramp; }) !== undefined;
   }
 
-  this.postProcessForecastData = (forecast) => {
+  this.postProcessForecastData = (forecast, timezoom) => {
+    // Hack for demo purposes
     const fakeNow = window.fakeNow;
+    // End hack
+
     let formattedData = [],
         actual = null,
         ts = null;
     //remove the header row 
     forecast.data.shift();
+    // Loop through and process the data, outputting a format consumable by the app
     forecast.data.forEach(function(timeslice){
       ts = this._convertTimestampToDate(timeslice[0]);
+      // Hack for demo
       if(fakeNow) {
         actual = ts.getTime() > fakeNow ? null : Math.round(timeslice[4]*1000)/1000;
       } else {
         actual = Math.round(timeslice[4]*1000)/1000;
       }
+      // End Hack
       let formattedSlice = {
         timestamp: ts,
         forecastMW: Math.round(timeslice[1]*1000)/1000,
@@ -97,6 +104,8 @@ let WindFarm = new function() {
       };
       formattedData.push(formattedSlice);
     }, this);
+
+    formattedData = this._applyTimezoom(timezoom, formattedData);
     forecast.data = this._detectRampsInForecast(formattedData);
     return forecast;
   }
@@ -106,9 +115,12 @@ let WindFarm = new function() {
    */
   this.setCurrentForecastByTimestamp = (ts, windFarmFeatures) => {
     windFarmFeatures.forEach(farm=>{
-      let currentForecast = farm.properties.forecastData.data.find(data=>{
-        return (data.timestamp.getTime() >= ts) && (data.timestamp.getTime()-ts < 1000*60*15);
-      });
+      let currentForecast = null;
+      if(ts) {
+        currentForecast = farm.properties.forecastData.data.find(data=>{
+          return (data.timestamp.getTime() >= ts) && (data.timestamp.getTime()-ts < 1000*60*15);
+        });
+      }
       // TODO there's got to be a better way of nulling these out when no
       // forecast is available for the given timestamp?
       if(!currentForecast) {
@@ -120,15 +132,14 @@ let WindFarm = new function() {
           actual: null,
           ramp: false,
           rampSeverity: null,
-          disabled: true
+          disabled: ts !== null ? true : false
         }
       } else {
         currentForecast.disabled = false;
       }
-      Object.assign(farm.properties, currentForecast);
+      Object.assign(farm.properties, currentForecast);  
     });
   }
-
 
   /* Set the currentForecast property of each provided farm to the value at
    * or soonest after (within 15 minutes of) the provided timestamp
@@ -148,6 +159,23 @@ let WindFarm = new function() {
   }
 
   // Private methods
+
+  this._applyTimezoom = (timezoom, data) => {
+    //Calculate data start and data end times
+    let dataStart = data[0].timestamp.getTime(),
+        dataEnd;
+    switch(timezoom) {
+      case '8':
+        dataEnd = dataStart + 1000*60*60*8;
+        break;
+      case '16':
+        dataEnd = dataStart + 1000*60*60*16;
+        break;
+      default:
+        dataEnd = data[data.length-1].timestamp.getTime();
+    }
+    return data.filter(d=>{ return d.timestamp.getTime() <= dataEnd; });
+  }
 
   this._convertTimestampToDate  = function(ts) {
     return new Date(ts);

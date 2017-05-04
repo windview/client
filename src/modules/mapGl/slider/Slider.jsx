@@ -36,6 +36,7 @@ export class Slider extends React.Component {
       this.renderSlider(nextProps.windFarmData);
       // Hacky for demo May 5 2017
       this.sliderEl.noUiSlider.set(getSliderDisplayFromValue(window.fakeNow));
+      // End hack
     }
   }
 
@@ -129,6 +130,9 @@ export class Slider extends React.Component {
           pipInterval = 1000*60*60*3;
 
     this.sliderEl = sliderEl;
+    if(sliderEl.noUiSlider) {
+      sliderEl.noUiSlider.destroy();
+    }
     
     noUiSlider.create(sliderEl, {
       animate: true,
