@@ -126,26 +126,13 @@ export class Slider extends React.Component {
           interval = this.props.interval,
           startTime = this.getDataStart(windFarmData, interval),
           endTime = this.getDataEnd(windFarmData, interval),
-          timezoom = this.props.timezoom,
           stepInterval = (1000*60*interval);
-    let   pipInterval = 0;
 
     this.sliderEl = sliderEl;
     if(sliderEl.noUiSlider) {
       sliderEl.noUiSlider.destroy();
     }
 
-    switch(timezoom) {
-      case '8':
-        pipInterval = 1000*60*60*1.5;
-        break;
-      case '16':
-        pipInterval = 1000*60*60*2;
-        break;
-      default:
-        pipInterval = 1000*60*60*3;
-    }
-    
     noUiSlider.create(sliderEl, {
       animate: true,
       animationDuration: (1000/this.props.framesPerSecond),
