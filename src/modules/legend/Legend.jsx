@@ -9,9 +9,9 @@ export default (props) => {
     <div id="legend" className="legend-wrapper">
       <table>
         <tbody>
-          <tr><td className="legend-item"><img src={windFarmIcon} height="22" width="22"></img></td><td className="legend-label">Wind Farm Site</td></tr>
-          <tr><td className="legend-item"><img src={windFarmSelectedIcon} height="22" width="22"></img></td><td className="legend-label">Selected Site</td></tr>
-          <tr><td className="legend-item"><img src={windFarmDisabledIcon} height="22" width="22"></img></td><td className="legend-label">Site W/out data</td></tr>
+          <tr><td className="legend-item"><img alt="wind farm" src={windFarmIcon} height="22" width="22"></img></td><td className="legend-label">Wind Farm Site</td></tr>
+          <tr><td className="legend-item"><img alt="wind farm" src={windFarmSelectedIcon} height="22" width="22"></img></td><td className="legend-label">Selected Site</td></tr>
+          <tr><td className="legend-item"><img alt="wind farm" src={windFarmDisabledIcon} height="22" width="22"></img></td><td className="legend-label">Site W/out data</td></tr>
           <tr>
             <td className="legend-item">
               <svg width="40px" height="30px">

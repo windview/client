@@ -6,7 +6,7 @@ Set now at 1800
 set now 2 at 2330
 set now 3 at 0230
 
-Add a legend for map and chart in the UI interface
+
 
 Implement a zoom in/zoom out in time feature to allow users to select
   6 hour
@@ -16,6 +16,7 @@ Implement a zoom in/zoom out in time feature to allow users to select
 
 DONE
 
+Add a legend for map and chart in the UI interface
 show farms with rings for current power across time
 show ramp alert on top of power rings
 show that given farm has no data at a given point
