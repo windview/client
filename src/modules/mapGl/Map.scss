@@ -2,6 +2,10 @@
   border: 1px solid #444;
 }
 
+.mapboxgl-popup {
+  z-index: 10000;
+}
+
 .map-popup {
   font-family: consolas;
   width: 400px;

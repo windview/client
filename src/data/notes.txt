@@ -1,10 +1,6 @@
 BY FRIDAY
 
-show that given farm has no data at a given point
-
-show farms with rings for current power across time
-- color for up and down
-- show ramp alert on top of power rings
+Style farms with color for up and down
 
 Set now at 1800
 set now 2 at 2330
@@ -17,15 +13,20 @@ Implement a zoom in/zoom out in time feature to allow users to select
   1 day
   1 week
   
-Deploy it somewhere in NREL where we can see it from a browser
-
-Add units to popup
-Total Cap MW
-Windspeed M/S
-Forecast Wind Power MW
-Turbine Models
 
 DONE
+
+show farms with rings for current power across time
+show ramp alert on top of power rings
+show that given farm has no data at a given point
+Deploy it somewhere in NREL where we can see it from a browser
+Add units to popup
+  Total Cap MW
+  Windspeed M/S
+  Forecast Wind Power MW
+  Turbine Models
+
+
 
 
 MAYBE BY FRIDAY

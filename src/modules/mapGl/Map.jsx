@@ -2,6 +2,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { connect } from 'react-redux';
 import '../../../node_modules/mapbox-gl/dist/mapbox-gl.css';
+import Legend from '../legend/Legend';
 import mapboxgl from '../../../node_modules/mapbox-gl/dist/mapbox-gl.js'
 import windFarmIcon from '../../images/windfarm.png';
 import windFarmDisabledIcon from '../../images/windfarm-disabled.png';
@@ -149,6 +150,7 @@ export class Map extends React.Component {
         </div>
         <div id="wind-map" className="stretch-v"></div>
         <Slider onChange={this.whenSliderMoved}/>
+        <Legend />
       </span>
     );
   }
@@ -268,11 +270,7 @@ export class Map extends React.Component {
           'icon-allow-overlap': true,
           'icon-keep-upright': true
         },
-        filter: [
-          'all',
-          ['!=', 'selected', true],
-          ['==', 'disabled', true],
-        ],
+        filter: ['==', 'disabled', true],
         paint: {
           'icon-opacity': 1
         }
