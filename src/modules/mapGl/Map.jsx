@@ -87,6 +87,7 @@ export class Map extends React.Component {
     }
   }
 
+  // Triggers the MapBox map to redraw the WindFarm features
   bumpMapFarms() {
     if(this.map && this.map.getSource('windfarms') && this.props.windFarmData) {
       this.map.getSource('windfarms').setData(this.props.windFarmData);

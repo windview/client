@@ -103,12 +103,6 @@ module.exports = {
         test: require.resolve('jquery'), 
         loader: 'imports?jQuery=jquery' 
       },
-      // Process scss as sass
-      {
-        test: /\.scss$/,
-        include: paths.appSrc,
-        loaders: ["style", "css", "sass"]
-      },
       // Process JS with Babel.
       {
         test: /\.(js|jsx)$/,
@@ -138,8 +132,20 @@ module.exports = {
         // Webpack 1.x uses Uglify plugin as a signal to minify *all* the assets
         // including CSS. This is confusing and will be removed in Webpack 2:
         // https://github.com/webpack/webpack/issues/283
-        loader: ExtractTextPlugin.extract('style', 'css?importLoaders=1&-autoprefixer!postcss')
+        loader: ExtractTextPlugin.extract(
+          'style', 
+          'css?importLoaders=1&-autoprefixer!postcss'
+        )
         // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
+      },
+      // Process scss as sass
+      {
+        test: /\.scss$/,
+        include: paths.appSrc,
+        loader: ExtractTextPlugin.extract(
+          "style", 
+          "css!sass?importLoaders=1&-autoprefixer!postcss"
+        )
       },
       // JSON is not enabled by default in Webpack but both Node and Browserify
       // allow it implicitly so we also enable it.
