@@ -1,0 +1,88 @@
+// map/slider/Slider.scss
+.slider-container {
+
+  i {
+    border: 1px solid black;
+    padding: 2px;
+    margin-left: 1px;
+    border-radius: 5px;
+    width: 18px;
+  }
+
+  a {
+    color: #444444;
+    background-color: #fff;
+
+    &:hover {
+        color: rgba(0, 77, 41, 1);
+     }
+  }
+}
+
+.slider-control {
+  width: 85px;
+  padding: 3px;
+  background-color: #bbb;
+  float: right;
+  margin-top: -17px;
+  border-radius: 4px;
+  box-shadow: 2px 2px 2px rgba(0,0,0,0.70);
+}
+
+.slider {
+  z-index: 1000;
+  width: 88%;
+  margin-left: 20px;
+  margin-top: 10px;
+
+  .noUi-base {
+    border: 1px solid black;
+    border-radius: 0px;
+  }
+
+  .noUi-connect {
+    background-color: #428bca;
+    border: none;
+  }
+
+  .noUi-handle {
+    border: 1px solid #444444;
+  }
+
+  .noUi-target {
+    background-color: #d6d6d6;
+  }
+
+  .noUi-pips-horizontal {
+    height: 50px;
+    overflow: hidden;
+  }
+
+  .noUi-handle {
+    width: 27px;
+    height:20px;
+    left: -14px;
+    top: -5px;
+  }
+
+  .noUi-handle:before {
+    left: 10px;
+    top: 3px;
+  }
+
+  .noUi-handle:after {
+    left: 14px;
+    top: 3px;
+  }  
+
+  .noUi-tooltip {
+    width: 80px;
+    height: 21px;
+    padding: 0px;
+    bottom: -37px;
+  }
+}
+.noUi-horizontal {
+  height: 14px;
+}
+

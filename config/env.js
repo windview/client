@@ -6,7 +6,9 @@ var REACT_APP = /^REACT_APP_/i;
 function getClientEnvironment(publicUrl) {
   var processEnv = Object
     .keys(process.env)
-    .filter(key => REACT_APP.test(key))
+    // this line strips out all process.env values that dont' begin with REACT_APP
+    // not a big fan of this, so get rid of it unless it becomes necessary later
+    //.filter(key => REACT_APP.test(key))
     .reduce((env, key) => {
       env[key] = JSON.stringify(process.env[key]);
       return env;

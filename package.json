@@ -44,6 +44,7 @@
     "redux-devtools": "^3.3.1",
     "rimraf": "2.5.4",
     "sass-loader": "^4.0.2",
+    "serve": "^5.1.5",
     "strip-ansi": "3.0.1",
     "style-loader": "0.13.1",
     "url-loader": "0.5.7",
@@ -54,14 +55,22 @@
   },
   "dependencies": {
     "bootstrap": "3.2",
+    "classnames": "^2.2.5",
+    "commafy": "^0.0.5",
+    "d3": "^4.3.0",
     "font-awesome": "^4.7.0",
+    "highcharts": "^5.0.10",
     "jquery": "^3.1.1",
     "leaflet": "^1.0.1",
+    "mapbox-gl": "^0.36.0",
+    "moment": "^2.16.0",
+    "nouislider": "^9.0.0",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "react-redux": "^4.4.5",
     "redux": "^3.6.0",
-    "topojson": "^1.6.27"
+    "topojson": "^1.6.27",
+    "wellknown": "^0.5.0"
   },
   "scripts": {
     "start": "node scripts/start.js",
@@ -92,6 +101,9 @@
     ]
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "env": {
+      "jquery": true
+    }
   }
 }

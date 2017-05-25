@@ -1,6 +1,15 @@
-#forecast-chart {
-  border: 1px solid #444444;
+#chart-wrapper {
   padding: 10px;
+}
+
+.forecast-chart {
+  height: 280px;
+}
+
+#forecast-chart {
+  min-width: 400px;
+  height: 400px;
+  margin: 0 auto;
 }
 
 .chart-wrapper {
@@ -9,11 +18,11 @@
   border-radius: 3px;
   margin-bottom: 10px;
 }
+
 .chart-wrapper .chart-title {
-  border-bottom: 1px solid #d7d7d7;
-  color: #666;
-  font-size: 14px;
-  font-weight: 200;
+  color: #525252;
+  font-size: 16px;
+  font-weight: 800;
   padding: 7px 10px 4px;
 }
 
@@ -29,4 +38,11 @@
   color: #808080;
   font-size: 12px;
   padding: 8px 10px 5px;
+}
+
+.chart-loader {
+  margin: auto;
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 50px;
 }
