@@ -1,7 +1,8 @@
 import WindFarm from './wind-farm';
 
 let Store = new function() {
-  this.apiBaseUrl = process.env.API_URL + "/data";
+  // this.apiBaseUrl = process.env.API_URL + "/data";
+  this.apiBaseUrl = window.location.href + "/data";
 
   this.getBatchForecast = function(windFarms, timezoom, callback, callbackScope) {
     let queueCount = windFarms.length;

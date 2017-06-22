@@ -2,6 +2,7 @@
   "name": "wind-react",
   "version": "0.1.0",
   "private": true,
+  "homepage": "http://maps-stage-api.nrel.gov/windview-beta",
   "devDependencies": {
     "autoprefixer": "6.5.1",
     "babel-core": "6.17.0",
