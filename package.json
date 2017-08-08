@@ -55,12 +55,14 @@
     "whatwg-fetch": "1.0.0"
   },
   "dependencies": {
+    "babel-polyfill": "^6.23.0",
     "bootstrap": "3.2",
     "classnames": "^2.2.5",
     "commafy": "^0.0.5",
     "d3": "^4.3.0",
     "font-awesome": "^4.7.0",
     "highcharts": "^5.0.10",
+    "isomorphic-fetch": "^2.2.1",
     "jquery": "^3.1.1",
     "leaflet": "^1.0.1",
     "mapbox-gl": "^0.36.0",
@@ -70,6 +72,8 @@
     "react-dom": "^15.3.2",
     "react-redux": "^4.4.5",
     "redux": "^3.6.0",
+    "redux-logger": "^3.0.6",
+    "redux-thunk": "^2.2.0",
     "topojson": "^1.6.27",
     "wellknown": "^0.5.0"
   },

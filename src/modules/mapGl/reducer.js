@@ -1,6 +1,6 @@
 // map/reducer.js
 
-// redux reducers 
+// redux reducers
 // http://redux.js.org/docs/basics/Reducers.html
 
 import * as t from './actionTypes';
@@ -25,33 +25,40 @@ const defaultValue = {
 }
 
 export default (state=defaultValue, action) => {
+  let newState = null;
   switch(action.type) {
     case t.LOAD_WIND_FARM_DATA:
-      return {
+      newState = {
         ...state,
         windFarmData: action.data
       };
+      break;
     case t.SELECT_FEATURE:
-      return {
+      newState = {
         ...state,
         selectedFeature: action.feature
       };
+      break;
     case t.SELECT_STYLE:
-      return {
+      newState = {
         ...state,
         selectedStyle: action.style
       };
+      break;
     case t.SELECT_TIME:
-      return {
+      newState = {
         ...state,
         selectedTimestamp: action.timestamp
       };
+      break;
     case t.SELECT_TIME_ZOOM:
-      return {
+      newState = {
         ...state,
         timezoom: action.timezoom
       };
+      break;
     default:
-      return state;
+      newState = state;
   }
+  return newState;
 }

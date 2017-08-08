@@ -25,7 +25,7 @@ import commafy from 'commafy';
 const getFeaturePopupMarkup = (feature) => {
   let prependRows = [],
       appendRows = [];
-  
+
   if(feature.properties.hasRamp) {
     prependRows = feature.properties.rampBins.map((rampBin) => {
       const startTime = moment.utc(rampBin.startTime).format('HH:mm UTC'),
@@ -34,7 +34,7 @@ const getFeaturePopupMarkup = (feature) => {
             className = rampBin.severity > 1 ? "severe" : "moderate";
       return <tr key={rampBin.startTime.getTime()} className={className}><td>RAMP ALERT</td><td className="right">A {severity} event is forecast starting at {startTime} and ending at {endTime}</td></tr>;
     });
-  } 
+  }
 
   if(feature.properties.timestamp) {
     const displayTime = moment.utc(feature.properties.timestamp).format('HH:mm M/D UTC'),
@@ -44,10 +44,10 @@ const getFeaturePopupMarkup = (feature) => {
           actual = feature.properties.actual + " MW";
     appendRows.push(<tr key={feature.properties.fid + "-ts"}><td>Forecast Time</td><td className="right">{displayTime}</td></tr>)
     appendRows.push(<tr key={feature.properties.fid + "-fcst"}><td>Forecast Power</td><td className="right">{forecastMW}</td></tr>);
-    appendRows.push(<tr key={feature.properties.fid + "-25"}><td>Forecast Power 25th Percentile</td><td className="right">{forecast25MW}</td></tr>);    
-    appendRows.push(<tr key={feature.properties.fid + "-75"}><td>Forecast Power 75th Percentile</td><td className="right">{forecast75MW}</td></tr>); 
+    appendRows.push(<tr key={feature.properties.fid + "-25"}><td>Forecast Power 25th Percentile</td><td className="right">{forecast25MW}</td></tr>);
+    appendRows.push(<tr key={feature.properties.fid + "-75"}><td>Forecast Power 75th Percentile</td><td className="right">{forecast75MW}</td></tr>);
     if(actual) {
-      appendRows.push(<tr key={feature.properties.fid + "-actl"}><td>Actual Power</td><td className="right">{actual}</td></tr>); 
+      appendRows.push(<tr key={feature.properties.fid + "-actl"}><td>Actual Power</td><td className="right">{actual}</td></tr>);
     }
   }
   const html = renderToStaticMarkup(
@@ -102,20 +102,22 @@ export class Map extends React.Component {
   }
 
   componentDidMount() {
-    let self = this;
+    //let self = this;
 
     Store.setGlobalFakeNow();
 
     // initialize windfarm data
-    Store.getWindFarms()
-      .done((data) => {
-        Store.getBatchForecast(data.features, null, () => {
-          self.props.onLoadWindFarmData(data);
-        }, self);
-      })
-      .fail((xhr, status, error) => {
-        self.renderMap();
-      });
+    this.props.onComponentDidMount();
+
+    // Store.getWindFarms()
+    //   .done((data) => {
+    //     Store.getBatchForecast(data.features, null, () => {
+    //       self.props.onLoadWindFarmData(data);
+    //     }, self);
+    //   })
+    //   .fail((xhr, status, error) => {
+    //     self.renderMap();
+    //   });
   }
 
   // This is a way of observing state changes that is useful
@@ -130,13 +132,13 @@ export class Map extends React.Component {
       // Turn one off and the other on
       this.toggleStyle(prevProps.selectedStyle);
       this.toggleStyle(this.props.selectedStyle);
-    } 
+    }
     if(prevProps.selectedTimestamp !== this.props.selectedTimestamp) {
       if(this.props.windFarmData) {
         WindFarm.setCurrentForecastByTimestamp(this.props.selectedTimestamp, this.props.windFarmData.features);
         this.bumpMapFarms();
       }
-    } 
+    }
     if(prevProps.windFarmData === null && this.props.windFarmData !== null && !this.map) {
       this.renderMap();
     }
@@ -152,9 +154,9 @@ export class Map extends React.Component {
         if(feature) {
           this.props.onSelectFeature(null);
           this.applySelectedFeature(feature);
-          this.props.onSelectFeature(feature);  
+          this.props.onSelectFeature(feature);
         }
-        
+
       }, this);
     }
   }
@@ -231,25 +233,24 @@ export class Map extends React.Component {
         if(err) return;
         map.addImage('windfarm-disabled', image);
       });
-      
-      // Add translines 
+      // Add translines
       map.addSource('translines', {
           type: "vector",
           url: process.env.TILE_SERVER_URL + "/osm-translines/metadata.json"
       });
-      
-      // TODO move app alerting to own module 
+
+      // TODO move app alerting to own module
       if(!this.props.windFarmData) {
         alert("Wind farm data could not be loaded.");
         return;
       }
 
-      // Add windfarms 
+      // Add windfarms
       map.addSource('windfarms', {
         type: "geojson",
         data: this.props.windFarmData
       });
-        
+
       // Initialize all of the layers
       tlinesStyle.initializeStyle(map, 'translines');
       wfSizeStyle.initializeStyle(map, 'windfarms');
@@ -332,7 +333,7 @@ export class Map extends React.Component {
       map.on('mouseleave', 'windfarms-symbol', this.whenFeatureMouseOut);
       map.on('mouseleave', 'windfarms-selected-symbol', this.whenFeatureMouseOut);
 
-    }.bind(this));  
+    }.bind(this));
   }
 
   toggleStyle(styleName) {
@@ -375,7 +376,7 @@ export class Map extends React.Component {
     }
   }
 
-  whenFeatureMouseOver(e) { 
+  whenFeatureMouseOver(e) {
     if(this.map) {
       this.map.getCanvas().style.cursor = 'pointer';
     }

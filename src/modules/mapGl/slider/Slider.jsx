@@ -25,7 +25,7 @@ export class Slider extends React.Component {
           requestAnimationFrame(animateMarker);
           this.moveSlider(this.animationDirection);
         }
-      }, (1000/this.props.framesPerSecond)); 
+      }, (1000/this.props.framesPerSecond));
     };
     // Start the animation.
     animateMarker.bind(this)(0);
@@ -54,7 +54,7 @@ export class Slider extends React.Component {
         ts = row.timestamp.getTime() > ts ? row.timestamp.getTime() : ts;
       });
     });
-    
+
     let dataEnd = new Date(ts),
         minute = dataEnd.getMinutes(),
         remainder = minute >= interval ? minute%interval : interval-minute;
@@ -93,7 +93,7 @@ export class Slider extends React.Component {
       case 'forwards':
         // wrap to beginning if going past end
         newVal = timestamp+interval <= endTs ? timestamp+interval : startTs;
-        newVal = getSliderDisplayFromValue(newVal);        
+        newVal = getSliderDisplayFromValue(newVal);
         break;
       case 'backwards':
         // wrap to end if going before begin
@@ -188,6 +188,7 @@ export class Slider extends React.Component {
     }
   }
 }
+
 Slider.defaultProps = {
   interval: 15,
   framesPerSecond: 2

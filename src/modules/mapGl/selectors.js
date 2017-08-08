@@ -14,6 +14,9 @@ export const mapStateToProps = (state, ownProps) => {
 
 export const mapDispatchToProps = (dispatch) => {
   return {
+    onComponentDidMount: () => {
+      dispatch(actions.fetchWindFarmData());
+    },
     onLoadWindFarmData: (data) => {
       dispatch(actions.loadWindFarmData(data));
     },
