@@ -8,17 +8,19 @@ export const mapStateToProps = (state, ownProps) => {
     selectedStyle: state.map.selectedStyle,
     selectedTimestamp: state.map.selectedTimestamp,
     timezoom: state.map.timezoom,
-    windFarmData: state.map.windFarmData
+    windFarms: state.map.windFarms,
+    windFarmsLoading: state.map.windFarmsLoading,
+    windFarmsLoadingError: state.map.windFarmsLoadingError
   }
 }
 
 export const mapDispatchToProps = (dispatch) => {
   return {
     onComponentDidMount: () => {
-      dispatch(actions.fetchWindFarmData());
+      dispatch(actions.fetchWindFarms());
     },
-    onLoadWindFarmData: (data) => {
-      dispatch(actions.loadWindFarmData(data));
+    onBumpWindFarms: (data) => {
+      dispatch(actions.fetchWindFarmsSuccess(data));
     },
     onSelectFeature: (feature) => {
       dispatch(actions.selectFeature(feature));

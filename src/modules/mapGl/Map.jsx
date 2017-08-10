@@ -74,7 +74,7 @@ const getFeaturePopupMarkup = (feature) => {
 export class Map extends React.Component {
 
   applySelectedFeature(feature, forcePopup) {
-    WindFarm.setSelectedFeature(feature, this.props.windFarmData.features);
+    WindFarm.setSelectedFeature(feature, this.props.windFarms.features);
     this.bumpMapFarms();
     if(forcePopup || this.layerPopup) {
       this.closePopup();
@@ -89,8 +89,8 @@ export class Map extends React.Component {
 
   // Triggers the MapBox map to redraw the WindFarm features
   bumpMapFarms() {
-    if(this.map && this.map.getSource('windfarms') && this.props.windFarmData) {
-      this.map.getSource('windfarms').setData(this.props.windFarmData);
+    if(this.map && this.map.getSource('windfarms') && this.props.windFarms) {
+      this.map.getSource('windfarms').setData(this.props.windFarms);
     }
   }
 
@@ -102,22 +102,9 @@ export class Map extends React.Component {
   }
 
   componentDidMount() {
-    //let self = this;
-
     Store.setGlobalFakeNow();
-
-    // initialize windfarm data
+    // dispatch any actions configured in selectors
     this.props.onComponentDidMount();
-
-    // Store.getWindFarms()
-    //   .done((data) => {
-    //     Store.getBatchForecast(data.features, null, () => {
-    //       self.props.onLoadWindFarmData(data);
-    //     }, self);
-    //   })
-    //   .fail((xhr, status, error) => {
-    //     self.renderMap();
-    //   });
   }
 
   // This is a way of observing state changes that is useful
@@ -134,22 +121,25 @@ export class Map extends React.Component {
       this.toggleStyle(this.props.selectedStyle);
     }
     if(prevProps.selectedTimestamp !== this.props.selectedTimestamp) {
-      if(this.props.windFarmData) {
-        WindFarm.setCurrentForecastByTimestamp(this.props.selectedTimestamp, this.props.windFarmData.features);
+      if(this.props.windFarms) {
+        WindFarm.setCurrentForecastByTimestamp(this.props.selectedTimestamp, this.props.windFarms.features);
         this.bumpMapFarms();
       }
     }
-    if(prevProps.windFarmData === null && this.props.windFarmData !== null && !this.map) {
+    if(prevProps.windFarms === null && this.props.windFarms !== null && !this.map) {
+      if(this.props.windFarmsLoadingError) {
+        alert("Wind farm data could not be loaded");
+      }
       this.renderMap();
     }
     if(prevProps.timezoom !== this.props.timezoom) {
-      let data =  this.props.windFarmData,
+      let data =  this.props.windFarms,
           timezoom = this.props.timezoom;
       Store.getBatchForecast(data.features, timezoom, () => {
         this.bumpMapFarms();
         // this double tap triggers rerendering of slider component
-        this.props.onLoadWindFarmData(null);
-        this.props.onLoadWindFarmData(data);
+        this.props.onBumpWindFarms(null);
+        this.props.onBumpWindFarms(data);
         let feature = this.props.feature;
         if(feature) {
           this.props.onSelectFeature(null);
@@ -240,7 +230,7 @@ export class Map extends React.Component {
       });
 
       // TODO move app alerting to own module
-      if(!this.props.windFarmData) {
+      if(!this.props.windFarms) {
         alert("Wind farm data could not be loaded.");
         return;
       }
@@ -248,7 +238,7 @@ export class Map extends React.Component {
       // Add windfarms
       map.addSource('windfarms', {
         type: "geojson",
-        data: this.props.windFarmData
+        data: this.props.windFarms
       });
 
       // Initialize all of the layers
@@ -361,7 +351,7 @@ export class Map extends React.Component {
   whenFeatureClicked(e) {
     // The click event has a feature wherein the properties have been turned into strings.
     // Need to supply the proper object form so we find it in our local copy of the data
-    const feature = Store.getWindFarmById(e.features[0].properties.fid, this.props.windFarmData.features);
+    const feature = Store.getWindFarmById(e.features[0].properties.fid, this.props.windFarms.features);
     this.applySelectedFeature(feature, true);
     this.props.onSelectFeature(feature);
   }

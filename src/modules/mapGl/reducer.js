@@ -17,7 +17,9 @@ const getStartTime = () => {
 }
 
 const defaultValue = {
-  windFarmData: null,
+  windFarms: null,
+  windFarmsLoading: false,
+  windFarmsLoadingError: null,
   selectedFeature: null,
   selectedTimestamp: getStartTime(),
   selectedStyle: 'ramp',
@@ -27,10 +29,24 @@ const defaultValue = {
 export default (state=defaultValue, action) => {
   let newState = null;
   switch(action.type) {
-    case t.LOAD_WIND_FARM_DATA:
+    case t.FETCH_WIND_FARMS_FAIL:
       newState = {
         ...state,
-        windFarmData: action.data
+        windFarmsLoading: false,
+        windFarmsLoadingError: action.error
+      };
+      break;
+    case t.FETCH_WIND_FARMS_REQUEST:
+      newState = {
+        ...state,
+        windFarmsLoading: true
+      };
+      break;
+    case t.FETCH_WIND_FARMS_SUCCESS:
+      newState = {
+        ...state,
+        windFarmsLoading: false,
+        windFarms: action.data
       };
       break;
     case t.SELECT_FEATURE:

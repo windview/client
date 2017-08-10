@@ -32,8 +32,8 @@ export class Slider extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if(this.props.windFarmData == null && nextProps.windFarmData !== null) {
-      this.renderSlider(nextProps.windFarmData);
+    if(this.props.windFarms == null && nextProps.windFarms !== null) {
+      this.renderSlider(nextProps.windFarms);
       // Hacky for demo May 5 2017
       this.sliderEl.noUiSlider.set(getSliderDisplayFromValue(window.fakeNow));
       // End hack
@@ -121,11 +121,11 @@ export class Slider extends React.Component {
     )
   }
 
-  renderSlider(windFarmData) {
+  renderSlider(windFarms) {
     const sliderEl = document.getElementById('slider'),
           interval = this.props.interval,
-          startTime = this.getDataStart(windFarmData, interval),
-          endTime = this.getDataEnd(windFarmData, interval),
+          startTime = this.getDataStart(windFarms, interval),
+          endTime = this.getDataEnd(windFarms, interval),
           stepInterval = (1000*60*interval);
 
     this.sliderEl = sliderEl;

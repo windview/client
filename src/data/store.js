@@ -1,8 +1,18 @@
 import WindFarm from './wind-farm';
 
 let Store = new function() {
+
   // this.apiBaseUrl = process.env.API_URL + "/data";
-  this.apiBaseUrl = window.location.href + "/data";
+  this.apiBaseUrl = (() => {
+    let c = process.env.API_URL,
+        r;
+    if(c === "//") {
+      r = window.location.href
+    } else {
+      r = c;
+    }
+    return `${r}/data`;
+  })();
 
   this.getBatchForecast = function(windFarms, timezoom, callback, callbackScope) {
     let queueCount = windFarms.length;
@@ -48,8 +58,8 @@ let Store = new function() {
   }
 
   /* Assuming that farm features are already fully loaded
-   * and processed... we just slice out the appropriate 
-   * amount of data and apply it to the object. 
+   * and processed... we just slice out the appropriate
+   * amount of data and apply it to the object.
    */
   this.getDataForTimezoom = (timezoom, farmFeatures) => {
 

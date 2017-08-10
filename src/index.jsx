@@ -12,8 +12,13 @@ import rootReducer from './rootReducer';
 import thunkMiddleware from 'redux-thunk';
 import {createLogger} from 'redux-logger';
 
-const logger = createLogger(),
-      store = createStore(rootReducer, applyMiddleware(thunkMiddleware, logger));
+let middlewares = [thunkMiddleware];
+if(process.env.LOG_ACTIONS) {
+  middlewares.push(createLogger());
+}
+
+const store = createStore(rootReducer, applyMiddleware.apply(this, middlewares));
+//window.STORE = store; //for debugging the redux store
 
 render(
   <Provider store={store}>
