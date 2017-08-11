@@ -4,8 +4,8 @@
 // http://redux.js.org/docs/basics/Actions.html
 
 import * as t from './actionTypes';
-import Store from '../../data/store';
-import fetch from 'isomorphic-fetch';
+import API from './data/api';
+import Forecast from './data/forecast';
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -73,24 +73,13 @@ export const selectTimezoom = (timezoom) => ({
 // http://redux.js.org/docs/advanced/AsyncActions.html#async-action-creators
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-export const fetchForecast = () => {
+export const fetchForecast = (windFarms) => {
   return function(dispatch) {
     // notify the app that data is loading
     dispatch(fetchForecastRequest());
-
-    return fetch('http://nrel.gov')
-      .then(
-        response => response.json(),
-        error => {
-          // notify the system of the fetch error
-          dispatch(fetchForecastFail(error));
-        }
-      )
-      .then(
-        json => {
-          dispatch(fetchForecastSuccess(json));
-        }
-      )
+    Forecast.getBatchForecast(windFarms.features, 24, () => {
+      dispatch(fetchForecastSuccess(windFarms));
+    }, this);
   }
 }
 
@@ -99,21 +88,19 @@ export const fetchWindFarms = () => {
     // notify app that data is loading
     dispatch(fetchWindFarmsRequest());
 
-    // go ahead and return a promise in case anyone upstream is interested
-    return fetch(`${Store.apiBaseUrl}/usgs_wind_farms.geo.json`)
+    // return a promise
+    return API.goFetch(`usgs_wind_farms.geo.json`)
       .then(
         response => response.json(),
         error => {
-          // notify the system of the fetch error
+          // in case anyone is interested
           dispatch(fetchWindFarmsFail(error));
         }
       )
       .then(
         json => {
-          // post processing of the data
-          Store.getBatchForecast(json.features, 24, () => {
-            dispatch(fetchWindFarmsSuccess(json));
-          }, this);
+          dispatch(fetchWindFarmsSuccess(json));
+          dispatch(fetchForecast(json));
         }
       )
   }

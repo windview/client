@@ -1,16 +1,19 @@
 // map/selectors.js
 
-import * as actions from './actions';
+import * as actions from '../../actionCreators';
 
 export const mapStateToProps = (state, ownProps) => {
   return {
-    feature: state.map.selectedFeature,
-    selectedStyle: state.map.selectedStyle,
-    selectedTimestamp: state.map.selectedTimestamp,
-    timezoom: state.map.timezoom,
-    windFarms: state.map.windFarms,
-    windFarmsLoading: state.map.windFarmsLoading,
-    windFarmsLoadingError: state.map.windFarmsLoadingError
+    feature: state.analysis.selectedFeature,
+    selectedStyle: state.analysis.selectedStyle,
+    selectedTimestamp: state.analysis.selectedTimestamp,
+    timezoom: state.analysis.timezoom,
+    windFarms: state.data.windFarms,
+    windFarmsLoading: state.data.windFarmsLoading,
+    windFarmsLoadingError: state.data.windFarmsLoadingError,
+    forecast: state.data.forecast,
+    forecastLoading: state.data.forecastLoading,
+    forecastLoadingError: state.data.forecastLoadingError
   }
 }
 

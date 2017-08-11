@@ -32,8 +32,8 @@ export class Slider extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if(this.props.windFarms == null && nextProps.windFarms !== null) {
-      this.renderSlider(nextProps.windFarms);
+    if(this.props.forecast == null && nextProps.forecast !== null) {
+      this.renderSlider(nextProps.forecast);
       // Hacky for demo May 5 2017
       this.sliderEl.noUiSlider.set(getSliderDisplayFromValue(window.fakeNow));
       // End hack

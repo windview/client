@@ -1,10 +1,10 @@
 // navBar/selectors.js
 
-import { activateView } from '../app/actions';
+import { activateView } from '../../actionCreators';
 
 export const mapStateToProps = (state, ownProps) => {
   return {
-    activePane: state.app.activePane
+    activePane: state.nav.activePane
   }
 }
 
