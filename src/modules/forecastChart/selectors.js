@@ -2,6 +2,7 @@
 
 export const mapStateToProps = (state, ownProps) => {
   return {
-    feature: state.map.selectedFeature
+    feature: state.analysis.selectedFeature,
+    forecast: state.data.forecast
   }
 }

@@ -2,7 +2,8 @@
 
 export const mapStateToProps = (state, ownProps) => {
   return {
-    feature: state.map.selectedFeature,
-    selectedTimestamp: state.map.selectedTimestamp
+    feature: state.analysis.selectedFeature,
+    selectedTimestamp: state.analysis.selectedTimestamp,
+    forecast: state.data.forecast
   }
 }

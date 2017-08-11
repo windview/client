@@ -2,8 +2,9 @@
 
 export const mapStateToProps = (state, ownProps) => {
   return {
-    selectedTimestamp: state.map.selectedTimestamp,
-    timezoom: state.map.timezoom,
-    windFarms: state.map.windFarms
+    selectedTimestamp: state.analysis.selectedTimestamp,
+    timezoom: state.analysis.timezoom,
+    windFarms: state.data.windFarms,
+    forecast: state.data.forecast
   }
 }

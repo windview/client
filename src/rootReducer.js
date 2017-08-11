@@ -1,8 +1,10 @@
 import { combineReducers } from 'redux';
-import app from './modules/app/index';
-import map from './modules/mapGl/index';
+import nav from './navigationReducers';
+import data from './dataReducers';
+import analysis from './analysisReducers';
 
 export default combineReducers({
-  [app.constants.NAME]: app.reducer,
-  [map.constants.NAME]: map.reducer
+  nav,
+  data,
+  analysis
 });

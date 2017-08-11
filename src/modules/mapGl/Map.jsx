@@ -11,8 +11,9 @@ import './Map.scss';
 import mapboxStyle from '../../styles/dark-matter-style';
 import { mapStateToProps, mapDispatchToProps } from './selectors';
 import Slider from './slider/Slider';
-import Store from '../../data/store';
-import WindFarm from '../../data/wind-farm';
+import WindFarm from '../../data/windFarm';
+import Config from '../../data/config';
+import Forecast from '../../data/forecast';
 import moment from 'moment';
 import * as tlinesStyle from './mapStyles/transmissionLines';
 import * as wfActualStyle from './mapStyles/windFarmActual';
@@ -74,7 +75,7 @@ const getFeaturePopupMarkup = (feature) => {
 export class Map extends React.Component {
 
   applySelectedFeature(feature, forcePopup) {
-    WindFarm.setSelectedFeature(feature, this.props.windFarms.features);
+    Forecast.setSelectedFeature(feature, this.props.windFarms.features);
     this.bumpMapFarms();
     if(forcePopup || this.layerPopup) {
       this.closePopup();
@@ -102,7 +103,7 @@ export class Map extends React.Component {
   }
 
   componentDidMount() {
-    Store.setGlobalFakeNow();
+    Config.setGlobalFakeNow();
     // dispatch any actions configured in selectors
     this.props.onComponentDidMount();
   }
@@ -122,7 +123,7 @@ export class Map extends React.Component {
     }
     if(prevProps.selectedTimestamp !== this.props.selectedTimestamp) {
       if(this.props.windFarms) {
-        WindFarm.setCurrentForecastByTimestamp(this.props.selectedTimestamp, this.props.windFarms.features);
+        Forecast.setCurrentForecastByTimestamp(this.props.selectedTimestamp, this.props.windFarms.features);
         this.bumpMapFarms();
       }
     }
@@ -135,18 +136,17 @@ export class Map extends React.Component {
     if(prevProps.timezoom !== this.props.timezoom) {
       let data =  this.props.windFarms,
           timezoom = this.props.timezoom;
-      Store.getBatchForecast(data.features, timezoom, () => {
+      Forecast.getBatchForecast(data.features, timezoom, () => {
         this.bumpMapFarms();
         // this double tap triggers rerendering of slider component
-        this.props.onBumpWindFarms(null);
-        this.props.onBumpWindFarms(data);
+        this.props.onBumpForecast(null);
+        this.props.onBumpForecast(data);
         let feature = this.props.feature;
         if(feature) {
           this.props.onSelectFeature(null);
           this.applySelectedFeature(feature);
           this.props.onSelectFeature(feature);
         }
-
       }, this);
     }
   }
@@ -351,7 +351,7 @@ export class Map extends React.Component {
   whenFeatureClicked(e) {
     // The click event has a feature wherein the properties have been turned into strings.
     // Need to supply the proper object form so we find it in our local copy of the data
-    const feature = Store.getWindFarmById(e.features[0].properties.fid, this.props.windFarms.features);
+    const feature = WindFarm.getWindFarmById(e.features[0].properties.fid, this.props.windFarms.features);
     this.applySelectedFeature(feature, true);
     this.props.onSelectFeature(feature);
   }
