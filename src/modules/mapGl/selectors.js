@@ -22,8 +22,8 @@ export const mapDispatchToProps = (dispatch) => {
     onComponentDidMount: () => {
       dispatch(actions.fetchWindFarms());
     },
-    onBumpWindFarms: (data) => {
-      dispatch(actions.fetchWindFarmsSuccess(data));
+    onBumpForecast: (data) => {
+      dispatch(actions.fetchForecastSuccess(data));
     },
     onSelectFeature: (feature) => {
       dispatch(actions.selectFeature(feature));

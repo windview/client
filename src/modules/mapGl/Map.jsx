@@ -139,15 +139,14 @@ export class Map extends React.Component {
       Forecast.getBatchForecast(data.features, timezoom, () => {
         this.bumpMapFarms();
         // this double tap triggers rerendering of slider component
-        this.props.onBumpWindFarms(null);
-        this.props.onBumpWindFarms(data);
+        this.props.onBumpForecast(null);
+        this.props.onBumpForecast(data);
         let feature = this.props.feature;
         if(feature) {
           this.props.onSelectFeature(null);
           this.applySelectedFeature(feature);
           this.props.onSelectFeature(feature);
         }
-
       }, this);
     }
   }
