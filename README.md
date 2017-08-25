@@ -20,7 +20,7 @@ yarn
 # ... or with npm (untested)
 npm install
 
-# serve with hot reload at localhost:3000
+# serve with hot reload at localhost:8088
 yarn start
 
 # build for production with minification
