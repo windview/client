@@ -2,6 +2,7 @@ import React from 'react';
 import NavBar from '../navBar/NavBar';
 import Map from '../map/Map';
 import ForecastChart from '../forecastChart/ForecastChart';
+import AggregatedForecastChart from '../aggregatedForecastChart/AggregatedForecastChart';
 import AppSettings from '../appSettings/AppSettings';
 import Help from '../help/Help';
 import { mapStateToProps } from './selectors';
@@ -21,6 +22,9 @@ export const App = ({ activePane }) => {
           </section>
           <section id="chart-section" className="sidebar col-md-4 stretch-v main-pane-right">
             <ForecastChart />
+          </section>
+          <section id="aggregated-chart-section" className="aggregated-chart-section">
+            <AggregatedForecastChart />
           </section>
         </div>
         <div className={classNames('row', 'stretch-v', {'hidden': activePane!=='settings'})}>
