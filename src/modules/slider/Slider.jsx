@@ -1,10 +1,10 @@
 // map/slider/Slider.jsx
 
 import React from 'react';
-import '../../../../node_modules/nouislider/distribute/nouislider.css';
+import '../../../node_modules/nouislider/distribute/nouislider.css';
 import noUiSlider from 'nouislider';
 import './Slider.scss';
-import { mapStateToProps } from './selectors.js';
+import { mapStateToProps, mapDispatchToProps } from './selectors.js';
 import { connect } from 'react-redux';
 import moment from 'moment';
 
@@ -42,8 +42,9 @@ export class Slider extends React.Component {
 
   constructor(props) {
     super(props);
-    this.toggleAnimation = this.toggleAnimation.bind(this);
-    this.moveSlider = this.moveSlider.bind(this);
+    this.toggleAnimation = this.toggleAnimation.bind(this)
+    this.moveSlider = this.moveSlider.bind(this)
+    this.whenSliderMoved = this.whenSliderMoved.bind(this)
   }
 
   // The latest timestamp in all the data for all the farms
@@ -167,7 +168,7 @@ export class Slider extends React.Component {
     });
 
     sliderEl.noUiSlider.on('update', (valuesStr, handle, values) => {
-      this.props.onChange(values[0]);
+      this.whenSliderMoved(values[0]);
     });
   }
 
@@ -187,6 +188,10 @@ export class Slider extends React.Component {
       this.animateSlider(direction);
     }
   }
+
+  whenSliderMoved(newTimestamp) {
+    this.props.onSelectTimestamp(newTimestamp);
+  }
 }
 
 Slider.defaultProps = {
@@ -194,4 +199,4 @@ Slider.defaultProps = {
   framesPerSecond: 2
 };
 
-export default connect(mapStateToProps, null)(Slider);
+export default connect(mapStateToProps, mapDispatchToProps)(Slider);

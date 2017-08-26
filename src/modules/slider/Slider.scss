@@ -1,5 +1,12 @@
 // map/slider/Slider.scss
+
+@import '../../styles/color-gradient.scss';
+
 .slider-container {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
 
   i {
     border: 1px solid black;
@@ -22,18 +29,20 @@
 .slider-control {
   width: 85px;
   padding: 3px;
-  background-color: #bbb;
-  float: right;
-  margin-top: -17px;
   border-radius: 4px;
   box-shadow: 2px 2px 2px rgba(0,0,0,0.70);
+  position: absolute;
+  right: 2px;
+  top: 5px;
+  @include linear-gradient(to left, rgb(176, 176, 176), #428bca);
 }
 
 .slider {
   z-index: 1000;
-  width: 88%;
-  margin-left: 20px;
-  margin-top: 10px;
+  position: absolute;
+  left: 30px;
+  top: 10px;
+  right: 100px;
 
   .noUi-base {
     border: 1px solid black;
@@ -41,7 +50,8 @@
   }
 
   .noUi-connect {
-    background-color: #428bca;
+    //background-color: #428bca;
+    @include linear-gradient(to right, rgb(176, 176, 176), #428bca);
     border: none;
   }
 
@@ -73,7 +83,7 @@
   .noUi-handle:after {
     left: 14px;
     top: 3px;
-  }  
+  }
 
   .noUi-tooltip {
     width: 80px;
@@ -85,4 +95,3 @@
 .noUi-horizontal {
   height: 14px;
 }
-
