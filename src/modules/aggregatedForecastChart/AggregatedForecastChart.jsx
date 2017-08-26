@@ -7,7 +7,7 @@ import ChartElement from './chartElement/ChartElement';
 // internal use only display components.
 export const BaseElement = (props) => {
   return (
-    <div id="aggregated-chart-wrapper" className="aggregated-chart-wrapper">
+    <div id="aggregated-chart" className="aggregated-chart-container">
       {props.children}
     </div>
   )

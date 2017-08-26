@@ -5,7 +5,7 @@ import { BaseElement } from '../AggregatedForecastChart';
 const ChartElement = ({forecast}) => {
   return (
     <BaseElement>
-      This is where the rendered chart will live
+      This is where the aggregation chart will render
     </BaseElement>
   )
 }

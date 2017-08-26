@@ -10,7 +10,6 @@ import windFarmSelectedIcon from '../../images/windfarm-selected.png';
 import './Map.scss';
 import mapboxStyle from '../../styles/dark-matter-style';
 import { mapStateToProps, mapDispatchToProps } from './selectors';
-import Slider from './slider/Slider';
 import WindFarm from '../../data/windFarm';
 import Config from '../../data/config';
 import Forecast from '../../data/forecast';
@@ -156,7 +155,6 @@ export class Map extends React.Component {
     this.whenFeatureClicked = this.whenFeatureClicked.bind(this);
     this.whenFeatureMouseOver = this.whenFeatureMouseOver.bind(this);
     this.whenFeatureMouseOut = this.whenFeatureMouseOut.bind(this);
-    this.whenSliderMoved = this.whenSliderMoved.bind(this);
     this.whenStyleChecked = this.whenStyleChecked.bind(this);
     this.whenTimezoomChanged = this.whenTimezoomChanged.bind(this);
   }
@@ -184,8 +182,7 @@ export class Map extends React.Component {
         <div id="style-menu">
           {els}
         </div>
-        <div id="wind-map" className="stretch-v"></div>
-        <Slider onChange={this.whenSliderMoved}/>
+        <div id="wind-map"></div>
         <Legend />
       </span>
     );
@@ -370,10 +367,6 @@ export class Map extends React.Component {
     if(this.map) {
       this.map.getCanvas().style.cursor = 'pointer';
     }
-  }
-
-  whenSliderMoved(newTimestamp) {
-    this.props.onSelectTimestamp(newTimestamp);
   }
 
   whenStyleChecked(e) {

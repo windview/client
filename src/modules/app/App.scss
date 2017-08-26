@@ -1,5 +1,41 @@
 // app/App.scss
 
-#map-section {
-  padding-right: 0px;
+// layout definitions
+@import './layout.scss';
+
+.main-content-container {
+  // this positioning forces the content container to fill the available space
+  // which is necessary for rendering the map
+  position: absolute;
+  top: 62px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+
+  // anchor the sidebar to the right at a fixed width
+  .main-pane-right {
+    position: absolute;
+    right: $spacer;
+    width: $sidebar-width;
+  }
+
+  .main-pane-left {
+    // similar to above, force this panel to fill the available space not
+    // taken up by the footer and the sidebar
+    position: absolute;
+    top: 0px;
+    left: $spacer;
+    right: $sidebar-width + $spacer * 2;
+    bottom: $footer-height + $spacer;
+  }
+
+  // anchor the footer to the bottom at a fixed height and stretch to fill
+  // the width of the viewport minus the width of the sidebar
+  .main-pane-bottom {
+    position: absolute;
+    bottom: $spacer;
+    left: $spacer;
+    right: $sidebar-width + $spacer * 2;;
+    height: $footer-height;
+  }
 }
