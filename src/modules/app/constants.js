@@ -1,4 +1,4 @@
-//app/constants.js
+// app/constants.js
 
 export const NAME = 'app';
 export const APP_TITLE = 'Wind View';

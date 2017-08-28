@@ -1,4 +1,4 @@
-// forecastChart/selectors
+// forecastChart/chartElement/selectors
 
 export const mapStateToProps = (state, ownProps) => {
   return {

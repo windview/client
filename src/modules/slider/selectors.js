@@ -1,4 +1,4 @@
-// map/slider/selectors.js
+// slider/selectors
 
 import * as actions from '../../actionCreators';
 

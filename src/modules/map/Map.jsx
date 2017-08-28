@@ -19,6 +19,7 @@ import * as wfActualStyle from './mapStyles/windFarmActual';
 import * as wfForecastStyle from './mapStyles/windFarmForecast';
 import * as wfRampStyle from './mapStyles/windFarmRamp';
 import * as wfSizeStyle from './mapStyles/windFarmSize';
+import * as openeiFarmStyle from './mapStyles/openeiFarms';
 import commafy from 'commafy';
 
 
@@ -225,6 +226,12 @@ export class Map extends React.Component {
           type: "vector",
           url: process.env.TILE_SERVER_URL + "/osm-translines/metadata.json"
       });
+      // Add OpenEI wind farm points
+      map.addSource('openei-farms', {
+        type: "vector",
+        url: process.env.TILE_SERVER_URL + "/openei-farms/metadata.json"
+      });
+
 
       // TODO move app alerting to own module
       if(!this.props.windFarms) {
@@ -243,10 +250,12 @@ export class Map extends React.Component {
       wfSizeStyle.initializeStyle(map, 'windfarms');
       wfForecastStyle.initializeStyle(map, 'windfarms');
       wfRampStyle.initializeStyle(map, 'windfarms');
+      openeiFarmStyle.initializeStyle(map, 'openei-farms');
 
       // Show these layers
       this.toggleStyle('tlines');
       this.toggleStyle(this.props.selectedStyle);
+      this.toggleStyle('openei-farms');
 
       // The icon layer is always present, and needs to be for all the
       // event handlers so add it outside of the specific styles above
@@ -270,7 +279,7 @@ export class Map extends React.Component {
         }
       });
 
-      // Thisicon layer shows a different icon for the selected farm
+      // This icon layer shows a different icon for the selected farm
       map.addLayer({
         id: 'windfarms-selected-symbol',
         type: 'symbol',
@@ -291,7 +300,7 @@ export class Map extends React.Component {
         }
       });
 
-      // Thisicon layer shows a different icon for the selected farm
+      // This icon layer shows a different icon for the selected farm
       map.addLayer({
         id: 'windfarms-disabled-symbol',
         type: 'symbol',
@@ -339,6 +348,9 @@ export class Map extends React.Component {
         break;
       case "tlines":
         tlinesStyle.toggleVisibility(this.map);
+        break;
+      case "openei-farms":
+        openeiFarmStyle.toggleVisibility(this.map);
         break;
       default:
         break;

@@ -1,3 +1,4 @@
+// app/selectors
 
 export const mapStateToProps = (state, ownProps) => {
   return {

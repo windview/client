@@ -1,4 +1,4 @@
-// map/selectors.js
+// map/selectors
 
 import * as actions from '../../actionCreators';
 

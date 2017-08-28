@@ -1,5 +1,3 @@
-// map/slider/Slider.jsx
-
 import React from 'react';
 import '../../../node_modules/nouislider/distribute/nouislider.css';
 import noUiSlider from 'nouislider';
