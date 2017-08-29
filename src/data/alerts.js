@@ -13,8 +13,8 @@ let Alerts = new function() {
         increments: Array of ints
       }
    */
-  this.calculateRampBins = (windFarm) => {
-    const forecastData = windFarm.properties.forecastData.data;
+  this.calculateRampBins = (forecastData) => {
+    forecastData = forecastData.data;
     let rampBins = [];
     // Old school for loop so we can adjust i from within the loop
     for( let i=0; i<forecastData.length; i++ ) {
@@ -66,29 +66,29 @@ let Alerts = new function() {
     }, this);
     return timeslices;
   }
-  
-  this.getFirstRamp = (windFarm) => {
-    const forecastData = windFarm.properties.forecastData.data;
+
+  this.getFirstRamp = (forecastData) => {
+    forecastData = forecastData.data;
     return forecastData.find((timeslice)=>{ return timeslice.ramp === true; });
   }
 
-  this.getFirstRampStart = (windFarm) => {
-    const firstRamp = this.getFirstRamp(windFarm);
+  this.getFirstRampStart = (forecastData) => {
+    const firstRamp = this.getFirstRamp(forecastData);
     return firstRamp ? firstRamp.timestamp : null;
   }
 
-  this.getMaxRampSeverity = (windFarm) => {
-    let maxSeverity = 0;
-    const forecastData = windFarm.properties.forecastData.data,
-          rampEvents = forecastData.filter(function(timeslice){ return timeslice.ramp;});
+  this.getMaxRampSeverity = (forecastData) => {
+    forecastData = forecastData.data;
+    let maxSeverity = 0,
+        rampEvents = forecastData.filter(function(timeslice){ return timeslice.ramp;});
     rampEvents.forEach(function(r){
       maxSeverity = r.rampSeverity > maxSeverity ? r.rampSeverity : maxSeverity;
     });
     return maxSeverity;
   }
 
-  this.hasRamp = (windFarm) => {
-    const forecastData = windFarm.properties.forecastData.data;
+  this.hasRamp = (forecastData) => {
+    forecastData = forecastData.data;
     return forecastData.find((timeslice)=>{ return timeslice.ramp; }) !== undefined;
   }
 }();

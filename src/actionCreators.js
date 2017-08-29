@@ -78,8 +78,8 @@ export const fetchForecast = (windFarms) => {
     // notify the app that data is loading
     dispatch(fetchForecastRequest());
     Forecast.getBatchForecast(windFarms.features, 24)
-      .then(() => {
-        dispatch(fetchForecastSuccess(windFarms));
+      .then((forecasts) => {
+        dispatch(fetchForecastSuccess(forecasts));
       })
       .catch((error) => {
         dispatch(fetchForecastFail(error))

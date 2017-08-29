@@ -27,8 +27,8 @@ const getFeaturePopupMarkup = (feature) => {
   let prependRows = [],
       appendRows = [];
 
-  if(feature.properties.hasRamp) {
-    prependRows = feature.properties.rampBins.map((rampBin) => {
+  if(feature.properties.forecastData.alerts.hasRamp) {
+    prependRows = feature.properties.forecastData.alerts.rampBins.map((rampBin) => {
       const startTime = moment.utc(rampBin.startTime).format('HH:mm UTC'),
             endTime = moment.utc(rampBin.endTime).format('HH:mm UTC'),
             severity = rampBin.severity > 1 ? "severe ramp" : "moderate ramp",

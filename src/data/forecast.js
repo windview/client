@@ -5,6 +5,40 @@ import Alerts from './alerts';
 let Forecast = new function(){
 
   /**
+    * Calculates an aggregated forecast for all of the wind farms
+    * provided using their previousl loaded forecast values
+    */
+  this.getAggregatedForecast = (windFarms) => {
+    debugger;
+    let forecast = [];
+    windFarms.forEach((farm)=>{
+      console.log('aggregate in', farm.properties.fid);
+      /*
+      let formattedSlice = {
+        timestamp: ts,
+        forecastMW: Math.round(timeslice[1]*1000)/1000,
+        forecast25MW: Math.round(timeslice[2]*1000)/1000,
+        forecast75MW: Math.round(timeslice[3]*1000)/1000,
+        actual: actual,
+        ramp: false,
+        rampSeverity: null
+      };
+      */
+    }, this);
+    return forecast;
+  }
+
+  this.getAlertsForForecast = (forecastData) => {
+    let alerts = {
+      rampStart: Alerts.getFirstRampStart(forecastData),
+      hasRamp: Alerts.hasRamp(forecastData),
+      maxRampSeverity: Alerts.getMaxRampSeverity(forecastData),
+      rampBins: Alerts.calculateRampBins(forecastData)
+    }
+    return alerts;
+  }
+
+  /**
     * Loads forecast for all of the farms. When a single farm fetch errors,
     * this method keeps chugging through the list. Checking for fetch errors
     * across all farms is not done here!
@@ -17,19 +51,17 @@ let Forecast = new function(){
         _self = this;
 
     return new Promise((resolve, reject) => {
+      let forecasts = []
       windFarms.forEach(function(farm) {
         this.getForecast(farm, timezoom)
           .then(
-            () => {
-              if(--queueCount === 0) {
-                console.log(queueCount, "resolving")
-                resolve();
-              }
+            (forecast) => {
+              forecasts.push(forecast)
+              if(--queueCount === 0) resolve(forecasts);
             }
           ).catch(error => {
-            // TODO what to do when a single farm errors?
             console.log(error);
-            if(--queueCount === 0) resolve();
+            if(--queueCount === 0) resolve(forecasts);
           });
       }, _self);
     });
@@ -61,13 +93,12 @@ let Forecast = new function(){
       )
       .then(
         data => {
-          console.log("parsing data for", farm.properties.fid)
           const forecastData = this.postProcessForecastData(data, timezoom);
           farm.properties.forecastData = forecastData;
-          farm.properties.rampStart = Alerts.getFirstRampStart(farm);
-          farm.properties.hasRamp = Alerts.hasRamp(farm);
-          farm.properties.maxRampSeverity = Alerts.getMaxRampSeverity(farm);
-          farm.properties.rampBins = Alerts.calculateRampBins(farm);
+          // A limitation of MapboxGL is that it doesn't support nested properties
+          // in styles, so we have to promote any prop used in a style to the top
+          farm.properties.maxRampSeverity = forecastData.alerts.maxRampSeverity;
+          return forecastData;
         }
       )
   }
@@ -106,6 +137,7 @@ let Forecast = new function(){
 
     formattedData = this._applyTimezoom(timezoom, formattedData);
     forecast.data = Alerts.detectRampsInForecast(formattedData);
+    forecast.alerts = this.getAlertsForForecast(forecast);
     return forecast;
   }
 

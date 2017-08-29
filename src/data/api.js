@@ -1,5 +1,5 @@
 let API = new function() {
-  // this.apiBaseUrl = process.env.API_URL + "/data";
+  
   this.apiBaseUrl = (() => {
     let c = process.env.API_URL,
         r;

@@ -29,9 +29,9 @@ export class Slider extends React.Component {
     animateMarker.bind(this)(0);
   }
 
-  componentWillReceiveProps(nextProps) {
-    if(this.props.forecast == null && nextProps.forecast !== null) {
-      this.renderSlider(nextProps.forecast);
+  componentDidUpdate(prevProps) {
+    if(prevProps.forecast == null && this.props.forecast !== null) {
+      this.renderSlider(this.props.forecast);
       // Hacky for demo May 5 2017
       this.sliderEl.noUiSlider.set(getSliderDisplayFromValue(window.fakeNow));
       // End hack
@@ -48,8 +48,8 @@ export class Slider extends React.Component {
   // The latest timestamp in all the data for all the farms
   getDataEnd(data, interval) {
     let ts = 0;
-    data.features.forEach(function(feature){
-      feature.properties.forecastData.data.forEach(function(row) {
+    data.forEach( forecast => {
+      forecast.data.forEach(function(row) {
         ts = row.timestamp.getTime() > ts ? row.timestamp.getTime() : ts;
       });
     });
@@ -65,8 +65,8 @@ export class Slider extends React.Component {
   // The earliest timestamp in all the data for all the farms
   getDataStart(data, interval) {
     let ts = new Date().getTime() + (1000*60*60*24*365); //1 year in the future
-    data.features.forEach(function(feature){
-      feature.properties.forecastData.data.forEach(function(row) {
+    data.forEach( forecast => {
+      forecast.data.forEach(function(row) {
         ts = row.timestamp.getTime() < ts ? row.timestamp.getTime() : ts;
       });
     });
@@ -120,11 +120,11 @@ export class Slider extends React.Component {
     )
   }
 
-  renderSlider(windFarms) {
+  renderSlider(forecast) {
     const sliderEl = document.getElementById('slider'),
           interval = this.props.interval,
-          startTime = this.getDataStart(windFarms, interval),
-          endTime = this.getDataEnd(windFarms, interval),
+          startTime = this.getDataStart(forecast, interval),
+          endTime = this.getDataEnd(forecast, interval),
           stepInterval = (1000*60*interval);
 
     this.sliderEl = sliderEl;
