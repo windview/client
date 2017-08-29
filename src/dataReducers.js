@@ -37,7 +37,8 @@ export default (state=defaultValue, action) => {
       return {
         ...state,
         forecastLoading: false,
-        forecast: action.data
+        forecast: action.data,
+        forecastMeta: action.meta
       };
     case t.FETCH_WIND_FARMS_FAIL:
       return {

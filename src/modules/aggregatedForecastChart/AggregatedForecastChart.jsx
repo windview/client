@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import './AggregatedForecastChart.scss';
 import { mapStateToProps } from './selectors';
+import Forecast from '../../data/forecast';
 import Highcharts from 'highcharts/highcharts';
 import HighchartsMore from 'highcharts/highcharts-more';
 // Stand up highcharts properly without the global var
@@ -37,7 +38,8 @@ const ChartElement = () => {
 export class AggregatedForecastChart extends React.Component {
 
   chartIt() {
-    const data = this.getChartData(this.props.feature.properties.forecastData),
+    let aggData = Forecast.getAggregatedForecast(this.props.forecast)
+    const data = this.getChartData(aggData),
           forecast = data[0],
           range = data[1],
           twentyFive = data[2],
@@ -49,7 +51,7 @@ export class AggregatedForecastChart extends React.Component {
       this.chart.destroy();
     }
 
-    let chart = Highcharts.chart('forecast-chart', {
+    let chart = Highcharts.chart('aggregated-chart', {
       title: {
         text: ''
       },
@@ -140,7 +142,7 @@ export class AggregatedForecastChart extends React.Component {
       }]
     });
 
-    const rampBins = this.props.feature.properties.rampBins;
+    const rampBins = this.props.forecast.properties.rampBins;
     rampBins.forEach((bin)=>{
       const color = bin.increments[bin.increments.length-1] > 0 ? "rgba(205, 186, 45, 0.63)" : "rgba(117, 140, 225, 0.53)",
             borderColor = bin.severity > 1 ? "rgba(255, 0, 0, 0.7" : color;
@@ -158,7 +160,7 @@ export class AggregatedForecastChart extends React.Component {
   }
 
   componentDidMount() {
-    if(this.props.feature) {
+    if(this.props.forecast) {
       this.chartIt();
       if(this.props.selectedTimestamp) {
         this.drawPlotLine(this.props.selectedTimestamp);
@@ -167,14 +169,14 @@ export class AggregatedForecastChart extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if(this.props.feature) {
-      if(prevProps.feature) {
-        // if the currently selected feature is not the same as the previously selected
-        if(this.props.feature.properties.fid !== prevProps.feature.properties.fid) {
+    if(this.props.forecast) {
+      if(prevProps.forecast) {
+        // if the current forecast is not the same as the previous forecast
+        if(this.props.forecast !== prevProps.forecast) {
           this.chartIt();
         }
       } else {
-        // there was no feature selected previously
+        // there was no forecast previously
         this.chartIt();
       }
     }

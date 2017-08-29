@@ -45,45 +45,11 @@ export class Slider extends React.Component {
     this.whenSliderMoved = this.whenSliderMoved.bind(this)
   }
 
-  // The latest timestamp in all the data for all the farms
-  getDataEnd(data, interval) {
-    let ts = 0;
-    data.forEach( forecast => {
-      forecast.data.forEach(function(row) {
-        ts = row.timestamp.getTime() > ts ? row.timestamp.getTime() : ts;
-      });
-    });
-
-    let dataEnd = new Date(ts),
-        minute = dataEnd.getMinutes(),
-        remainder = minute >= interval ? minute%interval : interval-minute;
-    dataEnd.setMinutes(minute+=remainder);
-    dataEnd.setSeconds(0);
-    return dataEnd;
-  }
-
-  // The earliest timestamp in all the data for all the farms
-  getDataStart(data, interval) {
-    let ts = new Date().getTime() + (1000*60*60*24*365); //1 year in the future
-    data.forEach( forecast => {
-      forecast.data.forEach(function(row) {
-        ts = row.timestamp.getTime() < ts ? row.timestamp.getTime() : ts;
-      });
-    });
-
-    let dataStart = new Date(ts),
-        minute = dataStart.getMinutes(),
-        remainder = minute >= interval ? minute%interval : minute;
-    dataStart.setMinutes(minute-=remainder);
-    dataStart.setSeconds(0);
-    return dataStart;
-  }
-
   moveSlider(direction) {
     const sliderObj = this.sliderEl.noUiSlider,
           currentVal = sliderObj.get(),
           timestamp = getSliderValueFromDisplay(currentVal),
-          interval = 1000*60*15,
+          interval = 1000*60*this.props.forecastMeta.interval,
           startTs = sliderObj.options.range.min,
           endTs = sliderObj.options.range.max;
     let   newVal = '';
@@ -122,9 +88,9 @@ export class Slider extends React.Component {
 
   renderSlider(forecast) {
     const sliderEl = document.getElementById('slider'),
-          interval = this.props.interval,
-          startTime = this.getDataStart(forecast, interval),
-          endTime = this.getDataEnd(forecast, interval),
+          interval = this.props.forecastMeta.interval,
+          startTime = this.props.forecastMeta.dataStart,
+          endTime = this.props.forecastMeta.dataEnd,
           stepInterval = (1000*60*interval);
 
     this.sliderEl = sliderEl;
@@ -193,7 +159,6 @@ export class Slider extends React.Component {
 }
 
 Slider.defaultProps = {
-  interval: 15,
   framesPerSecond: 2
 };
 
