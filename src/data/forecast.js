@@ -4,34 +4,35 @@ import Alerts from './alerts';
 
 let Forecast = new function(){
 
+  /**
+    * Loads forecast for all of the farms. When a single farm fetch errors,
+    * this method keeps chugging through the list. Checking for fetch errors
+    * across all farms is not done here!
+    *
+    * @return a JS Promise that will fulfill when all forecasts for all farms
+    * are fetch-resolved
+    */
   this.getBatchForecast = function(windFarms, timezoom, callback) {
-    let queueCount = windFarms.length;
-    // TODO move post processing routine into getForecast method
-    windFarms.forEach(function(farm) {
-      this.getForecast(farm.properties.fid)
-        .then(
-          response => response.json(),
-          error => {
-            // notify the system of the fetch error
-            //dispatch(fetchForecastFail(error));
-            alert("Error fetching forecast for", farm.properties.fid, "with", error);
-          }
-        )
-        .then(
-          data => {
-            const forecastData = this.postProcessForecastData(data, timezoom);
-            farm.properties.forecastData = forecastData;
-            farm.properties.rampStart = Alerts.getFirstRampStart(farm);
-            farm.properties.hasRamp = Alerts.hasRamp(farm);
-            farm.properties.maxRampSeverity = Alerts.getMaxRampSeverity(farm);
-            farm.properties.rampBins = Alerts.calculateRampBins(farm);
-            queueCount--;
-            if(queueCount === 0) {
-              callback.call();
+    let queueCount = windFarms.length,
+        _self = this;
+
+    return new Promise((resolve, reject) => {
+      windFarms.forEach(function(farm) {
+        this.getForecast(farm, timezoom)
+          .then(
+            () => {
+              if(--queueCount === 0) {
+                console.log(queueCount, "resolving")
+                resolve();
+              }
             }
-          }
-      )
-    }.bind(this));
+          ).catch(error => {
+            // TODO what to do when a single farm errors?
+            console.log(error);
+            if(--queueCount === 0) resolve();
+          });
+      }, _self);
+    });
   }
 
   /* Assuming that farm features are already fully loaded
@@ -42,9 +43,33 @@ let Forecast = new function(){
     // TODO Something
   }
 
-  // Returns a JQuery promise
-  this.getForecast = (windFarmFID) => {
-    return API.goFetch(`${windFarmFID}.json`)
+  /** Loads the forecast for a given farm out to a given range (timezoom) and
+    * post processes that data to detect alerts and other items of note.
+    *
+    * @return a fetch promise
+    */
+  this.getForecast = (farm, timezoom) => {
+    return API.goFetch(`${farm.properties.fid}.json`)
+      .then(
+        response => {
+          if(response.ok) {
+            return response.json();
+          } else {
+            throw("Error fetching forecast for", farm.properties.fid);
+          }
+        }
+      )
+      .then(
+        data => {
+          console.log("parsing data for", farm.properties.fid)
+          const forecastData = this.postProcessForecastData(data, timezoom);
+          farm.properties.forecastData = forecastData;
+          farm.properties.rampStart = Alerts.getFirstRampStart(farm);
+          farm.properties.hasRamp = Alerts.hasRamp(farm);
+          farm.properties.maxRampSeverity = Alerts.getMaxRampSeverity(farm);
+          farm.properties.rampBins = Alerts.calculateRampBins(farm);
+        }
+      )
   }
 
   this.postProcessForecastData = (forecast, timezoom) => {
