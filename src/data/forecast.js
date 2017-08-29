@@ -4,7 +4,7 @@ import Alerts from './alerts';
 
 let Forecast = new function(){
 
-  this.getBatchForecast = function(windFarms, timezoom, callback, callbackScope) {
+  this.getBatchForecast = function(windFarms, timezoom, callback) {
     let queueCount = windFarms.length;
     // TODO move post processing routine into getForecast method
     windFarms.forEach(function(farm) {
@@ -27,7 +27,7 @@ let Forecast = new function(){
             farm.properties.rampBins = Alerts.calculateRampBins(farm);
             queueCount--;
             if(queueCount === 0) {
-              callback.call(callbackScope);
+              callback.call();
             }
           }
       )
@@ -135,7 +135,7 @@ let Forecast = new function(){
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Private methods
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
+
   this._applyTimezoom = (timezoom, data) => {
     //Calculate data start and data end times
     let dataStart = data[0].timestamp.getTime(),

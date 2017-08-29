@@ -79,7 +79,7 @@ export const fetchForecast = (windFarms) => {
     dispatch(fetchForecastRequest());
     Forecast.getBatchForecast(windFarms.features, 24, () => {
       dispatch(fetchForecastSuccess(windFarms));
-    }, this);
+    });
   }
 }
 
