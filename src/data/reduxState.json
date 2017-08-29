@@ -1,6 +1,12 @@
 {
   "//": "A sample showing the shape of the redux state http://redux.js.org/docs/basics/Reducers.html#designing-the-state-shape",
-  "app": {
+  "data": {
+    "forecastLoading": false,
+    "forecastLoadingError": "Some error",
+    "windFarmsLoading": false,
+    "windFarmsLoadingError": "Some error"
+  },
+  "nav": {
     "activePane": "map-view"
   },
   "map": {
@@ -95,7 +101,8 @@
     "selectedStyle": "ramp",
     "selectedTimestamp": 1492195500000,
     "timezoom": 24,
-    "windFarmData": {
+    "windFarms": {},
+    "forecast": {
       "crs": {
         "properties": {
           "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
