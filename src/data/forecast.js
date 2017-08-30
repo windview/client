@@ -7,7 +7,6 @@ let Forecast = new function(){
   // TODO get from forecast or configuration
   this.forecastInterval = 15
 
-
   /**
     * Calculates an aggregated forecast for all of the wind farms
     * provided using their previously loaded forecast values. The
@@ -21,49 +20,58 @@ let Forecast = new function(){
     *    timeslice only has values at one or two farms, that timeslice is
     *    going to have a misleadingly small value
     */
-  this.getAggregatedForecast = (forecast) => {
+  this.getAggregatedForecast = forecasts => {
 
-    let startTime = this.getDataStart(forecast),
-        endTime = this.getDataEnd(forecast),
+    let masterTimeline = this._getMasterTimeline(forecasts),
+        forecastCount = forecasts.length,
+        forecastsAtTime = [],
         aggregatedForecast = {
           alerts: {},
           meta: {},
           data: []
         };
-    aggregatedForecast.meta = Object.assign({}, forecast[0].meta, {farm_uuid: "aggregate"})
 
+    aggregatedForecast.meta = Object.assign({}, forecasts[0].meta, {farm_uuid: "aggregate"});
 
-    forecast.forEach((f)=>{
-      console.log('aggregate in', f);
-      /*
-      let formattedSlice = {
-        timestamp: ts,
-        forecastMW: Math.round(timeslice[1]*1000)/1000,
-        forecast25MW: Math.round(timeslice[2]*1000)/1000,
-        forecast75MW: Math.round(timeslice[3]*1000)/1000,
-        actual: actual,
+    masterTimeline.forEach( ts => {
+      forecastsAtTime = forecasts.filter(forecast =>  {
+        return forecast.data.find( d => {return d.timestamp.getTime() === ts;}) !== undefined;
+      })
+
+      let reducedVals = forecastsAtTime.reduce((accumulator, forecast) => {
+        let dataPoint = forecast.data.find(d => {return d.timestamp.getTime() === ts;})
+        return {
+          actual: accumulator.actual + dataPoint.actual,
+          forecastMW: accumulator.forecastMW + dataPoint.forecastMW
+        };
+      }, {actual: 0, forecastMW: 0})
+
+      // TODO normalize by number of farms relative to the number with data
+      if(forecastsAtTime.length !== forecastCount) {
+        reducedVals.actual = reducedVals.actual/forecastsAtTime.length*forecastCount;
+        reducedVals.forecastMW = reducedVals.forecastMW/forecastsAtTime.length*forecastCount;
+      }
+
+      aggregatedForecast.data.push({
+        timestamp: new Date(ts),
+        forecastMW: Math.round(reducedVals.forecastMW*1000)/1000,
+        actual: Math.round(reducedVals.actual*1000)/1000,
         ramp: false,
         rampSeverity: null
-      };
-      */
-    }, this);
-    return aggregatedForecast;
-  }
+      })
+    })
 
-  this.getAlertsForForecast = (forecastData) => {
-    let alerts = {
-      rampStart: Alerts.getFirstRampStart(forecastData),
-      hasRamp: Alerts.hasRamp(forecastData),
-      maxRampSeverity: Alerts.getMaxRampSeverity(forecastData),
-      rampBins: Alerts.calculateRampBins(forecastData)
-    }
-    return alerts;
+    aggregatedForecast.data = Alerts.detectRampsInForecast(aggregatedForecast.data);
+    aggregatedForecast.alerts = Alerts.getAlertsForForecast(aggregatedForecast);
+
+    return aggregatedForecast;
   }
 
   /**
     * Loads forecast for all of the farms. Take note! When a single farm
     * fetch job encounters errors this method keeps chugging through the
-    * list. Checking for fetch errors across all farms is not done here!
+    * list leaving that farm in place with no forecast. Checking for fetch
+    * errors across all farms is not done here!
     *
     * @return a JS Promise that will fulfill when all forecasts for all farms
     * are fetch-resolved
@@ -81,10 +89,12 @@ let Forecast = new function(){
           })
           .catch(error => {
             console.log(error);
+            farm.properties.disabled = true;
           })
           .then(() => {
             if(--queueCount === 0) {
-              let meta = _self.getBatchForecastMeta(forecasts);
+              forecasts = _self._coerceForecastsToTimeline(forecasts);
+              let meta = _self._getBatchForecastMeta(forecasts);
               resolve({
                 data: forecasts,
                 meta: meta
@@ -95,26 +105,10 @@ let Forecast = new function(){
     });
   }
 
-  this.getBatchForecastMeta = (forecasts) => {
-    return {
-      dataEnd: this.getDataEnd(forecasts, this.forecastInterval),
-      dataStart: this.getDataStart(forecasts, this.forecastInterval),
-      interval: this.forecastInterval
-    }
-  }
-
-  /* Assuming that farm features are already fully loaded
-   * and processed... we just slice out the appropriate
-   * amount of data and apply it to the object.
-   */
-  this.getDataForTimezoom = (timezoom, farmFeatures) => {
-    // TODO Something
-  }
-
   // The latest timestamp in all the data for all the farms
-  this.getDataEnd = (data, interval) => {
+  this.getDataEnd = (forecasts, interval) => {
     let ts = 0;
-    data.forEach( forecast => {
+    forecasts.forEach( forecast => {
       forecast.data.forEach(function(row) {
         ts = row.timestamp.getTime() > ts ? row.timestamp.getTime() : ts;
       });
@@ -163,7 +157,7 @@ let Forecast = new function(){
       )
       .then(
         data => {
-          const forecastData = this.postProcessForecastData(data, timezoom);
+          const forecastData = this._postProcessForecastData(data, timezoom);
           farm.properties.forecastData = forecastData;
           // A limitation of MapboxGL is that it doesn't support nested properties
           // in styles, so we have to promote any prop used in a style to the top
@@ -175,70 +169,19 @@ let Forecast = new function(){
       )
   }
 
-  this.postProcessForecastData = (forecast, timezoom) => {
-    // Hack for demo purposes
-    const fakeNow = window.fakeNow;
-    // End hack
-
-    let formattedData = [],
-        actual = null,
-        ts = null;
-    //remove the header row
-    forecast.data.shift();
-    // Loop through and process the data, outputting a format consumable by the app
-    forecast.data.forEach(function(timeslice){
-      ts = this._convertTimestampToDate(timeslice[0]);
-      // Hack for demo
-      if(fakeNow) {
-        actual = ts.getTime() > fakeNow ? null : Math.round(timeslice[4]*1000)/1000;
-      } else {
-        actual = Math.round(timeslice[4]*1000)/1000;
-      }
-      // End Hack
-      let formattedSlice = {
-        timestamp: ts,
-        forecastMW: Math.round(timeslice[1]*1000)/1000,
-        forecast25MW: Math.round(timeslice[2]*1000)/1000,
-        forecast75MW: Math.round(timeslice[3]*1000)/1000,
-        actual: actual,
-        ramp: false,
-        rampSeverity: null
-      };
-      formattedData.push(formattedSlice);
-    }, this);
-
-    formattedData = this._applyTimezoom(timezoom, formattedData);
-    forecast.data = Alerts.detectRampsInForecast(formattedData);
-    forecast.alerts = this.getAlertsForForecast(forecast);
-    return forecast;
-  }
-
-  /* Set the currentForecast property of each provided farm to the value at
-   * or soonest after (within 15 minutes of) the provided timestamp
-   */
-  this.setCurrentForecast = (ts, farms) => {
-    farms.forEach(farm=>{
-      farm.properties.currentForecast = farm.properties.forecastData.data.find(data=>{
-        return (data.timestamp.getTime() >= ts) && (data.timestamp.getTime()-ts < 1000*60*15);
-      });
-      farm.properties.disabled = true; //farm.properties.currentForecast ? false : true;
-    });
-  }
-
   /* Set the currentForecast property of each provided farm to the value at
    * or soonest after (within 15 minutes of) the provided timestamp
    */
   this.setCurrentForecastByTimestamp = (ts, windFarmFeatures) => {
-    windFarmFeatures.forEach(farm=>{
-      let currentForecast = null;
-      if(ts) {
-        currentForecast = farm.properties.forecastData.data.find(data=>{
-          return (data.timestamp.getTime() >= ts) && (data.timestamp.getTime()-ts < 1000*60*15);
-        });
-      }
-      // TODO there's got to be a better way of nulling these out when no
-      // forecast is available for the given timestamp?
+    if(!ts) return;
+
+    windFarmFeatures.forEach(farm => {
+      let currentForecast = farm.properties.forecastData.data.find(dataPoint => {
+        return dataPoint.timestamp.getTime() === ts;
+      });
       if(!currentForecast) {
+        // This is needed to wipe props while we are operating on the actual
+        // object used in styling the map
         currentForecast = {
           timestamp: null,
           forecastMW: null,
@@ -247,12 +190,18 @@ let Forecast = new function(){
           actual: null,
           ramp: false,
           rampSeverity: null,
-          disabled: ts !== null ? true : false
+          disabled: true
         }
       } else {
         currentForecast.disabled = false;
       }
+
+      // A limitation of MapboxGL is that it doesn't support nested properties
+      // in styles, so we have to promote any prop used in a style to the top
+      // TODO format the data for the map in the map instead of forcing
+      // a substandard data format onto the redux state like this
       Object.assign(farm.properties, currentForecast);
+      farm.properties.currentForecast = currentForecast;
     });
   }
 
@@ -261,9 +210,9 @@ let Forecast = new function(){
     feature.properties.selected = true;
   }
 
-  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   // Private methods
-  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
   this._applyTimezoom = (timezoom, data) => {
     //Calculate data start and data end times
@@ -282,8 +231,126 @@ let Forecast = new function(){
     return data.filter(d=>{ return d.timestamp.getTime() <= dataEnd; });
   }
 
+  /**
+    * Calculates a single timeline for all of the provided forecasts then
+    * applies that timeline to the data. The end result is that all of the
+    * forecasts are aligned in time. If a forecast has data points at a more
+    * frequent interval than the master timeline extra points will be dropped
+    * from the forecast
+    *
+    * Alignment is conducted by finding the first and last data point, which are
+    * rounded down/up respectively to the nearest even intersection with the
+    * configured forecast interval. A master timeline is then constructed
+    * by creating a new Date at each interval between the start time and
+    * end time. Then each forecast is coerced to align with this master
+    * timeline by adjusting the forecast data points timestamp to be
+    * equal to the closest master timeline data point and dropping extra points
+    * where the forecsat interval is < the master timeline interval.
+    *
+    * For example, if the first data point is 8:03 and the last data point is
+    * 16:28 and the configured interval is 30, the master timeline would include
+    * 800, 830, 900, 930, 1000, 1030, etc, 1400, 1430, 1500, 1530, 1600, 1630
+    */
+  this._coerceForecastsToTimeline = forecasts => {
+    let interval = this.forecastInterval,
+        intervalMillisec = interval*60*1000,
+        masterTimeline = this._getMasterTimeline(forecasts);
+
+    // Coerce the farm values
+    forecasts.forEach(f => {
+      let newData = [];
+      masterTimeline.forEach( masterTime => {
+        let foundData = f.data.find( data => {
+          return (Math.abs(masterTime - data.timestamp.getTime()) <= (intervalMillisec/2));
+        });
+        if(foundData) {
+          foundData = Object.assign({}, foundData, {timestamp: new Date(masterTime)});
+          newData.push(foundData);
+        }
+      }, this);
+      f.data = newData;
+    }, this);
+
+    return forecasts;
+  }
+
   this._convertTimestampToDate  = function(ts) {
     return new Date(ts);
+  }
+
+  // Create a master timeline of ms since 1970 NOT Date objects
+  this._getMasterTimeline = forecasts => {
+    let interval = this.forecastInterval,
+        intervalMillisec = interval*60*1000,
+        firstTime = this.getDataStart(forecasts, interval).getTime(),
+        lastTime = this.getDataEnd(forecasts, interval).getTime(),
+        pointCount = (lastTime-firstTime)/intervalMillisec,
+        masterTimeline = null;
+
+    // Create a master timeline of ms since 1970 NOT Date objects
+    masterTimeline = Array.apply(null, {length: pointCount}).map((val, i) => {
+      return (firstTime + i * intervalMillisec);
+    });
+
+    return masterTimeline;
+  }
+
+  /**
+    * Invoke formating on an array of forecast data points for a single farm
+    */
+  this._formatForecastData = (forecast) => {
+    let formattedData = [];
+    //remove the header row
+    forecast.data.shift();
+    // Loop through and process the data, outputting a format consumable by the app
+    forecast.data.forEach((dataPoint) => {
+      formattedData.push(this._formatForecastDataPoint(dataPoint));
+    }, this);
+    return formattedData;
+  }
+
+  /**
+    * Formats the raw forecsat data for a single data point including
+    *  - Convert array to JS Object
+    *  - Rounding numbers
+    *  - Converting timestamp string to Date object
+    */
+  this._formatForecastDataPoint = (dataPoint) => {
+    let actual = dataPoint[4] ? Math.round(dataPoint[4]*1000)/1000 : null,
+        ts     = this._convertTimestampToDate(dataPoint[0]);
+
+    // Hack for demo purposes
+    const fakeNow = window.fakeNow;
+    if(fakeNow) {
+      actual = ts.getTime() > fakeNow ? null : Math.round(dataPoint[4]*1000)/1000;
+    }
+    // End hack
+
+    return {
+      timestamp: ts,
+      forecastMW: Math.round(dataPoint[1]*1000)/1000,
+      forecast25MW: Math.round(dataPoint[2]*1000)/1000,
+      forecast75MW: Math.round(dataPoint[3]*1000)/1000,
+      actual: actual,
+      ramp: false,
+      rampSeverity: null
+    };
+  }
+
+  this._getBatchForecastMeta = (forecasts) => {
+    return {
+      dataEnd: this.getDataEnd(forecasts, this.forecastInterval),
+      dataStart: this.getDataStart(forecasts, this.forecastInterval),
+      interval: this.forecastInterval
+    }
+  }
+
+  this._postProcessForecastData = (forecast, timezoom) => {
+    let formattedData = this._formatForecastData(forecast);
+    formattedData = this._applyTimezoom(timezoom, formattedData);
+    forecast.data = Alerts.detectRampsInForecast(formattedData);
+    forecast.alerts = Alerts.getAlertsForForecast(forecast);
+    return forecast;
   }
 }();
 

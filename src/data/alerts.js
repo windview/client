@@ -13,7 +13,7 @@ let Alerts = new function() {
         increments: Array of ints
       }
    */
-  this.calculateRampBins = (forecastData) => {
+  this.calculateRampBins = forecastData => {
     forecastData = forecastData.data;
     let rampBins = [];
     // Old school for loop so we can adjust i from within the loop
@@ -33,7 +33,7 @@ let Alerts = new function() {
         // now the sneaky part... hijack the value for i and loop through subsequent
         // timeslices to find each increment and eventualy the end of the ramp event
         let nextTimeslice = forecastData[++i];
-        while(nextTimeslice.ramp) {
+        while(nextTimeslice && nextTimeslice.ramp) {
           // TODO If the ramp changes direction between consecutive slices, treat
           // that as a new rampBin
           rampBin.increments.push(nextTimeslice.forecastMW - timeslice.forecastMW);
@@ -51,10 +51,10 @@ let Alerts = new function() {
   this.detectRampsInForecast = function(timeslices) {
     let previous = timeslices[0],
         r = 5; // ramping threshold
-    timeslices.forEach(function(timeslice, i) {
+    timeslices.forEach((timeslice, i) => {
       const diff = timeslice.forecastMW - previous.forecastMW;
       // if the change in power is greater than r going up or down
-      if(diff >= r || diff <= (r*-1)) {
+      if(Math.abs(diff) >= r) {
         timeslice.ramp = true;
         // two ramps in a row constitute a severe ramping event
         timeslice.rampSeverity = previous.ramp ? 2 : 1;
@@ -63,8 +63,18 @@ let Alerts = new function() {
         previous.ramp = true;
       }
       previous = timeslice;
-    }, this);
+    });
     return timeslices;
+  }
+
+  this.getAlertsForForecast = (forecastData) => {
+    let alerts = {
+      rampStart: this.getFirstRampStart(forecastData),
+      hasRamp: this.hasRamp(forecastData),
+      maxRampSeverity: this.getMaxRampSeverity(forecastData),
+      rampBins: this.calculateRampBins(forecastData)
+    }
+    return alerts;
   }
 
   this.getFirstRamp = (forecastData) => {
