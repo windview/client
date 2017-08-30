@@ -2,23 +2,6 @@
 
 let Config = new function() {
 
-  this._applyTimezoom = (timezoom, data) => {
-    //Calculate data start and data end times
-    let dataStart = data[0].timestamp.getTime(),
-        dataEnd;
-    switch(timezoom) {
-      case '8':
-        dataEnd = dataStart + 1000*60*60*8;
-        break;
-      case '16':
-        dataEnd = dataStart + 1000*60*60*16;
-        break;
-      default:
-        dataEnd = data[data.length-1].timestamp.getTime();
-    }
-    return data.filter(d=>{ return d.timestamp.getTime() <= dataEnd; });
-  }
-  
   this.getQueryParam = (paramName) => {
     let parts = window.location.href.split("?"),
         retval = null;
