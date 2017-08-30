@@ -39,10 +39,28 @@ let Forecast = new function(){
       })
 
       let reducedVals = forecastsAtTime.reduce((accumulator, forecast) => {
-        let dataPoint = forecast.data.find(d => {return d.timestamp.getTime() === ts;})
+        let dataPoint = forecast.data.find(d => {return d.timestamp.getTime() === ts;}),
+            forecastMW = accumulator.forecastMW + dataPoint.forecastMW,
+            actual = undefined;
+
+        if(dataPoint.actual) {
+          if(accumulator.actual) {
+            actual = dataPoint.actual + accumulator.actual;
+          } else {
+            actual = dataPoint.actual;
+          }
+        }
+
+        // actuals may or may not be present
+        // Hack for demo purposes
+        const fakeNow = window.fakeNow;
+        if(fakeNow && ts >= fakeNow) {
+          actual = undefined
+        }
+        // End hack
         return {
-          actual: accumulator.actual + dataPoint.actual,
-          forecastMW: accumulator.forecastMW + dataPoint.forecastMW
+          actual: actual,
+          forecastMW: forecastMW
         };
       }, {actual: 0, forecastMW: 0})
 
