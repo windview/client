@@ -33,7 +33,6 @@ const ChartElement = () => {
   )
 }
 
-
 // This is the main export
 export class AggregatedForecastChart extends React.Component {
 
@@ -41,10 +40,7 @@ export class AggregatedForecastChart extends React.Component {
     let aggData = Forecast.getAggregatedForecast(this.props.forecast)
     const data = this.getChartData(aggData),
           forecast = data[0],
-          range = data[1],
-          twentyFive = data[2],
-          seventyFive = data[3],
-          actuals = data[4],
+          actuals = data[1],
           now = window.fakeNow;
 
     if(this.chart) {
@@ -53,12 +49,16 @@ export class AggregatedForecastChart extends React.Component {
 
     let chart = Highcharts.chart('aggregated-chart', {
       title: {
-        text: ''
+        text: 'Aggregated Forecast for Visible Wind Farms',
+        style: {
+          fontSize: "12px"
+        },
+        margin: 0
       },
       xAxis: {
         type: 'datetime',
         title: {
-          text: 'Timestamp UTC'
+          text: ''
         },
         plotLines: [{
           id: 'now',
@@ -70,6 +70,7 @@ export class AggregatedForecastChart extends React.Component {
         }]
       },
       yAxis: {
+        opposite: true,
         title: {
           text: "Power (MW)"
         }
@@ -80,14 +81,17 @@ export class AggregatedForecastChart extends React.Component {
         valueSuffix: ' MW'
       },
       legend: {
-        enabled: true
+        enabled: false,
+        floating: true,
+        align: 'center',
+        verticalAlign: 'top'
       },
       series: [{
         name: 'Forecast',
         data: forecast,
         zIndex: 4,
-        color: '#fff',
-        lineWidth: 3.5,
+        color: '#062e1a',
+        lineWidth: 2,
         dashStyle: 'Solid',
         marker: {
           lineWidth: 1,
@@ -107,42 +111,13 @@ export class AggregatedForecastChart extends React.Component {
           lineColor: '#fff',
           symbol: "square"
         }
-      }, {
-        name: '25th Percentile',
-        data: twentyFive,
-        color: '#bbb',
-        zIndex: 3,
-        marker: {
-          enabled: false,
-          lineWidth: .2,
-          lineColor: '#fff',
-          symbol: "triangle-down"
-        }
-      }, {
-        name: '75th Percentile',
-        data: seventyFive,
-        color: '#bbb',
-        zIndex: 3,
-        marker: {
-          enabled: false,
-          lineWidth: .2,
-          lineColor: '#fff',
-          symbol: "triangle"
-        }
-      }, {
-        name: 'Range',
-        data: range,
-        type: 'arearange',
-        lineWidth: 0,
-        linkedTo: ':previous',
-        color: '#666',
-        fillOpacity: 1,
-        zIndex: 0,
-        enableMouseTracking: false
-      }]
+      }],
+      credits: {
+        enabled: false
+      }
     });
 
-    const rampBins = this.props.forecast.properties.rampBins;
+    const rampBins = aggData.alerts.rampBins;
     rampBins.forEach((bin)=>{
       const color = bin.increments[bin.increments.length-1] > 0 ? "rgba(205, 186, 45, 0.63)" : "rgba(117, 140, 225, 0.53)",
             borderColor = bin.severity > 1 ? "rgba(255, 0, 0, 0.7" : color;
@@ -204,13 +179,10 @@ export class AggregatedForecastChart extends React.Component {
    * for forecast, arearange, 25th, 75th, and the actuals
    */
   getChartData(featureData) {
-    let retval = [[], [], [], [], []];
+    let retval = [[], []];
     featureData.data.forEach((row)=>{
       retval[0].push([row.timestamp.getTime(), row.forecastMW]);
-      retval[1].push([row.timestamp.getTime(), row.forecast25MW, row.forecast75MW]);
-      retval[2].push([row.timestamp.getTime(), row.forecast25MW]);
-      retval[3].push([row.timestamp.getTime(), row.forecast75MW]);
-      retval[4].push([row.timestamp.getTime(), row.actual]);
+      retval[1].push([row.timestamp.getTime(), row.actual]);
     });
     return retval;
   }

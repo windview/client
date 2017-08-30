@@ -6,6 +6,10 @@
   right: 0px;
   left: 0px;
   height: 130px;
-  padding: 10px;
+  padding: 0px;
   @include linear-gradient(310deg, #E47D7D 0%, #C195D3 30%, #4FB4E8 100%);
+}
+
+#aggregated-chart {
+  height: 130px;
 }
