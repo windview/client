@@ -7,9 +7,22 @@
   left: 0px;
   height: 130px;
   padding: 0px;
-  @include linear-gradient(310deg, #E47D7D 0%, #C195D3 30%, #4FB4E8 100%);
+  border: 1px solid #e2e2e2;
+  border-radius: 3px;
 }
 
 #aggregated-chart {
-  height: 130px;
+  height: 128px;
+}
+
+.bin-up {
+   background-image: url('http://localhost:8088/images/up.svg');
+   background-size: contain;
+   background-repeat: repeat-y;
+}
+
+.bin-down {
+  background-image: url('http://localhost:8088/images/down.svg');
+  background-size: contain;
+  background-repeat: repeat-y;
 }

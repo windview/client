@@ -49,10 +49,11 @@ export class AggregatedForecastChart extends React.Component {
 
     let chart = Highcharts.chart('aggregated-chart', {
       title: {
-        text: 'Aggregated Forecast for Visible Wind Farms',
+        text: 'Aggregated Forecast for Currently Visible Wind Farms',
         style: {
-          fontSize: "12px"
+          fontSize: "13px"
         },
+        align: 'left',
         margin: 0
       },
       xAxis: {
@@ -90,7 +91,7 @@ export class AggregatedForecastChart extends React.Component {
         name: 'Forecast',
         data: forecast,
         zIndex: 4,
-        color: '#062e1a',
+        color: '#000',
         lineWidth: 2,
         dashStyle: 'Solid',
         marker: {
@@ -119,9 +120,18 @@ export class AggregatedForecastChart extends React.Component {
 
     const rampBins = aggData.alerts.rampBins;
     rampBins.forEach((bin)=>{
+      // color depending on wether the ramp is going up or down
       const color = bin.increments[bin.increments.length-1] > 0 ? "rgba(205, 186, 45, 0.63)" : "rgba(117, 140, 225, 0.53)",
+            label =  bin.increments[bin.increments.length-1] > 0 ? '<<<<<<': '>>>>>>',
             borderColor = bin.severity > 1 ? "rgba(255, 0, 0, 0.7" : color;
       chart.xAxis[0].addPlotBand({
+        label: {
+          text: label,
+          rotation: 90,
+          verticalAlign: 'middle',
+          x: -3,
+          y: 2
+        },
         color: color,
         borderColor: borderColor,
         borderWidth: 2,
