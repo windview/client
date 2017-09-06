@@ -24,6 +24,12 @@ export class ChartElement extends React.Component {
     }
 
     let chart = Highcharts.chart('forecast-chart', {
+      chart: {
+        height: 280
+      },
+      credits: {
+        enabled: false
+      },
       title: {
         text: ''
       },
@@ -52,7 +58,9 @@ export class ChartElement extends React.Component {
         valueSuffix: ' MW'
       },
       legend: {
-        enabled: true
+        enabled: true,
+        align: 'center',
+        itemDistance: 10
       },
       series: [{
         name: 'Forecast',
@@ -80,7 +88,7 @@ export class ChartElement extends React.Component {
           symbol: "square"
         }
       }, {
-        name: '25th Percentile',
+        name: '25% Probability',
         data: twentyFive,
         color: '#bbb',
         zIndex: 3,
@@ -91,7 +99,7 @@ export class ChartElement extends React.Component {
           symbol: "triangle-down"
         }
       }, {
-        name: '75th Percentile',
+        name: '75% Probability',
         data: seventyFive,
         color: '#bbb',
         zIndex: 3,
@@ -191,7 +199,7 @@ export class ChartElement extends React.Component {
     const feature = this.props.feature;
     return feature.loading ? <LoadingElement feature={feature} /> : (
       <BaseElement>
-        <div className='chart-title'>Forecast for {feature.properties.label}</div>
+        <div className='chart-title'>Details and Forecast for {feature.properties.label}</div>
         <div id="forecast-chart"></div>
       </BaseElement>
     )
