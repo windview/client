@@ -1,5 +1,4 @@
 import React from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
 import { connect } from 'react-redux';
 import '../../../node_modules/mapbox-gl/dist/mapbox-gl.css';
 import Legend from '../legend/Legend';
@@ -13,79 +12,23 @@ import { mapStateToProps, mapDispatchToProps } from './selectors';
 import WindFarm from '../../data/windFarm';
 import Config from '../../data/config';
 import Forecast from '../../data/forecast';
-import moment from 'moment';
 import * as tlinesStyle from './mapStyles/transmissionLines';
 import * as wfActualStyle from './mapStyles/windFarmActual';
 import * as wfForecastStyle from './mapStyles/windFarmForecast';
 import * as wfRampStyle from './mapStyles/windFarmRamp';
 import * as wfSizeStyle from './mapStyles/windFarmSize';
 import * as openeiFarmStyle from './mapStyles/openeiFarms';
-import commafy from 'commafy';
-
-
-const getFeaturePopupMarkup = (feature) => {
-  let prependRows = [],
-      appendRows = [];
-
-  if(feature.properties.forecastData.alerts.hasRamp) {
-    prependRows = feature.properties.forecastData.alerts.rampBins.map((rampBin) => {
-      const startTime = moment.utc(rampBin.startTime).format('HH:mm UTC'),
-            endTime = moment.utc(rampBin.endTime).format('HH:mm UTC'),
-            severity = rampBin.severity > 1 ? "severe ramp" : "moderate ramp",
-            className = rampBin.severity > 1 ? "severe" : "moderate";
-      return <tr key={rampBin.startTime.getTime()} className={className}><td>RAMP ALERT</td><td className="right">A {severity} event is forecast starting at {startTime} and ending at {endTime}</td></tr>;
-    });
-  }
-
-  if(feature.properties.timestamp) {
-    const displayTime = moment.utc(feature.properties.timestamp).format('HH:mm M/D UTC'),
-          forecastMW = commafy(feature.properties.forecastMW) + " MW",
-          forecast25MW = commafy(feature.properties.forecast25MW) + " MW",
-          forecast75MW = commafy(feature.properties.forecast75MW) + " MW",
-          actual = feature.properties.actual + " MW";
-    appendRows.push(<tr key={feature.properties.fid + "-ts"}><td>Forecast Time</td><td className="right">{displayTime}</td></tr>)
-    appendRows.push(<tr key={feature.properties.fid + "-fcst"}><td>Forecast Power</td><td className="right">{forecastMW}</td></tr>);
-    appendRows.push(<tr key={feature.properties.fid + "-25"}><td>Forecast Power 25th Percentile</td><td className="right">{forecast25MW}</td></tr>);
-    appendRows.push(<tr key={feature.properties.fid + "-75"}><td>Forecast Power 75th Percentile</td><td className="right">{forecast75MW}</td></tr>);
-    if(actual) {
-      appendRows.push(<tr key={feature.properties.fid + "-actl"}><td>Actual Power</td><td className="right">{actual}</td></tr>);
-    }
-  }
-  const html = renderToStaticMarkup(
-    <div>
-      <strong>{feature.properties.label}</strong><br />
-      <table className="map-popup">
-        <tbody>
-        {prependRows}
-        <tr>
-          <td>Total Farm Capacity</td><td className="right">{commafy(feature.properties.total_capacity)} MW</td>
-        </tr><tr>
-          <td>Turbine Manufacturer(s)</td><td className="right">{feature.properties.manufacturers.join(', ')}</td>
-        </tr><tr>
-          <td>Turbine Models</td><td className="right">{feature.properties.models.join(', ')}</td>
-        </tr>
-        {appendRows}
-        </tbody>
-      </table>
-    </div>
-  );
-  return html;
-}
 
 export class Map extends React.Component {
+
+  afterMapRender() {
+    this.onChangeVisibleExtent({type:'manual'});
+    this.whenFeatureClicked(null, this.props.windFarms.features.find(f=>f.properties.fid === 'boulder_nrel_wind'));
+  }
 
   applySelectedFeature(feature, forcePopup) {
     Forecast.setSelectedFeature(feature, this.props.windFarms.features);
     this.bumpMapFarms();
-    if(forcePopup || this.layerPopup) {
-      this.closePopup();
-      let self = this;
-      this.layerPopup = new mapboxgl.Popup()
-        .on('close', ()=>{ self.layerPopup = null; })
-        .setLngLat(feature.geometry.coordinates)
-        .setHTML(getFeaturePopupMarkup(feature))
-        .addTo(this.map);
-    }
   }
 
   // Triggers the MapBox map to redraw the WindFarm features
@@ -359,8 +302,17 @@ export class Map extends React.Component {
       // the moveend event
       map.on('moveend', this.onChangeVisibleExtent)
 
-      // now that layers are added, wait a tic and initialize visible layers state
-      setTimeout((()=>{this.onChangeVisibleExtent({type:'manual'});}).bind(this), 100)
+      // now that layers are added, create and invoke a method for determining
+      // when the map is loaded (all layers rendered) and then do post init
+      // stuff
+      const checkMap = (map)=>{
+        if(!map.loaded()) {
+          setTimeout(()=>{checkMap(map)}, 50)
+        } else {
+          this.afterMapRender();
+        }
+      }
+      checkMap(map);
 
     }.bind(this));
   }
@@ -390,10 +342,12 @@ export class Map extends React.Component {
     }
   }
 
-  whenFeatureClicked(e) {
+  whenFeatureClicked(e, feature) {
     // The click event has a feature wherein the properties have been turned into strings.
     // Need to supply the proper object form so we find it in our local copy of the data
-    const feature = WindFarm.getWindFarmById(e.features[0].properties.fid, this.props.windFarms.features);
+    if(!feature) {
+      feature = WindFarm.getWindFarmById(e.features[0].properties.fid, this.props.windFarms.features);
+    }
     this.applySelectedFeature(feature, true);
     this.props.onSelectFeature(feature);
   }

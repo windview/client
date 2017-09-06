@@ -2,6 +2,7 @@ import React from 'react';
 import NavBar from '../navBar/NavBar';
 import Map from '../map/Map';
 import ForecastChart from '../forecastChart/ForecastChart';
+import FarmDetail from '../farmDetail/FarmDetail';
 import AggregatedForecastChart from '../aggregatedForecastChart/AggregatedForecastChart';
 import Slider from '../slider/Slider';
 import AppSettings from '../appSettings/AppSettings';
@@ -23,6 +24,7 @@ export const App = ({ activePane }) => {
           </section>
           <section id="map-sidebar" className="main-pane-right">
             <ForecastChart />
+            <FarmDetail />
           </section>
           <section id="map-footer" className="main-pane-bottom">
             <Slider />

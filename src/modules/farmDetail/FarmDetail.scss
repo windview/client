@@ -1,0 +1,28 @@
+.map-popup {
+  font-family: consolas;
+  width: 100%;
+  border: 1px solid #e2e2e2;
+  border-radius: 3px;
+
+
+  td {
+    padding-left: 2px;
+    padding-right: 5px;
+    padding-top: 6px;
+    vertical-align: top;
+    border-top: 1px solid #ddd;
+  }
+  .right {
+    text-align: right;
+  }
+  .severe {
+    background-color: red;
+    font-weight: bold;
+    color: #fffac2;
+  }
+  .moderate {
+    background-color: #fffac2;
+    font-weight: bold;
+    color: red;
+  }
+}
