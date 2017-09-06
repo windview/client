@@ -1,10 +1,10 @@
 let API = new function() {
-  // this.apiBaseUrl = process.env.API_URL + "/data";
+
   this.apiBaseUrl = (() => {
     let c = process.env.API_URL,
         r;
     if(c === "//") {
-      r = window.location.href
+      r = window.location.href.split('?')[0]
     } else {
       r = c;
     }

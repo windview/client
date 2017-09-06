@@ -28,9 +28,10 @@ export const fetchForecastRequest = () => ({
   type: t.FETCH_FORECAST_REQUEST
 });
 
-export const fetchForecastSuccess = (data) => ({
+export const fetchForecastSuccess = (data, meta) => ({
   type: t.FETCH_FORECAST_SUCCESS,
-  data: data
+  data: data,
+  meta: meta
 });
 
 export const fetchWindFarmsFail = (error) => ({
@@ -45,6 +46,11 @@ export const fetchWindFarmsRequest = () => ({
 export const fetchWindFarmsSuccess = (data) => ({
   type: t.FETCH_WIND_FARMS_SUCCESS,
   data: data
+});
+
+export const mapMove = (features) => ({
+  type: t.MAP_MOVE,
+  features: features
 });
 
 export const selectFeature = (feature) => ({
@@ -77,9 +83,13 @@ export const fetchForecast = (windFarms) => {
   return function(dispatch) {
     // notify the app that data is loading
     dispatch(fetchForecastRequest());
-    Forecast.getBatchForecast(windFarms.features, 24, () => {
-      dispatch(fetchForecastSuccess(windFarms));
-    }, this);
+    Forecast.fetchBatchForecast(windFarms.features, 24)
+      .then((forecast) => {
+        dispatch(fetchForecastSuccess(forecast.data, forecast.meta));
+      })
+      .catch((error) => {
+        dispatch(fetchForecastFail(error))
+      });
   }
 }
 

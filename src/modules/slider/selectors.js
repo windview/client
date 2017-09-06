@@ -1,4 +1,4 @@
-// map/slider/selectors.js
+// slider/selectors
 
 import * as actions from '../../actionCreators';
 
@@ -7,7 +7,8 @@ export const mapStateToProps = (state, ownProps) => {
     selectedTimestamp: state.analysis.selectedTimestamp,
     timezoom: state.analysis.timezoom,
     windFarms: state.data.windFarms,
-    forecast: state.data.forecast
+    forecast: state.data.forecast,
+    forecastMeta: state.data.forecastMeta
   }
 }
 

@@ -85,9 +85,9 @@ const toggleAnimation = (map, visibility) => {
           if (opacity === 0) {
             radius = initialRadius;
             opacity = initialOpacity;
-          } 
+          }
         }
-      }, 1000 / framesPerSecond); 
+      }, 1000 / framesPerSecond);
     }
 
     // Start the animation.

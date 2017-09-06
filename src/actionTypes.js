@@ -15,6 +15,7 @@ export const FETCH_WIND_FARMS_REQUEST = 'FETCH_WIND_FARMS_REQUEST';
 export const FETCH_WIND_FARMS_SUCCESS = 'FETCH_WIND_FARMS_SUCCESS';
 
 // analysis actions
+export const MAP_MOVE = 'MAP_MOVE';
 export const SELECT_FEATURE = 'SELECT_FEATURE';
 export const SELECT_STYLE = 'SELECT_STYLE';
 export const SELECT_TIME = 'SELECT_TIME';

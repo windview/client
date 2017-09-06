@@ -1,5 +1,3 @@
-// map/slider/Slider.jsx
-
 import React from 'react';
 import '../../../node_modules/nouislider/distribute/nouislider.css';
 import noUiSlider from 'nouislider';
@@ -31,9 +29,9 @@ export class Slider extends React.Component {
     animateMarker.bind(this)(0);
   }
 
-  componentWillReceiveProps(nextProps) {
-    if(this.props.forecast == null && nextProps.forecast !== null) {
-      this.renderSlider(nextProps.forecast);
+  componentDidUpdate(prevProps) {
+    if(prevProps.forecast == null && this.props.forecast !== null) {
+      this.renderSlider(this.props.forecast);
       // Hacky for demo May 5 2017
       this.sliderEl.noUiSlider.set(getSliderDisplayFromValue(window.fakeNow));
       // End hack
@@ -47,45 +45,11 @@ export class Slider extends React.Component {
     this.whenSliderMoved = this.whenSliderMoved.bind(this)
   }
 
-  // The latest timestamp in all the data for all the farms
-  getDataEnd(data, interval) {
-    let ts = 0;
-    data.features.forEach(function(feature){
-      feature.properties.forecastData.data.forEach(function(row) {
-        ts = row.timestamp.getTime() > ts ? row.timestamp.getTime() : ts;
-      });
-    });
-
-    let dataEnd = new Date(ts),
-        minute = dataEnd.getMinutes(),
-        remainder = minute >= interval ? minute%interval : interval-minute;
-    dataEnd.setMinutes(minute+=remainder);
-    dataEnd.setSeconds(0);
-    return dataEnd;
-  }
-
-  // The earliest timestamp in all the data for all the farms
-  getDataStart(data, interval) {
-    let ts = new Date().getTime() + (1000*60*60*24*365); //1 year in the future
-    data.features.forEach(function(feature){
-      feature.properties.forecastData.data.forEach(function(row) {
-        ts = row.timestamp.getTime() < ts ? row.timestamp.getTime() : ts;
-      });
-    });
-
-    let dataStart = new Date(ts),
-        minute = dataStart.getMinutes(),
-        remainder = minute >= interval ? minute%interval : minute;
-    dataStart.setMinutes(minute-=remainder);
-    dataStart.setSeconds(0);
-    return dataStart;
-  }
-
   moveSlider(direction) {
     const sliderObj = this.sliderEl.noUiSlider,
           currentVal = sliderObj.get(),
           timestamp = getSliderValueFromDisplay(currentVal),
-          interval = 1000*60*15,
+          interval = 1000*60*this.props.forecastMeta.interval,
           startTs = sliderObj.options.range.min,
           endTs = sliderObj.options.range.max;
     let   newVal = '';
@@ -122,11 +86,11 @@ export class Slider extends React.Component {
     )
   }
 
-  renderSlider(windFarms) {
+  renderSlider(forecast) {
     const sliderEl = document.getElementById('slider'),
-          interval = this.props.interval,
-          startTime = this.getDataStart(windFarms, interval),
-          endTime = this.getDataEnd(windFarms, interval),
+          interval = this.props.forecastMeta.interval,
+          startTime = this.props.forecastMeta.dataStart,
+          endTime = this.props.forecastMeta.dataEnd,
           stepInterval = (1000*60*interval);
 
     this.sliderEl = sliderEl;
@@ -195,7 +159,6 @@ export class Slider extends React.Component {
 }
 
 Slider.defaultProps = {
-  interval: 15,
   framesPerSecond: 2
 };
 

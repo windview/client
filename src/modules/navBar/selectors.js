@@ -1,4 +1,4 @@
-// navBar/selectors.js
+// navBar/selectors
 
 import { activateView } from '../../actionCreators';
 

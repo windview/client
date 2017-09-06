@@ -32,7 +32,12 @@ const defaultValue = {
 
 export default (state=defaultValue, action) => {
   switch(action.type) {
-    case t.SELECT_FEATURE:
+    case t.MAP_MOVE:
+      return {
+        ...state,
+        visibleWindFarms: action.features
+      };
+     case t.SELECT_FEATURE:
       return {
         ...state,
         selectedFeature: action.feature

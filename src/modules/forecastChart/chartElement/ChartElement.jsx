@@ -114,7 +114,7 @@ export class ChartElement extends React.Component {
       }]
     });
 
-    const rampBins = this.props.feature.properties.rampBins;
+    const rampBins = this.props.feature.properties.forecastData.alerts.rampBins;
     rampBins.forEach((bin)=>{
       const color = bin.increments[bin.increments.length-1] > 0 ? "rgba(205, 186, 45, 0.63)" : "rgba(117, 140, 225, 0.53)",
             borderColor = bin.severity > 1 ? "rgba(255, 0, 0, 0.7" : color;
@@ -171,9 +171,9 @@ export class ChartElement extends React.Component {
     }
   }
 
-  /* 
+  /*
    * Formats the data for Highcharts. Creates 5 arrays, one each
-   * for forecast, arearange, 25th, 75th, and the actuals 
+   * for forecast, arearange, 25th, 75th, and the actuals
    */
   getChartData(featureData) {
     let retval = [[], [], [], [], []];

@@ -1,4 +1,4 @@
-// map/selectors.js
+// map/selectors
 
 import * as actions from '../../actionCreators';
 
@@ -24,6 +24,9 @@ export const mapDispatchToProps = (dispatch) => {
     },
     onBumpForecast: (data) => {
       dispatch(actions.fetchForecastSuccess(data));
+    },
+    onMapMove: (features) => {
+      dispatch(actions.mapMove(features));
     },
     onSelectFeature: (feature) => {
       dispatch(actions.selectFeature(feature));

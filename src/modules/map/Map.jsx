@@ -19,6 +19,7 @@ import * as wfActualStyle from './mapStyles/windFarmActual';
 import * as wfForecastStyle from './mapStyles/windFarmForecast';
 import * as wfRampStyle from './mapStyles/windFarmRamp';
 import * as wfSizeStyle from './mapStyles/windFarmSize';
+import * as openeiFarmStyle from './mapStyles/openeiFarms';
 import commafy from 'commafy';
 
 
@@ -26,8 +27,8 @@ const getFeaturePopupMarkup = (feature) => {
   let prependRows = [],
       appendRows = [];
 
-  if(feature.properties.hasRamp) {
-    prependRows = feature.properties.rampBins.map((rampBin) => {
+  if(feature.properties.forecastData.alerts.hasRamp) {
+    prependRows = feature.properties.forecastData.alerts.rampBins.map((rampBin) => {
       const startTime = moment.utc(rampBin.startTime).format('HH:mm UTC'),
             endTime = moment.utc(rampBin.endTime).format('HH:mm UTC'),
             severity = rampBin.severity > 1 ? "severe ramp" : "moderate ramp",
@@ -152,11 +153,37 @@ export class Map extends React.Component {
 
   constructor(props) {
     super(props);
+    this.onChangeVisibleExtent = this.onChangeVisibleExtent.bind(this);
     this.whenFeatureClicked = this.whenFeatureClicked.bind(this);
     this.whenFeatureMouseOver = this.whenFeatureMouseOver.bind(this);
     this.whenFeatureMouseOut = this.whenFeatureMouseOut.bind(this);
     this.whenStyleChecked = this.whenStyleChecked.bind(this);
     this.whenTimezoomChanged = this.whenTimezoomChanged.bind(this);
+  }
+
+  getUniqueFeatures(array, comparatorProperty) {
+    var existingFeatureKeys = {};
+    // Because features come from tiled vector data, feature geometries may be split
+    // or duplicated across tile boundaries and, as a result, features may appear
+    // multiple times in query results.
+    var uniqueFeatures = array.filter(function(el) {
+        if (existingFeatureKeys[el.properties[comparatorProperty]]) {
+          return false;
+        } else {
+          existingFeatureKeys[el.properties[comparatorProperty]] = true;
+          return true;
+        }
+    });
+
+    return uniqueFeatures;
+  }
+
+  onChangeVisibleExtent(e) {
+    let features = this.map.queryRenderedFeatures({layers:['windfarms-symbol', 'windfarms-selected-symbol', 'windfarms-disabled-symbol']});
+    if (features) {
+      let uniqueFeatures = this.getUniqueFeatures(features, "fid");
+      this.props.onMapMove(uniqueFeatures)
+    }
   }
 
   render() {
@@ -225,6 +252,12 @@ export class Map extends React.Component {
           type: "vector",
           url: process.env.TILE_SERVER_URL + "/osm-translines/metadata.json"
       });
+      // Add OpenEI wind farm points
+      map.addSource('openei-farms', {
+        type: "vector",
+        url: process.env.TILE_SERVER_URL + "/openei-farms/metadata.json"
+      });
+
 
       // TODO move app alerting to own module
       if(!this.props.windFarms) {
@@ -243,10 +276,12 @@ export class Map extends React.Component {
       wfSizeStyle.initializeStyle(map, 'windfarms');
       wfForecastStyle.initializeStyle(map, 'windfarms');
       wfRampStyle.initializeStyle(map, 'windfarms');
+      openeiFarmStyle.initializeStyle(map, 'openei-farms');
 
       // Show these layers
       this.toggleStyle('tlines');
       this.toggleStyle(this.props.selectedStyle);
+      this.toggleStyle('openei-farms');
 
       // The icon layer is always present, and needs to be for all the
       // event handlers so add it outside of the specific styles above
@@ -270,7 +305,7 @@ export class Map extends React.Component {
         }
       });
 
-      // Thisicon layer shows a different icon for the selected farm
+      // This icon layer shows a different icon for the selected farm
       map.addLayer({
         id: 'windfarms-selected-symbol',
         type: 'symbol',
@@ -291,7 +326,7 @@ export class Map extends React.Component {
         }
       });
 
-      // Thisicon layer shows a different icon for the selected farm
+      // This icon layer shows a different icon for the selected farm
       map.addLayer({
         id: 'windfarms-disabled-symbol',
         type: 'symbol',
@@ -308,6 +343,9 @@ export class Map extends React.Component {
         }
       });
 
+      // now that layers are added, initialize visible layers state
+      this.onChangeVisibleExtent({type:'manual'});
+
       // Handle the relevant events on the windfarms layer
       map.on('click', 'windfarms-symbol', this.whenFeatureClicked);
       map.on('click', 'windfarms-selected-symbol', this.whenFeatureClicked);
@@ -320,6 +358,9 @@ export class Map extends React.Component {
       map.on('mouseleave', 'windfarms-symbol', this.whenFeatureMouseOut);
       map.on('mouseleave', 'windfarms-selected-symbol', this.whenFeatureMouseOut);
 
+      // All the events that might change the visible extent are encapsulated in
+      // the moveend event
+      map.on('moveend', this.onChangeVisibleExtent)
     }.bind(this));
   }
 
@@ -339,6 +380,9 @@ export class Map extends React.Component {
         break;
       case "tlines":
         tlinesStyle.toggleVisibility(this.map);
+        break;
+      case "openei-farms":
+        openeiFarmStyle.toggleVisibility(this.map);
         break;
       default:
         break;
