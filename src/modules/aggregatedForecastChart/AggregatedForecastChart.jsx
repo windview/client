@@ -37,7 +37,9 @@ const ChartElement = () => {
 export class AggregatedForecastChart extends React.Component {
 
   chartIt() {
-    let aggData = Forecast.getAggregatedForecast(this.props.forecast)
+    let aggData = Forecast.getAggregatedForecast(this.getForecasts())
+    if(!aggData) return;
+
     const data = this.getChartData(aggData),
           forecast = data[0],
           actuals = data[1],
@@ -145,7 +147,7 @@ export class AggregatedForecastChart extends React.Component {
   }
 
   componentDidMount() {
-    if(this.props.forecast) {
+    if(this.props.visibleWindFarms && this.props.forecast) {
       this.chartIt();
       if(this.props.selectedTimestamp) {
         this.drawPlotLine(this.props.selectedTimestamp);
@@ -155,18 +157,18 @@ export class AggregatedForecastChart extends React.Component {
 
   componentDidUpdate(prevProps) {
     if(this.props.forecast) {
-      if(prevProps.forecast) {
-        // if the current forecast is not the same as the previous forecast
-        if(this.props.forecast !== prevProps.forecast) {
+      if(this.props.visibleWindFarms) {
+        if(prevProps.visibleWindFarms) {
+          if(this.farmsHaveChanged(prevProps.visibleWindFarms, this.props.visibleWindFarms)) {
+            this.chartIt();
+          }
+        } else {
           this.chartIt();
         }
-      } else {
-        // there was no forecast previously
-        this.chartIt();
       }
-    }
-    if(this.props.selectedTimestamp) {
-      this.drawPlotLine(this.props.selectedTimestamp);
+      if(this.props.selectedTimestamp && this.chart) {
+        this.drawPlotLine(this.props.selectedTimestamp);
+      }
     }
   }
 
@@ -184,6 +186,22 @@ export class AggregatedForecastChart extends React.Component {
     }
   }
 
+  farmsHaveChanged(prev, current) {
+    let prevFids = prev.map(i=>i.properties.fid),
+        currentFids = current.map(i=>i.properties.fid);
+
+    // Super simple check may bypass the need for doing any introspection
+    if(prevFids.length !== currentFids.length) {
+      return true;
+    } else {
+      // here we know the sets are the same length, and we don't care about
+      // the details of the diff only that there is a diff, so a simple one-way
+      // id check is sufficient
+      const leftovers = currentFids.filter( fid=>!prevFids.includes(fid) )
+      return leftovers.length > 0
+    }
+  }
+
   /*
    * Formats the data for Highcharts. Creates 5 arrays, one each
    * for forecast, arearange, 25th, 75th, and the actuals
@@ -195,6 +213,16 @@ export class AggregatedForecastChart extends React.Component {
       retval[1].push([row.timestamp.getTime(), row.actual]);
     });
     return retval;
+  }
+
+  getForecasts() {
+    let retval = [];
+    if(this.props.visibleWindFarms) {
+      this.props.visibleWindFarms.forEach(farm=>{
+        retval.push(Forecast.getForecastForFarm(farm.properties.fid, this.props.forecast));
+      })
+    }
+    return retval.filter(r=>r); // filter out falsy values
   }
 
   render() {

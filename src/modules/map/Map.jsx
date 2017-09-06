@@ -153,11 +153,37 @@ export class Map extends React.Component {
 
   constructor(props) {
     super(props);
+    this.onChangeVisibleExtent = this.onChangeVisibleExtent.bind(this);
     this.whenFeatureClicked = this.whenFeatureClicked.bind(this);
     this.whenFeatureMouseOver = this.whenFeatureMouseOver.bind(this);
     this.whenFeatureMouseOut = this.whenFeatureMouseOut.bind(this);
     this.whenStyleChecked = this.whenStyleChecked.bind(this);
     this.whenTimezoomChanged = this.whenTimezoomChanged.bind(this);
+  }
+
+  getUniqueFeatures(array, comparatorProperty) {
+    var existingFeatureKeys = {};
+    // Because features come from tiled vector data, feature geometries may be split
+    // or duplicated across tile boundaries and, as a result, features may appear
+    // multiple times in query results.
+    var uniqueFeatures = array.filter(function(el) {
+        if (existingFeatureKeys[el.properties[comparatorProperty]]) {
+          return false;
+        } else {
+          existingFeatureKeys[el.properties[comparatorProperty]] = true;
+          return true;
+        }
+    });
+
+    return uniqueFeatures;
+  }
+
+  onChangeVisibleExtent(e) {
+    let features = this.map.queryRenderedFeatures({layers:['windfarms-symbol', 'windfarms-selected-symbol', 'windfarms-disabled-symbol']});
+    if (features) {
+      let uniqueFeatures = this.getUniqueFeatures(features, "fid");
+      this.props.onMapMove(uniqueFeatures)
+    }
   }
 
   render() {
@@ -317,6 +343,9 @@ export class Map extends React.Component {
         }
       });
 
+      // now that layers are added, initialize visible layers state
+      this.onChangeVisibleExtent({type:'manual'});
+
       // Handle the relevant events on the windfarms layer
       map.on('click', 'windfarms-symbol', this.whenFeatureClicked);
       map.on('click', 'windfarms-selected-symbol', this.whenFeatureClicked);
@@ -329,6 +358,9 @@ export class Map extends React.Component {
       map.on('mouseleave', 'windfarms-symbol', this.whenFeatureMouseOut);
       map.on('mouseleave', 'windfarms-selected-symbol', this.whenFeatureMouseOut);
 
+      // All the events that might change the visible extent are encapsulated in
+      // the moveend event
+      map.on('moveend', this.onChangeVisibleExtent)
     }.bind(this));
   }
 

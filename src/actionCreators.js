@@ -48,6 +48,11 @@ export const fetchWindFarmsSuccess = (data) => ({
   data: data
 });
 
+export const mapMove = (features) => ({
+  type: t.MAP_MOVE,
+  features: features
+});
+
 export const selectFeature = (feature) => ({
   type: t.SELECT_FEATURE,
   feature: feature
@@ -78,7 +83,7 @@ export const fetchForecast = (windFarms) => {
   return function(dispatch) {
     // notify the app that data is loading
     dispatch(fetchForecastRequest());
-    Forecast.getBatchForecast(windFarms.features, 24)
+    Forecast.fetchBatchForecast(windFarms.features, 24)
       .then((forecast) => {
         dispatch(fetchForecastSuccess(forecast.data, forecast.meta));
       })

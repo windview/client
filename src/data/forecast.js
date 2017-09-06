@@ -22,6 +22,8 @@ let Forecast = new function(){
     */
   this.getAggregatedForecast = forecasts => {
 
+    if(!forecasts || forecasts.length === 0) return null;
+
     let masterTimeline = this._getMasterTimeline(forecasts),
         forecastCount = forecasts.length,
         forecastsAtTime = [],
@@ -94,14 +96,14 @@ let Forecast = new function(){
     * @return a JS Promise that will fulfill when all forecasts for all farms
     * are fetch-resolved
     */
-  this.getBatchForecast = function(windFarms, timezoom) {
+  this.fetchBatchForecast = function(windFarms, timezoom) {
     let queueCount = windFarms.length,
         _self = this;
 
     return new Promise((resolve, reject) => {
       let forecasts = []
       windFarms.forEach((farm) => {
-        _self.getForecast(farm, timezoom)
+        _self.fetchForecast(farm, timezoom)
           .then((forecast) => {
             forecasts.push(forecast)
           })
@@ -121,6 +123,36 @@ let Forecast = new function(){
           })
       });
     });
+  }
+
+  /** Loads the forecast for a given farm out to a given range (timezoom) and
+    * post processes that data to detect alerts and other items of note.
+    *
+    * @return a fetch promise
+    */
+  this.fetchForecast = (farm, timezoom) => {
+    return API.goFetch(`${farm.properties.fid}.json`)
+      .then(
+        response => {
+          if(response.ok) {
+            return response.json();
+          } else {
+            throw("Error fetching forecast for", farm.properties.fid);
+          }
+        }
+      )
+      .then(
+        data => {
+          const forecastData = this._postProcessForecastData(data, timezoom);
+          farm.properties.forecastData = forecastData;
+          // A limitation of MapboxGL is that it doesn't support nested properties
+          // in styles, so we have to promote any prop used in a style to the top
+          // TODO format the data for the map in the map instead of forcing
+          // a substandard data format onto the state like this
+          farm.properties.maxRampSeverity = forecastData.alerts.maxRampSeverity;
+          return forecastData;
+        }
+      )
   }
 
   // The latest timestamp in all the data for all the farms
@@ -157,34 +189,12 @@ let Forecast = new function(){
     return dataStart;
   }
 
-  /** Loads the forecast for a given farm out to a given range (timezoom) and
-    * post processes that data to detect alerts and other items of note.
-    *
-    * @return a fetch promise
-    */
-  this.getForecast = (farm, timezoom) => {
-    return API.goFetch(`${farm.properties.fid}.json`)
-      .then(
-        response => {
-          if(response.ok) {
-            return response.json();
-          } else {
-            throw("Error fetching forecast for", farm.properties.fid);
-          }
-        }
-      )
-      .then(
-        data => {
-          const forecastData = this._postProcessForecastData(data, timezoom);
-          farm.properties.forecastData = forecastData;
-          // A limitation of MapboxGL is that it doesn't support nested properties
-          // in styles, so we have to promote any prop used in a style to the top
-          // TODO format the data for the map in the map instead of forcing
-          // a substandard data format onto the state like this
-          farm.properties.maxRampSeverity = forecastData.alerts.maxRampSeverity;
-          return forecastData;
-        }
-      )
+  this.getForecastForFarm = (fid, forecasts) => {
+    let retval = null;
+    if( fid && forecasts && forecasts.length > 0) {
+      retval = forecasts.find(fc=>fc.meta.farm_uuid === fid)
+    }
+    return retval || null;
   }
 
   /* Set the currentForecast property of each provided farm to the value at
