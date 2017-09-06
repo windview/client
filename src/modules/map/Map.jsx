@@ -298,7 +298,10 @@ export class Map extends React.Component {
       map.on('moveend', this.onChangeVisibleExtent)
 
       // now that layers are added, wait a tic and initialize visible layers state
-      setTimeout(()=>{this.onChangeVisibleExtent({type:'manual'});}, 100)
+      setTimeout(()=>{
+        this.onChangeVisibleExtent({type:'manual'});
+        this.whenFeatureClicked(null, this.props.windFarms.features[0]);
+      }, 100)
 
     }.bind(this));
   }
@@ -328,10 +331,12 @@ export class Map extends React.Component {
     }
   }
 
-  whenFeatureClicked(e) {
+  whenFeatureClicked(e, feature) {
     // The click event has a feature wherein the properties have been turned into strings.
     // Need to supply the proper object form so we find it in our local copy of the data
-    const feature = WindFarm.getWindFarmById(e.features[0].properties.fid, this.props.windFarms.features);
+    if(!feature) {
+      feature = WindFarm.getWindFarmById(e.features[0].properties.fid, this.props.windFarms.features);
+    }
     this.applySelectedFeature(feature, true);
     this.props.onSelectFeature(feature);
   }
