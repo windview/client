@@ -343,9 +343,6 @@ export class Map extends React.Component {
         }
       });
 
-      // now that layers are added, initialize visible layers state
-      this.onChangeVisibleExtent({type:'manual'});
-
       // Handle the relevant events on the windfarms layer
       map.on('click', 'windfarms-symbol', this.whenFeatureClicked);
       map.on('click', 'windfarms-selected-symbol', this.whenFeatureClicked);
@@ -361,6 +358,10 @@ export class Map extends React.Component {
       // All the events that might change the visible extent are encapsulated in
       // the moveend event
       map.on('moveend', this.onChangeVisibleExtent)
+
+      // now that layers are added, wait a tic and initialize visible layers state
+      setTimeout((()=>{this.onChangeVisibleExtent({type:'manual'});}).bind(this), 100)
+
     }.bind(this));
   }
 
