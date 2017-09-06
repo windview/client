@@ -13,7 +13,7 @@ import thunkMiddleware from 'redux-thunk';
 import {createLogger} from 'redux-logger';
 
 let middlewares = [thunkMiddleware];
-if(process.env.LOG_ACTIONS) {
+if(process.env.LOG_ACTIONS === 'true') {
   middlewares.push(createLogger());
 }
 

@@ -4,8 +4,7 @@
 var REACT_APP = /^REACT_APP_/i;
 
 function getClientEnvironment(publicUrl) {
-  var processEnv = Object
-    .keys(process.env)
+  var processEnv = Object.keys(process.env)
     // this line strips out all process.env values that dont' begin with REACT_APP
     // not a big fan of this, so get rid of it unless it becomes necessary later
     //.filter(key => REACT_APP.test(key))
@@ -15,14 +14,15 @@ function getClientEnvironment(publicUrl) {
     }, {
       // Useful for determining whether we’re running in production mode.
       // Most importantly, it switches React into the correct mode.
-      'NODE_ENV': JSON.stringify(
-        process.env.NODE_ENV || 'development'
-      ),
+      'NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
       // Useful for resolving the correct path to static assets in `public`.
       // For example, <img src={process.env.PUBLIC_URL + '/img/logo.png'} />.
       // This should only be used as an escape hatch. Normally you would put
       // images into the `src` and `import` them in code to get their paths.
-      'PUBLIC_URL': JSON.stringify(publicUrl)
+      'PUBLIC_URL': JSON.stringify(publicUrl),
+      // Apply some app defaults for when .env is not present
+      'API_URL': JSON.stringify(process.env.API_URL || '//'),
+      'TILE_SERVER_URL': JSON.stringify(process.env.TILE_SERVER_URL || 'http://maps-stage-api.nrel.gov/windview-tiles'
     });
   return {'process.env': processEnv};
 }

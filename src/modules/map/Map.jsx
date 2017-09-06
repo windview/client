@@ -21,6 +21,11 @@ import * as openeiFarmStyle from './mapStyles/openeiFarms';
 
 export class Map extends React.Component {
 
+  afterMapRender() {
+    this.onChangeVisibleExtent({type:'manual'});
+    this.whenFeatureClicked(null, this.props.windFarms.features.find(f=>f.properties.fid === 'boulder_nrel_wind'));
+  }
+
   applySelectedFeature(feature, forcePopup) {
     Forecast.setSelectedFeature(feature, this.props.windFarms.features);
     this.bumpMapFarms();
@@ -297,11 +302,17 @@ export class Map extends React.Component {
       // the moveend event
       map.on('moveend', this.onChangeVisibleExtent)
 
-      // now that layers are added, wait a tic and initialize visible layers state
-      setTimeout(()=>{
-        this.onChangeVisibleExtent({type:'manual'});
-        this.whenFeatureClicked(null, this.props.windFarms.features[0]);
-      }, 100)
+      // now that layers are added, create and invoke a method for determining
+      // when the map is loaded (all layers rendered) and then do post init
+      // stuff
+      const checkMap = (map)=>{
+        if(!map.loaded()) {
+          setTimeout(()=>{checkMap(map)}, 50)
+        } else {
+          this.afterMapRender();
+        }
+      }
+      checkMap(map);
 
     }.bind(this));
   }
