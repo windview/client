@@ -22,7 +22,7 @@ function getClientEnvironment(publicUrl) {
       'PUBLIC_URL': JSON.stringify(publicUrl),
       // Apply some app defaults for when .env is not present
       'API_URL': JSON.stringify(process.env.API_URL || '//'),
-      'TILE_SERVER_URL': JSON.stringify(process.env.TILE_SERVER_URL || 'http://maps-stage-api.nrel.gov/windview-tiles'
+      'TILE_SERVER_URL': JSON.stringify(process.env.TILE_SERVER_URL || 'http://maps-stage-api.nrel.gov/windview-tiles')
     });
   return {'process.env': processEnv};
 }
