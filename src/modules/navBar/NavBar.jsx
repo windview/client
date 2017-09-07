@@ -6,18 +6,19 @@ import { connect } from 'react-redux';
 export const NavBar = ({activePane, onClick, appTitle, buttons}) => {
 
   const modelOptions = [
-    { value: 'one', label: 'Forecast One'},
-    { value: 'local', label: 'Local Forecast'}
+    { value: 'best', label: 'Best/Most Recent'},
+    { value: 'one', label: 'Forecaster 1'},
+    { value: 'local', label: 'Forecaster 2'}
   ];
 
-  const modelOptionElements = modelOptions.map((option) => 
+  const modelOptionElements = modelOptions.map((option) =>
     <option key={option.value} value={option.value}>{option.label}</option>
-  ); 
+  );
 
-  const buttonElements = buttons.map((btn) => 
+  const buttonElements = buttons.map((btn) =>
     <li key={btn.id}><a href="#" key={btn.id} id={btn.id} onClick={e => {e.preventDefault(); onClick(btn.id);}}><i className={"fa " + btn.class + " fa-2x"} aria-hidden="true"></i><p>{btn.name}</p></a></li>
   );
-  
+
   return (
      <nav id="app-navbar" className="navbar navbar-inverse">
       <div className="container-fluid">
@@ -32,13 +33,13 @@ export const NavBar = ({activePane, onClick, appTitle, buttons}) => {
           </div>
           <div className="collapse navbar-collapse" id="#wv-navbar-collapse-1">
               <ul className="nav navbar-nav">
-                {buttonElements}    
+                {buttonElements}
                 <li key="forecastModel">
                   <p className="selectbox">Active Forecast Model</p>
                   <select>
                     {modelOptionElements}
                   </select>
-                </li>       
+                </li>
               </ul>
           </div>
       </div>
