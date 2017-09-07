@@ -100,6 +100,7 @@ export class AggregatedForecastChart extends React.Component {
         lineWidth: 2,
         dashStyle: 'Solid',
         marker: {
+          enabled: false,
           lineWidth: 1,
           lineColor: '#699173',
           symbol: "circle"
