@@ -1,5 +1,9 @@
 @import './layout.scss';
 
+body {
+  background-color: $app-background;
+}
+
 .main-content-container {
   // this positioning forces the content container to fill the available space
   // which is necessary for rendering the map

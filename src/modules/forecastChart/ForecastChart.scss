@@ -1,3 +1,5 @@
+@import '../app/layout.scss';
+
 #chart-wrapper {
   padding: 10px;
 }
@@ -10,7 +12,7 @@
 }
 
 .chart-wrapper {
-  background: #fff;
+  background: $component-background;
   border: 1px solid #e2e2e2;
   border-radius: 3px;
   margin-bottom: 5px;
