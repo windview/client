@@ -8,6 +8,74 @@ let Forecast = new function(){
   this.forecastInterval = 15
 
   /**
+    * Loads forecast for all of the farms. Take note! When a single farm
+    * fetch job encounters errors this method keeps chugging through the
+    * list leaving that farm in place with no forecast. Checking for fetch
+    * errors across all farms is not done here!
+    *
+    * @return a JS Promise that will fulfill when all forecasts for all farms
+    * are fetch-resolved
+    */
+  this.fetchBatchForecast = function(windFarms, timezoom) {
+    let queueCount = windFarms.length,
+        _self = this;
+
+    return new Promise((resolve, reject) => {
+      let forecasts = []
+      windFarms.forEach((farm) => {
+        _self.fetchForecast(farm, timezoom)
+          .then((forecast) => {
+            forecasts.push(forecast)
+          })
+          .catch(error => {
+            console.log(error);
+            farm.properties.disabled = true;
+          })
+          .then(() => {
+            if(--queueCount === 0) {
+              forecasts = _self._coerceForecastsToTimeline(forecasts);
+              let meta = _self._getBatchForecastMeta(forecasts);
+              resolve({
+                data: forecasts,
+                meta: meta
+              });
+            }
+          })
+      });
+    });
+  }
+
+  /** Loads the forecast for a given farm out to a given range (timezoom) and
+    * post processes that data to detect alerts and other items of note.
+    *
+    * @return a fetch promise
+    */
+  this.fetchForecast = (farm, timezoom) => {
+    return API.goFetch(`${farm.properties.fid}.json`)
+      .then(
+        response => {
+          if(response.ok) {
+            return response.json();
+          } else {
+            throw("Error fetching forecast for", farm.properties.fid);
+          }
+        }
+      )
+      .then(
+        data => {
+          const forecastData = this._postProcessForecastData(data, timezoom);
+          farm.properties.forecastData = forecastData;
+          // A limitation of MapboxGL is that it doesn't support nested properties
+          // in styles, so we have to promote any prop used in a style to the top
+          // TODO format the data for the map in the map instead of forcing
+          // a substandard data format onto the state like this
+          farm.properties.maxRampSeverity = forecastData.alerts.maxRampSeverity;
+          return forecastData;
+        }
+      )
+  }
+
+  /**
     * Calculates an aggregated forecast for all of the wind farms
     * provided using their previously loaded forecast values. The
     * result is an array with a forecast for each available time slice.
@@ -85,74 +153,6 @@ let Forecast = new function(){
     aggregatedForecast.alerts = Alerts.getAlertsForForecast(aggregatedForecast);
 
     return aggregatedForecast;
-  }
-
-  /**
-    * Loads forecast for all of the farms. Take note! When a single farm
-    * fetch job encounters errors this method keeps chugging through the
-    * list leaving that farm in place with no forecast. Checking for fetch
-    * errors across all farms is not done here!
-    *
-    * @return a JS Promise that will fulfill when all forecasts for all farms
-    * are fetch-resolved
-    */
-  this.fetchBatchForecast = function(windFarms, timezoom) {
-    let queueCount = windFarms.length,
-        _self = this;
-
-    return new Promise((resolve, reject) => {
-      let forecasts = []
-      windFarms.forEach((farm) => {
-        _self.fetchForecast(farm, timezoom)
-          .then((forecast) => {
-            forecasts.push(forecast)
-          })
-          .catch(error => {
-            console.log(error);
-            farm.properties.disabled = true;
-          })
-          .then(() => {
-            if(--queueCount === 0) {
-              forecasts = _self._coerceForecastsToTimeline(forecasts);
-              let meta = _self._getBatchForecastMeta(forecasts);
-              resolve({
-                data: forecasts,
-                meta: meta
-              });
-            }
-          })
-      });
-    });
-  }
-
-  /** Loads the forecast for a given farm out to a given range (timezoom) and
-    * post processes that data to detect alerts and other items of note.
-    *
-    * @return a fetch promise
-    */
-  this.fetchForecast = (farm, timezoom) => {
-    return API.goFetch(`${farm.properties.fid}.json`)
-      .then(
-        response => {
-          if(response.ok) {
-            return response.json();
-          } else {
-            throw("Error fetching forecast for", farm.properties.fid);
-          }
-        }
-      )
-      .then(
-        data => {
-          const forecastData = this._postProcessForecastData(data, timezoom);
-          farm.properties.forecastData = forecastData;
-          // A limitation of MapboxGL is that it doesn't support nested properties
-          // in styles, so we have to promote any prop used in a style to the top
-          // TODO format the data for the map in the map instead of forcing
-          // a substandard data format onto the state like this
-          farm.properties.maxRampSeverity = forecastData.alerts.maxRampSeverity;
-          return forecastData;
-        }
-      )
   }
 
   // The latest timestamp in all the data for all the farms
