@@ -1,8 +1,8 @@
 import 'babel-polyfill';
-import './styles/main.scss';
 import '../node_modules/bootstrap/dist/css/bootstrap.css';
 import '../node_modules/bootstrap/dist/js/bootstrap.js';
 import '../node_modules/font-awesome/css/font-awesome.css';
+import './styles/main.scss';
 import React from 'react';
 import { render } from 'react-dom';
 import App from './modules/app/App';
