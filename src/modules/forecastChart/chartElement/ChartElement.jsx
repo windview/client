@@ -200,7 +200,6 @@ export class ChartElement extends React.Component {
     const feature = this.props.feature;
     return feature.loading ? <LoadingElement feature={feature} /> : (
       <BaseElement>
-        <div className='chart-title'>Details and Forecast for {feature.properties.label}</div>
         <div id="forecast-chart"></div>
       </BaseElement>
     )

@@ -18,6 +18,17 @@ body {
     position: absolute;
     right: $spacer;
     width: $sidebar-width;
+
+    .detail-title {
+      color: #525252;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 5px 0px 4px 5px;
+      background-color: $component-background;
+      margin-bottom: $spacer;
+      border: 1px solid #e2e2e2;
+      border-radius: 3px;
+    }
   }
 
   .main-pane-left {
