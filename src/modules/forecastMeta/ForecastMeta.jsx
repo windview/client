@@ -8,23 +8,29 @@ import './ForecastMeta.scss';
 
 export class ForecastMeta extends React.Component {
 
-  getDetailMarkup() {
-    const farm = this.props.selectedFeature,
-          forecast = this.props.forecast,
-          selectedForecast = Forecast.getForecastForFarm(farm.properties.fid, forecast),
-          runtime = moment.utc(selectedForecast.job_completed_at).format('HH:mm M/D UTC'),
-          model = selectedForecast.model_name,
-          horizon = selectedForecast.forecast_horizon_minutes;
+  getDetailMarkup(selectedForecast) {
+    const runtime = moment.utc(selectedForecast.meta.job_completed_at).format('HH:mm M/D UTC'),
+          model = selectedForecast.meta.model_name,
+          horizon = selectedForecast.meta.forecast_horizon_minutes;
+
+    console.log(selectedForecast)
 
     const el = (
-      <div id="forecast-meta">
+      <div id="forecast-meta" className="forecast-meta">
         <table>
           <tbody>
-          <tr>
-            <td>Model Name</td><td className="right">{model}</td>
-            <td>Forecast Generated</td><td className="right">{runtime}</td>
-            <td>Forecast Horizon</td><td className="right">{horizon}</td>
-          </tr>
+            <tr>
+              <th>Forecaster Model Details</th><th></th>
+            </tr>
+            <tr>
+              <td>Model Name:</td><td className="right">{model}</td>
+            </tr>
+            <tr>
+              <td>Forecast Generated:</td><td className="right">{runtime}</td>
+            </tr>
+            <tr>
+              <td>Forecast Horizon:</td><td className="right">{horizon}</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -33,9 +39,13 @@ export class ForecastMeta extends React.Component {
   }
 
   getSelectedForecast() {
-    const farm = this.props.selectedFeature,
-          forecast = this.props.forecast;
-    return Forecast.getForecastForFarm(farm.properties.fid, forecast);
+    let farm = this.props.selectedFeature,
+        forecast = this.props.forecast,
+        selectedForecast = null;
+    if(farm && forecast) {
+      selectedForecast = Forecast.getForecastForFarm(farm.properties.fid, forecast);
+    }
+    return selectedForecast;
   }
 
   render() {

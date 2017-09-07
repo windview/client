@@ -1,9 +1,12 @@
 .map-popup {
-  font-family: consolas;
+  font-size: 12px;
   width: 100%;
   border: 1px solid #e2e2e2;
   border-radius: 3px;
 
+  table {
+    width: 100%;
+  }
 
   td {
     padding-left: 2px;
