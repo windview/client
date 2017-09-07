@@ -13,30 +13,29 @@
   background: #fff;
   border: 1px solid #e2e2e2;
   border-radius: 3px;
-  margin-bottom: 10px;
-}
+  margin-bottom: 5px;
 
-.chart-wrapper .chart-title {
-  color: #525252;
-  font-size: 16px;
-  font-weight: 800;
-  padding: 7px 10px 4px;
-}
+  .chart-title {
+    color: #525252;
+    font-size: 14px;
+    font-weight: 800;
+    padding: 0px 10px 4px;
+  }
 
-.chart-wrapper .chart-stage {
-  overflow: hidden;
-  padding: 5px 10px;
-  position: relative;
-}
+  .chart-stage {
+    overflow: hidden;
+    padding: 5px 10px;
+    position: relative;
+  }
 
-.chart-wrapper .chart-notes {
-  background: #fbfbfb;
-  border-top: 1px solid #e2e2e2;
-  color: #808080;
-  font-size: 12px;
-  padding: 8px 10px 5px;
+  .chart-notes {
+    background: #fbfbfb;
+    border-top: 1px solid #e2e2e2;
+    color: #808080;
+    font-size: 12px;
+    padding: 8px 10px 5px;
+  }
 }
-
 .chart-loader {
   margin: auto;
   text-align: center;

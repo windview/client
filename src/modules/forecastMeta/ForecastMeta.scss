@@ -1,12 +1,17 @@
-.map-popup {
+.forecast-meta {
   font-size: 12px;
   width: 100%;
   border: 1px solid #e2e2e2;
   border-radius: 3px;
+  margin-top: 10px;
   background-color: #fff;
 
   table {
     width: 100%;
+  }
+
+  th {
+    padding: 4px 0px 1px 2px;
   }
 
   td {
@@ -18,15 +23,5 @@
   }
   .right {
     text-align: right;
-  }
-  .severe {
-    background-color: red;
-    font-weight: bold;
-    color: #fffac2;
-  }
-  .moderate {
-    background-color: #fffac2;
-    font-weight: bold;
-    color: red;
   }
 }
