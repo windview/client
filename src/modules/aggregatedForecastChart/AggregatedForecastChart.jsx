@@ -51,7 +51,7 @@ export class AggregatedForecastChart extends React.Component {
 
     let chart = Highcharts.chart('aggregated-chart', {
       chart: {
-        spacingBottom: 5
+        spacingBottom: 10
       },
       title: {
         text: 'Aggregated Forecast for Currently Visible Wind Farms',
