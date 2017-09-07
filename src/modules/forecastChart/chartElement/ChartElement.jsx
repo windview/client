@@ -25,7 +25,7 @@ export class ChartElement extends React.Component {
 
     let chart = Highcharts.chart('forecast-chart', {
       chart: {
-        height: 280,
+        height: 240,
         spacingBottom: 5
       },
       credits: {
