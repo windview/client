@@ -2,20 +2,20 @@ The README below was created by Create React App and has some good stuff if you 
 
 ## Dependencies
 
-* 'curl'
+* `curl`
 
-sudo apt-get install curl
+sudo apt-get install curl<br>
 
 * `NodeJS >- v6.9.0`
 
-curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
-sudo apt-get install nodejs
+curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -<br>
+sudo apt-get install nodejs<br>
 
 * `yarn`
 
-curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-sudo apt-get update && sudo apt-get install yarn
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -<br>
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list<br>
+sudo apt-get update && sudo apt-get install yarn<br>
 
 ## Environment Setup
 
