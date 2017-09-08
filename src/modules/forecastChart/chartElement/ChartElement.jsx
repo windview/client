@@ -17,6 +17,9 @@ export class ChartElement extends React.Component {
           twentyFive = data[2],
           seventyFive = data[3],
           actuals = data[4],
+          range1_99 = data[5],
+          one = data[6],
+          ninetynine = data[7],
           now = window.fakeNow;
 
     if(this.chart) {
@@ -89,6 +92,17 @@ export class ChartElement extends React.Component {
           symbol: "square"
         }
       }, {
+        name: '1% Probability',
+        data: one,
+        color: '#bbb',
+        zIndex: 3,
+        marker: {
+          enabled: false,
+          lineWidth: .2,
+          lineColor: '#fff',
+          symbol: "triangle-down"
+        }
+      }, {
         name: '25% Probability',
         data: twentyFive,
         color: '#bbb',
@@ -111,12 +125,33 @@ export class ChartElement extends React.Component {
           symbol: "triangle"
         }
       }, {
+        name: '99% Probability',
+        data: ninetynine,
+        color: '#bbb',
+        zIndex: 3,
+        marker: {
+          enabled: false,
+          lineWidth: .2,
+          lineColor: '#fff',
+          symbol: "triangle"
+        }
+      }, {
         name: 'Range',
         data: range,
         type: 'arearange',
         lineWidth: 0,
         linkedTo: ':previous',
         color: '#666',
+        fillOpacity: 1,
+        zIndex: 1,
+        enableMouseTracking: false
+      }, {
+        name: 'Range1-99',
+        data: range1_99,
+        type: 'arearange',
+        lineWidth: 0,
+        linkedTo: ':previous',
+        color: '#ddd',
         fillOpacity: 1,
         zIndex: 0,
         enableMouseTracking: false
@@ -185,13 +220,22 @@ export class ChartElement extends React.Component {
    * for forecast, arearange, 25th, 75th, and the actuals
    */
   getChartData(featureData) {
-    let retval = [[], [], [], [], []];
+    /*
+    * Add temporary random forecast1MW, forecast99MW Data
+    */
+    let rand_1MW, rand_99MW;
+    let retval = [[], [], [], [], [], [], [], []];  //3 coulmns are added at the last: range, forecast1MW, forcast99MW
     featureData.data.forEach((row)=>{
+      rand_1MW = 1.0 + (Math.random() * 3);
+      rand_99MW = 1.0 + (Math.random() * 3);
       retval[0].push([row.timestamp.getTime(), row.forecastMW]);
       retval[1].push([row.timestamp.getTime(), row.forecast25MW, row.forecast75MW]);
       retval[2].push([row.timestamp.getTime(), row.forecast25MW]);
       retval[3].push([row.timestamp.getTime(), row.forecast75MW]);
       retval[4].push([row.timestamp.getTime(), row.actual]);
+      retval[5].push([row.timestamp.getTime(), (row.forecast25MW - rand_1MW < 0 ? 0 : row.forecast25MW - rand_1MW), row.forecast75MW + rand_99MW]);
+      retval[6].push([row.timestamp.getTime(), (row.forecast25MW - rand_1MW < 0 ? 0 : row.forecast25MW - rand_1MW)]);
+      retval[7].push([row.timestamp.getTime(), row.forecast75MW + rand_99MW]);
     });
     return retval;
   }
