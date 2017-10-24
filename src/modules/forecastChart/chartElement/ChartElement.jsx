@@ -28,7 +28,7 @@ export class ChartElement extends React.Component {
 
     let chart = Highcharts.chart('forecast-chart', {
       chart: {
-        height: 280,
+        height: 240,
         spacingBottom: 5
       },
       credits: {
@@ -244,7 +244,6 @@ export class ChartElement extends React.Component {
     const feature = this.props.feature;
     return feature.loading ? <LoadingElement feature={feature} /> : (
       <BaseElement>
-        <div className='chart-title'>Details and Forecast for {feature.properties.label}</div>
         <div id="forecast-chart"></div>
       </BaseElement>
     )

@@ -2,6 +2,7 @@
 
 export const mapStateToProps = (state, ownProps) => {
   return {
-    activePane: state.nav.activePane
+    activePane: state.nav.activePane,
+    selectedFeature: state.analysis.selectedFeature
   }
 }
