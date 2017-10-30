@@ -17,7 +17,7 @@ export const initializeStyle = (map, layerSource) => {
     source: layerSource,
     paint: {
       'circle-radius': initialRadius,
-      'circle-stroke-width': 8,
+      'circle-stroke-width': 10,
       'circle-stroke-color': 'hsla(310, 100%, 40%, 0.7)',
     },
     filter: [">=", "forecastMW", 20],
@@ -35,7 +35,7 @@ export const initializeStyle = (map, layerSource) => {
     source: layerSource,
     paint: {
       'circle-radius': initialRadius,
-      'circle-stroke-width': 6,
+      'circle-stroke-width': 7,
       'circle-stroke-color': 'hsla(280, 100%, 50%, .7)',
     },
     filter: [">=", "forecastMW", 10],
@@ -70,7 +70,7 @@ export const initializeStyle = (map, layerSource) => {
     paint: {
       'circle-radius': initialRadius,
       'circle-stroke-width': 2,
-      'circle-stroke-color': 'hsla(219, 100%, 70%, .7)',
+      'circle-stroke-color': 'hsla(0, 100%, 100%, .7)',
     },
     filter: [">", "forecastMW", 0],
     layout: {
@@ -85,9 +85,9 @@ export const initializeStyle = (map, layerSource) => {
     type: 'circle',
     source: 'windfarms',
     paint: {
-      'circle-radius': initialRadius+8,
+      'circle-radius': initialRadius,
       'circle-color': 'hsla(53, 100%, 54%, 0.8)',
-      'circle-opacity': 0.5
+      'circle-opacity': 0.8
     },
     filter: ["==", "rampSeverity", 1],
     layout: {
@@ -102,7 +102,7 @@ export const initializeStyle = (map, layerSource) => {
     type: 'circle',
     source: 'windfarms',
     paint: {
-      'circle-radius': initialRadius+8,
+      'circle-radius': initialRadius,
       'circle-color': '#B00',
     'circle-opacity': 0.8,
     },
