@@ -12,7 +12,7 @@ export const initializeStyle = (map, layerSource) => {
     paint: {
       'circle-radius': initialRadius,
       'circle-stroke-width': 6,
-      'circle-stroke-color': 'hsla(280, 100%, 50%, .7)',
+      'circle-stroke-color': 'hsla(250, 100%, 50%, .7)',
     },
     filter: [">=", "total_capacity", 30000],
     layout: {
@@ -29,7 +29,7 @@ export const initializeStyle = (map, layerSource) => {
     paint: {
       'circle-radius': initialRadius,
       'circle-stroke-width': 4,
-      'circle-stroke-color': 'hsla(250, 100%, 70%, .7)',
+      'circle-stroke-color': 'hsla(210, 100%, 70%, .7)',
     },
     filter: [">=", "total_capacity", 10000] && ["<", "total_capacity", 30000],
     layout: {
@@ -46,7 +46,7 @@ export const initializeStyle = (map, layerSource) => {
     paint: {
       'circle-radius': initialRadius,
       'circle-stroke-width': 2,
-      'circle-stroke-color': 'hsla(219, 100%, 70%, .7)',
+      'circle-stroke-color': 'hsla(0, 100%, 100%, .7)',
     },
     filter: ["<", "total_capacity", 10000],
     layout: {
