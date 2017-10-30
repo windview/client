@@ -236,7 +236,7 @@ export class Map extends React.Component {
         source: 'windfarms',
         layout: {
           'icon-image': 'windfarm',
-          'icon-size': .18,
+          'icon-size': .3,
           'icon-allow-overlap': true,
           'icon-keep-upright': true
         },
@@ -257,7 +257,7 @@ export class Map extends React.Component {
         source: 'windfarms',
         layout: {
           'icon-image': 'windfarm-selected',
-          'icon-size': .24,
+          'icon-size': .40,
           'icon-allow-overlap': true,
           'icon-keep-upright': true
         },
@@ -278,7 +278,7 @@ export class Map extends React.Component {
         source: 'windfarms',
         layout: {
           'icon-image': 'windfarm-disabled',
-          'icon-size': .18,
+          'icon-size': .3,
           'icon-allow-overlap': true,
           'icon-keep-upright': true
         },

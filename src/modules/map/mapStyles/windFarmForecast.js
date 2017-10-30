@@ -1,14 +1,14 @@
 const layerIds = [],
       framesPerSecond = 5,
       initialOpacity = 1,
-      initialRadius = 8,
+      initialRadius = 20,
       maxRadius = 38;
 let   opacity = initialOpacity,
       radius = initialRadius,
       animate = false;
 
 export const initializeStyle = (map, layerSource) => {
-  const initialRadius = 14;
+  const initialRadius = 26;
 
 // Mega winds
   map.addLayer({

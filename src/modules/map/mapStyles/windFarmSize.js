@@ -2,7 +2,7 @@ const layerIds = [];
 
 export const initializeStyle = (map, layerSource) => {
 
-  const initialRadius = 14;
+  const initialRadius = 26;
 
   // Big farms
   map.addLayer({

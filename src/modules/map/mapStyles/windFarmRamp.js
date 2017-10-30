@@ -2,7 +2,7 @@
 const layerIds = [],
       framesPerSecond = 5,
       initialOpacity = 1,
-      initialRadius =8,
+      initialRadius = 20,
       maxRadius = 38;
 let   opacity = initialOpacity,
       radius = initialRadius,
