@@ -1,7 +1,7 @@
 const layerIds = [];
 
 export const initializeStyle = (map, layerSource) => {
-  
+
   const initialRadius = 14;
 
   // Big farms
@@ -10,9 +10,9 @@ export const initializeStyle = (map, layerSource) => {
     type: 'circle',
     source: layerSource,
     paint: {
-      'circle-radius': initialRadius+10,
-      'circle-stroke-width': 2,
-      'circle-stroke-color': 'hsla(219, 100%, 88%, 1)',
+      'circle-radius': initialRadius,
+      'circle-stroke-width': 6,
+      'circle-stroke-color': 'hsla(280, 100%, 50%, .7)',
     },
     filter: [">=", "total_capacity", 30000],
     layout: {
@@ -27,11 +27,11 @@ export const initializeStyle = (map, layerSource) => {
     type: 'circle',
     source: layerSource,
     paint: {
-      'circle-radius': initialRadius+5,
-      'circle-stroke-width': 2,
-      'circle-stroke-color': 'hsla(219, 100%, 79%, 1)',
+      'circle-radius': initialRadius,
+      'circle-stroke-width': 4,
+      'circle-stroke-color': 'hsla(250, 100%, 70%, .7)',
     },
-    filter: [">=", "total_capacity", 10000],
+    filter: [">=", "total_capacity", 10000] && ["<", "total_capacity", 30000],
     layout: {
       visibility: 'none'
     }
@@ -46,13 +46,14 @@ export const initializeStyle = (map, layerSource) => {
     paint: {
       'circle-radius': initialRadius,
       'circle-stroke-width': 2,
-      'circle-stroke-color': 'hsla(219, 100%, 70%, 1)',
+      'circle-stroke-color': 'hsla(219, 100%, 70%, .7)',
     },
+    filter: ["<", "total_capacity", 10000],
     layout: {
       visibility: 'none'
     }
   });
-  layerIds.push('windfarms-small');  
+  layerIds.push('windfarms-small');
 }
 
 export const toggleVisibility = (map) => {

@@ -2,7 +2,7 @@
 const layerIds = [],
       framesPerSecond = 5,
       initialOpacity = 1,
-      initialRadius = 8,
+      initialRadius =8,
       maxRadius = 38;
 let   opacity = initialOpacity,
       radius = initialRadius,
@@ -54,7 +54,7 @@ export const initializeStyle = (map, layerSource) => {
     paint: {
       'circle-radius': initialRadius+8,
       'circle-color': '#B00',
-      'circle-opacity': 0.8
+      'circle-opacity': 0.8,
     },
     filter: [">=", "maxRampSeverity", 2],
     layout: {
@@ -62,7 +62,7 @@ export const initializeStyle = (map, layerSource) => {
     }
   });
   layerIds.push('windfarms-r-halo');
-}
+};
 
 // const toggleAnimation = (map, visibility) => {
 //   if(visibility === 'none') {
