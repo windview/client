@@ -211,7 +211,9 @@ export class Map extends React.Component {
       // Add windfarms
       map.addSource('windfarms', {
         type: "geojson",
-        data: this.props.windFarms
+        data: this.props.windFarms,
+        cluster: true,
+        clusterRadius: 20
       });
 
       // Initialize all of the layers
@@ -283,6 +285,45 @@ export class Map extends React.Component {
         filter: ['==', 'disabled', true],
         paint: {
           'icon-opacity': 1
+        }
+      });
+
+      map.addLayer({
+        id: "clusters",
+        type: "circle",
+        source: "windfarms",
+        filter: ["has", "point_count"],
+        paint: {
+          "circle-color": {
+            property: "point_count",
+            type: "interval",
+            stops: [
+              [0, "#51bbd6"],
+              [5, "#f1f075"],
+              [10, "#f28cb1"],
+            ]
+          },
+          "circle-radius": {
+            property: "point_count",
+            type: "interval",
+            stops: [
+              [0, 20],
+              [5, 30],
+              [10, 40]
+            ]
+          }
+        }
+      });
+
+      map.addLayer({
+        id: "cluster-count",
+        type: "symbol",
+        source: "windfarms",
+        filter: ["has", "point_count"],
+        layout: {
+          "text-field": "{point_count_abbreviated}",
+          "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+          "text-size": 12,
         }
       });
 
