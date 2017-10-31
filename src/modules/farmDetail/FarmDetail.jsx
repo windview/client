@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { mapStateToProps } from './selectors';
+import { mapStateToProps, mapDispatchToProps } from './selectors';
 import moment from 'moment';
 import commafy from 'commafy';
 import './FarmDetail.scss';
@@ -8,6 +8,7 @@ import './FarmDetail.scss';
 export class FarmDetail extends React.Component {
 
   getDetailMarkup() {
+
     let prependRows = [],
         appendRows = [],
         feature = this.props.feature;
@@ -18,7 +19,7 @@ export class FarmDetail extends React.Component {
               endTime = moment.utc(rampBin.endTime).format('HH:mm UTC'),
               severity = rampBin.severity > 1 ? "severe ramp" : "moderate ramp",
               className = rampBin.severity > 1 ? "severe" : "moderate";
-        return <tr key={rampBin.startTime.getTime()} className={className}><td>RAMP ALERT</td><td className="right">A {severity} event is forecast starting at {startTime} and ending at {endTime}</td></tr>;
+        return <tr key={rampBin.startTime.getTime()} className={className}><td>RAMP ALERT</td><td className="right">A {severity} event is forecast starting at {startTime} and ending at {endTime}</td><td><button onClick={()=>this.props.onAcknowledgeAlert(feature)} type="button">Close</button></td></tr>;
       });
     }
 

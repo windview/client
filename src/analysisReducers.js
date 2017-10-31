@@ -32,6 +32,10 @@ const defaultValue = {
 
 export default (state=defaultValue, action) => {
   switch(action.type) {
+    case t.ACKNOWLEDGE_ALERT:
+     return {
+      ...state,
+     };
     case t.MAP_MOVE:
       return {
         ...state,

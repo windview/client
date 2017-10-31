@@ -95,7 +95,7 @@ let Alerts = new function() {
       maxSeverity = r.rampSeverity > maxSeverity ? r.rampSeverity : maxSeverity;
     });
     return maxSeverity;
-  }
+  };
 
   this.hasRamp = (forecastData) => {
     forecastData = forecastData.data;

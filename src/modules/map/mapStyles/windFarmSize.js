@@ -54,7 +54,7 @@ export const initializeStyle = (map, layerSource) => {
     }
   });
   layerIds.push('windfarms-small');
-}
+};
 
 export const toggleVisibility = (map) => {
   if(layerIds.length === 0) { return; }
@@ -62,4 +62,4 @@ export const toggleVisibility = (map) => {
   layerIds.forEach(function(id){
     map.setLayoutProperty(id, 'visibility', visible);
   });
-}
+};

@@ -11,6 +11,10 @@ import Forecast from './data/forecast';
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // POJO action creators
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+export const acknowledgeAlert = (feature) => ({
+  type: t.ACKNOWLEDGE_ALERT,
+  feature: feature
+});
 
 export const activateView = (viewName) => {
   return {
