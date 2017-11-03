@@ -28,7 +28,8 @@ let Alerts = new function() {
           startTime: timeslice.timestamp,
           endTime: null,
           severity: 0,
-          increments: [0]
+          increments: [0],
+          display: true,
         }
         // now the sneaky part... hijack the value for i and loop through subsequent
         // timeslices to find each increment and eventualy the end of the ramp event

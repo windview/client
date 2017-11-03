@@ -9,7 +9,7 @@ export class FarmDetail extends React.Component {
 
   handleAcknowledgeAlert(id) {
     let forecast = this.props.forecast;
-    this.props.onAcknowledgeAlert(forecast, id)
+    this.props.onToggleAlert(forecast, id)
   }
 
   getDetailMarkup() {
@@ -28,7 +28,7 @@ export class FarmDetail extends React.Component {
 
               if (feature.displayAlerts !== false) {
 
-                return <tr key={rampBin.startTime.getTime()} className={className}><td>RAMP ALERT</td><td className="right">A {severity} event is forecast starting at {startTime} and ending at {endTime}</td><td><button onClick={()=>this.handleAcknowledgeAlert(rampBin)} type="button">Close</button></td></tr>;
+                return <tr key={rampBin.startTime.getTime()} className={className}><td>RAMP ALERT</td><td className="right">A {severity} event is forecast starting at {startTime} and ending at {endTime}</td><td><button onClick={()=>this.handleAcknowledgeAlert(rampBin)} type="button">Toggle Alert</button></td></tr>;
               }
       });
     }

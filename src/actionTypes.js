@@ -7,7 +7,7 @@
 export const ACTIVATE_VIEW = 'ACTIVATE_VIEW'
 
 // async data request related actions
-export const ACKNOWLEDGE_ALERT = 'ACKNOWLEDGE_ALERT';
+export const TOGGLE_ALERT = 'TOGGLE_ALERT';
 export const FETCH_FORECAST_FAIL = 'FETCH_FORECAST_FAIL';
 export const FETCH_FORECAST_REQUEST = 'FETCH_FORECAST_REQUEST';
 export const FETCH_FORECAST_SUCCESS = 'FETCH_FORECAST_SUCCESS';

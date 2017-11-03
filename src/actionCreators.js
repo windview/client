@@ -11,8 +11,8 @@ import Forecast from './data/forecast';
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // POJO action creators
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-export const acknowledgeAlert = (forecast, id) => ({
-  type: t.ACKNOWLEDGE_ALERT,
+export const toggleAlert = (forecast, id) => ({
+  type: t.TOGGLE_ALERT,
   forecast: forecast,
   id: id
 });

@@ -12,8 +12,8 @@ export const mapStateToProps = (state, ownProps) => {
 
 export const mapDispatchToProps = (dispatch) => {
   return {
-    onAcknowledgeAlert: (forecast, id) => {
-      dispatch(actions.acknowledgeAlert(forecast, id));
+    onToggleAlert: (forecast, id) => {
+      dispatch(actions.toggleAlert(forecast, id));
     },
   };
 };
