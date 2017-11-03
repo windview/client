@@ -20,8 +20,21 @@ const defaultValue = {
 // The reducers
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
 export default (state=defaultValue, action) => {
   switch(action.type) {
+    case t.ACKNOWLEDGE_ALERT:
+        var newState = {...state}
+        newState.forecast.map((element) => {
+          element.alerts.rampBins.map((alert) => {
+            if (alert === action.id) {
+              return alert.display = false
+            } else {
+              return alert.display = true
+            }
+          });
+        });
+        return newState
     case t.FETCH_FORECAST_FAIL:
       return {
         ...state,

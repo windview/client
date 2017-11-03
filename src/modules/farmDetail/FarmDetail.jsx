@@ -7,11 +7,17 @@ import './FarmDetail.scss';
 
 export class FarmDetail extends React.Component {
 
+  handleAcknowledgeAlert(id) {
+    let forecast = this.props.forecast;
+    this.props.onAcknowledgeAlert(forecast, id)
+  }
+
   getDetailMarkup() {
 
     let prependRows = [],
         appendRows = [],
         feature = this.props.feature;
+
 
     if(feature.properties.forecastData.alerts.hasRamp) {
       prependRows = feature.properties.forecastData.alerts.rampBins.map((rampBin) => {
@@ -19,7 +25,11 @@ export class FarmDetail extends React.Component {
               endTime = moment.utc(rampBin.endTime).format('HH:mm UTC'),
               severity = rampBin.severity > 1 ? "severe ramp" : "moderate ramp",
               className = rampBin.severity > 1 ? "severe" : "moderate";
-        return <tr key={rampBin.startTime.getTime()} className={className}><td>RAMP ALERT</td><td className="right">A {severity} event is forecast starting at {startTime} and ending at {endTime}</td><td><button onClick={()=>this.props.onAcknowledgeAlert(feature)} type="button">Close</button></td></tr>;
+
+              if (feature.displayAlerts !== false) {
+
+                return <tr key={rampBin.startTime.getTime()} className={className}><td>RAMP ALERT</td><td className="right">A {severity} event is forecast starting at {startTime} and ending at {endTime}</td><td><button onClick={()=>this.handleAcknowledgeAlert(rampBin)} type="button">Close</button></td></tr>;
+              }
       });
     }
 
@@ -66,4 +76,4 @@ export class FarmDetail extends React.Component {
   }
 }
 
-export default connect(mapStateToProps, null)(FarmDetail);
+export default connect(mapStateToProps, mapDispatchToProps)(FarmDetail);
