@@ -4,6 +4,7 @@ import '../../../node_modules/mapbox-gl/dist/mapbox-gl.css';
 import Legend from '../legend/Legend';
 import mapboxgl from '../../../node_modules/mapbox-gl/dist/mapbox-gl.js';
 import MapboxDraw from '../../../node_modules/@mapbox/mapbox-gl-draw';
+import turf from '../../../node_modules/@turf/turf/turf.min.js';
 import windFarmIcon from '../../images/windfarm.png';
 import windFarmDisabledIcon from '../../images/windfarm-disabled.png';
 import windFarmSelectedIcon from '../../images/windfarm-selected.png';
@@ -174,7 +175,15 @@ export class Map extends React.Component {
     });
     this.map = map;
 
+    // Disable default box zooming.
+    map.boxZoom.disable();
 
+    // Create a popup, but don't add it to the map yet.
+    var popup = new mapboxgl.Popup({
+        closeButton: false
+    });
+
+    // Add tool for drawing polygon on map
     var draw = new MapboxDraw({
         displayControlsDefault: false,
         controls: {
@@ -183,6 +192,8 @@ export class Map extends React.Component {
         }
     });
     map.addControl(draw);
+
+
 
 
     // Add zoom and rotation controls to the map.
@@ -228,8 +239,6 @@ export class Map extends React.Component {
       map.addSource('windfarms', {
         type: "geojson",
         data: this.props.windFarms,
-        cluster: true,
-        clusterRadius: 20
       });
 
       // Initialize all of the layers
@@ -246,6 +255,19 @@ export class Map extends React.Component {
 
       // The icon layer is always present, and needs to be for all the
       // event handlers so add it outside of the specific styles above
+      map.addLayer({
+        "id": "windfarms-highlighted",
+        "type": "circle",
+        "source": "windfarms",
+        "paint": {
+          'circle-color': 'hsla(0, 100%, 100%, 1)',
+          // 'circle-stroke-color': 'hsla(0, 100%, 100%, .7)',
+          'circle-radius': 20,
+
+        },
+         "filter": ["in", "fid", ""],
+      }); // Place polygon under these labels.
+
       map.addLayer({
         id: 'windfarms-symbol',
         type: 'symbol',
@@ -304,44 +326,36 @@ export class Map extends React.Component {
         }
       });
 
-      map.addLayer({
-        id: "clusters",
-        type: "circle",
-        source: "windfarms",
-        filter: ["has", "point_count"],
-        paint: {
-          "circle-color": {
-            property: "point_count",
-            type: "interval",
-            stops: [
-              [0, "#51bbd6"],
-              [5, "#f1f075"],
-              [10, "#f28cb1"],
-            ]
-          },
-          "circle-radius": {
-            property: "point_count",
-            type: "interval",
-            stops: [
-              [0, 20],
-              [5, 30],
-              [10, 40]
-            ]
+
+      $('.mapbox-gl-draw_polygon').click(() => {
+
+      })
+      map.on('draw.create', function(e){
+        // Remove all other features, so that current one is the only one on map.
+        var currentId = e.features[0].id
+        var otherFeatures = draw.getAll().features.filter(function(feature) { return feature.id != currentId });
+        draw.delete(otherFeatures.map(function(feature) { return feature.id }));
+
+        var userPolygon = e.features[0];
+        // generate bounding box from polygon the user drew
+        var polygonBoundingBox = turf.bbox(userPolygon);
+
+        var southWest = [polygonBoundingBox[0], polygonBoundingBox[1]];
+        var northEast = [polygonBoundingBox[2], polygonBoundingBox[3]];
+        var northEastPointPixel = map.project(northEast);
+        var southWestPointPixel = map.project(southWest);
+        var features = map.queryRenderedFeatures([southWestPointPixel, northEastPointPixel], { layers: ['windfarms-symbol', 'windfarms-selected-symbol', 'windfarms-disabled-symbol'] });
+        var filter = features.reduce(function(memo, feature) {
+          if (! (undefined === turf.intersect(feature, userPolygon))) {
+
+            // only add the property, if the feature intersects with the polygon drawn by the user
+            memo.push(feature.properties.fid);
           }
-        }
+          return memo;
+        }, ['in', 'fid']);
+        map.setFilter("windfarms-highlighted", filter);
       });
 
-      map.addLayer({
-        id: "cluster-count",
-        type: "symbol",
-        source: "windfarms",
-        filter: ["has", "point_count"],
-        layout: {
-          "text-field": "{point_count_abbreviated}",
-          "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
-          "text-size": 12,
-        }
-      });
 
       // Handle the relevant events on the windfarms layer
       map.on('click', 'windfarms-symbol', this.whenFeatureClicked);
