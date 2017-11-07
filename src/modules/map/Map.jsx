@@ -2,7 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import '../../../node_modules/mapbox-gl/dist/mapbox-gl.css';
 import Legend from '../legend/Legend';
-import mapboxgl from '../../../node_modules/mapbox-gl/dist/mapbox-gl.js'
+import mapboxgl from '../../../node_modules/mapbox-gl/dist/mapbox-gl.js';
+import MapboxDraw from '../../../node_modules/@mapbox/mapbox-gl-draw';
 import windFarmIcon from '../../images/windfarm.png';
 import windFarmDisabledIcon from '../../images/windfarm-disabled.png';
 import windFarmSelectedIcon from '../../images/windfarm-selected.png';
@@ -45,6 +46,7 @@ export class Map extends React.Component {
     }
   }
 
+
   componentDidMount() {
     Config.setGlobalFakeNow();
     // dispatch any actions configured in selectors
@@ -59,6 +61,9 @@ export class Map extends React.Component {
   // that wrap integration do this under the covers. e.g.
   //https://github.com/PaulLeCam/react-leaflet
   componentDidUpdate(prevProps) {
+    if(prevProps.forecast) {
+
+    }
     if(prevProps.selectedStyle !== this.props.selectedStyle) {
       // Turn one off and the other on
       this.toggleStyle(prevProps.selectedStyle);
@@ -169,6 +174,17 @@ export class Map extends React.Component {
     });
     this.map = map;
 
+
+    var draw = new MapboxDraw({
+        displayControlsDefault: false,
+        controls: {
+            polygon: true,
+            trash: true
+        }
+    });
+    map.addControl(draw);
+
+
     // Add zoom and rotation controls to the map.
     map.addControl(new mapboxgl.NavigationControl());
 
@@ -220,7 +236,7 @@ export class Map extends React.Component {
       tlinesStyle.initializeStyle(map, 'translines');
       wfSizeStyle.initializeStyle(map, 'windfarms');
       wfForecastStyle.initializeStyle(map, 'windfarms');
-      wfRampStyle.initializeStyle(map, 'windfarms');
+      wfRampStyle.initializeStyle(map, 'windfarms', this.props.forecast);
       openeiFarmStyle.initializeStyle(map, 'openei-farms');
 
       // Show these layers
@@ -417,5 +433,8 @@ export class Map extends React.Component {
     this.props.onSelectTimezoom(e.target.value);
   }
 }
+
+
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(Map);
