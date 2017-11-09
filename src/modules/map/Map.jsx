@@ -320,10 +320,8 @@ export class Map extends React.Component {
         "type": "circle",
         "source": "windfarms",
         "paint": {
-          'circle-color': 'hsla(240, 100%, 50%, 100)',
-          // 'circle-stroke-color': 'hsla(0, 100%, 100%, .7)',
-          'circle-radius': 15,
-
+          'circle-color': 'hsla(240, 100%, 50%, 0)',
+          'circle-radius': 1,
         },
          "filter": ["in", "fid", ""],
       }); // Place polygon under these labels.
