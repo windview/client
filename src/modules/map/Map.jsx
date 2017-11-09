@@ -357,6 +357,11 @@ export class Map extends React.Component {
         this.props.onSelectFeaturesByPolygon(features)
       }.bind(this));
 
+      map.on('draw.delete', function(e) {
+        map.removeLayer("windfarms-highlighted")
+        this.props.onSelectFeaturesByPolygon(null)
+      }.bind(this))
+
 
       // Handle the relevant events on the windfarms layer
       map.on('click', 'windfarms-symbol', this.whenFeatureClicked);
