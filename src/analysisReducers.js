@@ -25,7 +25,7 @@ const defaultValue = {
   selectedStyle: 'ramp',
   timezoom: 24,
   dataSource: 'visibleFarms',
-  chartTitle: 'Aggregated Forecast for Currently Visible Wind Farms'
+  chartTitle: 'Currently Visible Wind Farms'
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

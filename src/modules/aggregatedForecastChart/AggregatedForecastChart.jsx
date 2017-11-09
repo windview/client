@@ -62,7 +62,7 @@ export class AggregatedForecastChart extends React.Component {
         spacingBottom: 5
       },
       title: {
-        text: this.props.chartTitle,
+        text: `Aggregated Forecast for ${this.props.chartTitle}`,
         style: {
           fontSize: "13px"
         },
