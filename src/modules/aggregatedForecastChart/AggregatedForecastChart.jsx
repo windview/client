@@ -190,7 +190,7 @@ export class AggregatedForecastChart extends React.Component {
   }
 
   drawPlotLine(timestamp) {
-    if(this.chart) {
+    if(this.chart.xAxis) {
       this.chart.xAxis[0].removePlotLine('selectedTimestamp');
       this.chart.xAxis[0].addPlotLine({
         id: 'selectedTimestamp',
