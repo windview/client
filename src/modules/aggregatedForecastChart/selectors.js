@@ -6,6 +6,7 @@ export const mapStateToProps = (state, ownProps) => {
     selectedTimestamp: state.analysis.selectedTimestamp,
     visibleWindFarms: state.analysis.visibleWindFarms,
     selectedWindFarmsByPolygon: state.analysis.selectedWindFarmsByPolygon,
-    aggregatedSource: state.analysis.dataSource
+    aggregatedSource: state.analysis.dataSource,
+    chartTitle: state.analysis.chartTitle
   }
 }

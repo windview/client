@@ -24,7 +24,8 @@ const defaultValue = {
   selectedTimestamp: getStartTime(),
   selectedStyle: 'ramp',
   timezoom: 24,
-  dataSource: 'visibleFarms' 
+  dataSource: 'visibleFarms',
+  chartTitle: 'Aggregated Forecast for Currently Visible Wind Farms'
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -41,7 +42,8 @@ export default (state=defaultValue, action) => {
       case t.SELECT_AGGREGATION:
        return {
          ...state,
-         dataSource: action.dataSource
+         dataSource: action.dataSource,
+         chartTitle: action.title
        };
      case t.SELECT_FEATURE:
       return {

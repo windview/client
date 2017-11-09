@@ -60,7 +60,8 @@ export const mapMove = (features) => ({
 
 export const selectAggregation = (dataSource) => ({
   type: t.SELECT_AGGREGATION,
-  dataSource: dataSource
+  dataSource: dataSource.value,
+  title: dataSource.label
 });
 
 export const selectFeature = (feature) => ({

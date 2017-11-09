@@ -15,8 +15,8 @@ export const NavBar = ({activePane, onClick, appTitle, buttons, onSelectAggregat
   );
 
   const aggregatedOptions = [
-    { value: 'visibleFarms', label: 'Currently Visible Windfarms'},
-    { value: 'polygonFarms', label: 'Select Windfarms with Polygon Selection Tool'}
+    { value: 'visibleFarms', label: 'Currently Visible Wind Farms'},
+    { value: 'polygonFarms', label: 'Selected Wind Farms with Polygon Selection Tool'}
   ];
 
   const aggregatedOptionElements = aggregatedOptions.map((option) =>
@@ -29,7 +29,7 @@ export const NavBar = ({activePane, onClick, appTitle, buttons, onSelectAggregat
 
   const handleChangeEvent = () => {
     let e = document.getElementById("aggregatedSource");
-    let source = e.options[e.selectedIndex].value
+    let source = e.options[e.selectedIndex]
     onSelectAggregation(source);
   }
 

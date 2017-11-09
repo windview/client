@@ -38,23 +38,26 @@ export class AggregatedForecastChart extends React.Component {
 
   chartIt() {
     let aggData = Forecast.getAggregatedForecast(this.getForecasts())
-    if(!aggData) return;
+    if(!aggData) {
+      if(this.chart) {
+        this.chart.destroy();
+        $('#aggregated-chart').text('Select desired wind farms using the polygon selection tool in the upper right corner of the map.')
+      }
+      return;
+    }
 
     const data = this.getChartData(aggData),
           forecast = data[0],
           actuals = data[1],
           now = window.fakeNow;
 
-    if(this.chart) {
-      this.chart.destroy();
-    }
 
     let chart = Highcharts.chart('aggregated-chart', {
       chart: {
         spacingBottom: 5
       },
       title: {
-        text: 'Aggregated Forecast for Currently Visible Wind Farms',
+        text: this.props.chartTitle,
         style: {
           fontSize: "13px"
         },
