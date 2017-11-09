@@ -186,6 +186,9 @@ export class AggregatedForecastChart extends React.Component {
       if(this.props.aggregatedSource !== prevProps.aggregatedSource) {
         this.chartIt();
       }
+      if(aggDataSource === null) {
+        this.chartIt();
+      }
     }
   }
 
