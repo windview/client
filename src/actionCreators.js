@@ -58,8 +58,18 @@ export const mapMove = (features) => ({
   features: features
 });
 
+export const selectAggregation = (dataSource) => ({
+  type: t.SELECT_AGGREGATION,
+  dataSource: dataSource
+});
+
 export const selectFeature = (feature) => ({
   type: t.SELECT_FEATURE,
+  feature: feature
+});
+
+export const selectFeaturesByPolygon = (feature) => ({
+  type: t.SELECT_FEATURES_BY_POLYGON,
   feature: feature
 });
 

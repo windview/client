@@ -31,6 +31,9 @@ export const mapDispatchToProps = (dispatch) => {
     onSelectFeature: (feature) => {
       dispatch(actions.selectFeature(feature));
     },
+    onSelectFeaturesByPolygon: (feature) => {
+      dispatch(actions.selectFeaturesByPolygon(feature));
+    },
     onSelectStyle: (style) => {
       dispatch(actions.selectStyle(style));
     },

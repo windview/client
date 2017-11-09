@@ -23,7 +23,8 @@ const defaultValue = {
   selectedFeature: null,
   selectedTimestamp: getStartTime(),
   selectedStyle: 'ramp',
-  timezoom: 24
+  timezoom: 24,
+  dataSource: 'visibleFarms' 
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -32,20 +33,26 @@ const defaultValue = {
 
 export default (state=defaultValue, action) => {
   switch(action.type) {
-    case t.ACKNOWLEDGE_ALERT:
-     return {
-      ...state,
-     };
     case t.MAP_MOVE:
       return {
         ...state,
         visibleWindFarms: action.features
       };
+      case t.SELECT_AGGREGATION:
+       return {
+         ...state,
+         dataSource: action.dataSource
+       };
      case t.SELECT_FEATURE:
       return {
         ...state,
         selectedFeature: action.feature
       };
+      case t.SELECT_FEATURES_BY_POLYGON:
+       return {
+         ...state,
+         selectedWindFarmsByPolygon: action.feature
+       };
     case t.SELECT_STYLE:
       return {
         ...state,

@@ -165,6 +165,7 @@ export class Map extends React.Component {
   }
 
   renderMap() {
+    let self = this;
     //Create map
     let map = new mapboxgl.Map({
       container: 'wind-map', // container id
@@ -255,18 +256,6 @@ export class Map extends React.Component {
 
       // The icon layer is always present, and needs to be for all the
       // event handlers so add it outside of the specific styles above
-      map.addLayer({
-        "id": "windfarms-highlighted",
-        "type": "circle",
-        "source": "windfarms",
-        "paint": {
-          'circle-color': 'hsla(0, 100%, 100%, 1)',
-          // 'circle-stroke-color': 'hsla(0, 100%, 100%, .7)',
-          'circle-radius': 20,
-
-        },
-         "filter": ["in", "fid", ""],
-      }); // Place polygon under these labels.
 
       map.addLayer({
         id: 'windfarms-symbol',
@@ -326,16 +315,26 @@ export class Map extends React.Component {
         }
       });
 
+      map.addLayer({
+        "id": "windfarms-highlighted",
+        "type": "circle",
+        "source": "windfarms",
+        "paint": {
+          'circle-color': 'hsla(240, 100%, 50%, 100)',
+          // 'circle-stroke-color': 'hsla(0, 100%, 100%, .7)',
+          'circle-radius': 15,
 
-      $('.mapbox-gl-draw_polygon').click(() => {
+        },
+         "filter": ["in", "fid", ""],
+      }); // Place polygon under these labels.
 
-      })
+
       map.on('draw.create', function(e){
+
         // Remove all other features, so that current one is the only one on map.
         var currentId = e.features[0].id
         var otherFeatures = draw.getAll().features.filter(function(feature) { return feature.id != currentId });
         draw.delete(otherFeatures.map(function(feature) { return feature.id }));
-
         var userPolygon = e.features[0];
         // generate bounding box from polygon the user drew
         var polygonBoundingBox = turf.bbox(userPolygon);
@@ -354,7 +353,9 @@ export class Map extends React.Component {
           return memo;
         }, ['in', 'fid']);
         map.setFilter("windfarms-highlighted", filter);
-      });
+
+        this.props.onSelectFeaturesByPolygon(features)
+      }.bind(this));
 
 
       // Handle the relevant events on the windfarms layer
@@ -386,6 +387,11 @@ export class Map extends React.Component {
       checkMap(map);
 
     }.bind(this));
+  }
+
+  setSelectedFeaturesByPolygon(feature) {
+    debugger
+
   }
 
   toggleStyle(styleName) {

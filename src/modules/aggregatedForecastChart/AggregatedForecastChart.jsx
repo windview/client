@@ -150,7 +150,8 @@ export class AggregatedForecastChart extends React.Component {
   }
 
   componentDidMount() {
-    if(this.props.visibleWindFarms && this.props.forecast) {
+    let aggDataSource = this.getAggregatedSourceData();
+    if(aggDataSource && this.props.forecast) {
       this.chartIt();
       if(this.props.selectedTimestamp) {
         this.drawPlotLine(this.props.selectedTimestamp);
@@ -159,10 +160,12 @@ export class AggregatedForecastChart extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
+    let aggDataSource = this.getAggregatedSourceData();
+    let prevDataSource = this.getAggregatedPrevData(prevProps);
     if(this.props.forecast) {
-      if(this.props.visibleWindFarms) {
-        if(prevProps.visibleWindFarms) {
-          if(this.farmsHaveChanged(prevProps.visibleWindFarms, this.props.visibleWindFarms)) {
+      if(aggDataSource) {
+        if(prevDataSource) {
+          if(this.farmsHaveChanged(prevDataSource, aggDataSource)) {
             this.chartIt();
           }
         } else {
@@ -171,6 +174,9 @@ export class AggregatedForecastChart extends React.Component {
       }
       if(this.props.selectedTimestamp && this.chart) {
         this.drawPlotLine(this.props.selectedTimestamp);
+      }
+      if(this.props.aggregatedSource !== prevProps.aggregatedSource) {
+        this.chartIt();
       }
     }
   }
@@ -205,6 +211,24 @@ export class AggregatedForecastChart extends React.Component {
     }
   }
 
+  getAggregatedPrevData(prevProps) {
+    if (this.props.aggregatedSource === 'visibleFarms') {
+      return prevProps.visibleWindFarms
+    }
+    if (this.props.aggregatedSource === 'polygonFarms') {
+      return prevProps.selectedWindFarmsByPolygon
+    }
+  }
+
+  getAggregatedSourceData() {
+    if (this.props.aggregatedSource === 'visibleFarms') {
+      return this.props.visibleWindFarms
+    }
+    if (this.props.aggregatedSource === 'polygonFarms') {
+      return this.props.selectedWindFarmsByPolygon
+    }
+  }
+
   /*
    * Formats the data for Highcharts. Creates 5 arrays, one each
    * for forecast, arearange, 25th, 75th, and the actuals
@@ -220,8 +244,9 @@ export class AggregatedForecastChart extends React.Component {
 
   getForecasts() {
     let retval = [];
-    if(this.props.visibleWindFarms) {
-      this.props.visibleWindFarms.forEach(farm=>{
+    let aggDataSource = this.getAggregatedSourceData();
+    if(aggDataSource) {
+      aggDataSource.forEach(farm=>{
         retval.push(Forecast.getForecastForFarm(farm.properties.fid, this.props.forecast));
       })
     }
