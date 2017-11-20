@@ -341,18 +341,18 @@ export class Map extends React.Component {
         var northEast = [polygonBoundingBox[2], polygonBoundingBox[3]];
         var northEastPointPixel = map.project(northEast);
         var southWestPointPixel = map.project(southWest);
+        var select = []
         var features = map.queryRenderedFeatures([southWestPointPixel, northEastPointPixel], { layers: ['windfarms-symbol', 'windfarms-selected-symbol', 'windfarms-disabled-symbol'] });
-        var filter = features.reduce(function(memo, feature) {
-          if (! (undefined === turf.intersect(feature, userPolygon))) {
-
+        var selectedFeatures = features.map(function(feature) {
+          var polygon = turf.polygon(userPolygon.geometry.coordinates)
+          var point = turf.point(feature.geometry.coordinates)
+          if (turf.inside(point, polygon)) {
+              select.push(feature)
             // only add the property, if the feature intersects with the polygon drawn by the user
-            memo.push(feature.properties.fid);
           }
-          return memo;
-        }, ['in', 'fid']);
-        map.setFilter("windfarms-highlighted", filter);
-
-        this.props.onSelectFeaturesByPolygon(features)
+          return select
+        });
+        this.props.onSelectFeaturesByPolygon(selectedFeatures[0])
       }.bind(this));
 
       map.on('draw.delete', function(e) {
