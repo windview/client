@@ -51,7 +51,8 @@ let Forecast = new function(){
     * @return a fetch promise
     */
   this.fetchForecast = (farm, timezoom) => {
-    return API.goFetch(`${farm.properties.fid}.json`)
+
+    return API.goFetch(`farms/${farm.properties.id}/forecasts/latest`)
       .then(
         response => {
           if(response.ok) {
@@ -328,10 +329,8 @@ let Forecast = new function(){
     */
   this._formatForecastData = (forecast) => {
     let formattedData = [];
-    //remove the header row
-    forecast.data.shift();
     // Loop through and process the data, outputting a format consumable by the app
-    forecast.data.forEach((dataPoint) => {
+    forecast.forecast.data.forEach((dataPoint) => {
       formattedData.push(this._formatForecastDataPoint(dataPoint));
     }, this);
     return formattedData;

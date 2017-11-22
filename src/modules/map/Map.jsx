@@ -23,7 +23,8 @@ export class Map extends React.Component {
 
   afterMapRender() {
     this.onChangeVisibleExtent({type:'manual'});
-    this.whenFeatureClicked(null, this.props.windFarms.features.find(f=>f.properties.fid === 'boulder_nrel_wind'));
+    // select first farm
+    this.whenFeatureClicked(null, this.props.windFarms.features[0]);
   }
 
   applySelectedFeature(feature, forcePopup) {
@@ -346,7 +347,7 @@ export class Map extends React.Component {
     // The click event has a feature wherein the properties have been turned into strings.
     // Need to supply the proper object form so we find it in our local copy of the data
     if(!feature) {
-      feature = WindFarm.getWindFarmById(e.features[0].properties.fid, this.props.windFarms.features);
+      feature = WindFarm.getWindFarmById(e.features[0].properties.id, this.props.windFarms.features);
     }
     this.applySelectedFeature(feature, true);
     this.props.onSelectFeature(feature);

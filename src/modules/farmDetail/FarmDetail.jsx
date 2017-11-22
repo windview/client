@@ -44,9 +44,9 @@ export class FarmDetail extends React.Component {
           <tr>
             <td>Total Farm Capacity</td><td className="right">{commafy(feature.properties.total_capacity)} MW</td>
           </tr><tr>
-            <td>Turbine Manufacturer(s)</td><td className="right">{feature.properties.manufacturers.join(', ')}</td>
+            <td>Turbine Manufacturer(s)</td><td className="right">{'manufacturers' in feature.properties ? feature.properties.manufacturers.join(', ') : "unknown"}</td>
           </tr><tr>
-            <td>Turbine Models</td><td className="right">{feature.properties.models.join(', ')}</td>
+            <td>Turbine Models</td><td className="right">{'models' in feature.properties ? feature.properties.models.join(', ') : "unknown" }</td>
           </tr>
           {appendRows}
           </tbody>
