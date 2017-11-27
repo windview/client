@@ -391,10 +391,6 @@ export class Map extends React.Component {
     }.bind(this));
   }
 
-  setSelectedFeaturesByPolygon(feature) {
-    debugger
-
-  }
 
   toggleStyle(styleName) {
     switch(styleName) {

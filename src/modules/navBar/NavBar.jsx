@@ -3,7 +3,7 @@ import './NavBar.scss';
 import { mapStateToProps, mapDispatchToProps} from './selectors';
 import { connect } from 'react-redux';
 
-export const NavBar = ({activePane, onClick, appTitle, buttons, onSelectAggregation}) => {
+export const NavBar = ({activePane, windFarms, onClick, appTitle, buttons, onSelectAggregation}) => {
 
   const modelOptions = [
     { value: 'one', label: 'Forecast One'},
@@ -29,6 +29,11 @@ export const NavBar = ({activePane, onClick, appTitle, buttons, onSelectAggregat
     { value: 'two', label: 'Group 2'},
   ];
 
+  const groupedFarms = [
+    {groupTitle: 'one', value: ['boulder_nrel_wind', 'kit_carson_windpower']},
+    {groupTitle: 'two', value: ['boulder_nrel_wind']}
+  ]
+
   const groupedFarmsOptionsElements = groupedFarmsOptions.map((option) =>
     <option key={option.value} value={option.value}>{option.label}</option>
   );
@@ -43,10 +48,27 @@ export const NavBar = ({activePane, onClick, appTitle, buttons, onSelectAggregat
     onSelectAggregation(source);
     if (source.value !== 'groupedFarms') {
       $('.groupedFarmsDropdown').addClass('hidden')
+      this.setGroupedFarms()
     }
     if (source.value === 'groupedFarms') {
       $('.groupedFarmsDropdown').removeClass('hidden')
     }
+  }
+
+
+
+  const setGroupedFarms=() => {
+    let windFarms = windFarms
+    let e = document.getElementById("groupedFarmsSelect")
+    let source = e.options[e.selectedIndex]
+    groupedFarms.map((group) => {
+      if (group.groupTitle === source.value) {
+        group.value.map((wf) => {
+          
+        })
+      }
+    })
+
   }
 
   return (
@@ -78,7 +100,7 @@ export const NavBar = ({activePane, onClick, appTitle, buttons, onSelectAggregat
                 </li>
                 <li key="groupedFarmsSelect" className="groupedFarmsDropdown hidden">
                   <p className="selectbox">Grouped Farms</p>
-                  <select id="groupedFarmsSelect" onChange={handleChangeEvent}>
+                  <select id="groupedFarmsSelect" onChange={setGroupedFarms}>
                     {groupedFarmsOptionsElements}
                   </select>
                 </li>

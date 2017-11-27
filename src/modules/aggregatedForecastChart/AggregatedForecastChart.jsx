@@ -238,6 +238,9 @@ export class AggregatedForecastChart extends React.Component {
     if (this.props.aggregatedSource === 'polygonFarms') {
       return this.props.selectedWindFarmsByPolygon
     }
+    if (this.props.aggregatedSource === 'groupedFarms') {
+      return this.props.selectedWindFarmsByGroup
+    }
   }
 
   /*

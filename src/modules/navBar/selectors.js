@@ -5,7 +5,8 @@ import * as actions from '../../actionCreators';
 
 export const mapStateToProps = (state, ownProps) => {
   return {
-    activePane: state.nav.activePane
+    activePane: state.nav.activePane,
+    windFarms: state.data.windFarms
   }
 }
 
