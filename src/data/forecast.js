@@ -207,6 +207,13 @@ let Forecast = new function(){
       let currentForecast = farm.properties.forecastData.data.find(dataPoint => {
         return dataPoint.timestamp.getTime() === ts;
       });
+      let dataConfidence = farm.properties.data_confidence
+      if (dataConfidence <= .5) {
+        currentForecast.suspectData = true
+      }
+      if (dataConfidence > 0.5) {
+        currentForecast.suspectData = false
+      }
       if(!currentForecast) {
         // This is needed to wipe props while we are operating on the actual
         // object used in styling the map
@@ -218,6 +225,7 @@ let Forecast = new function(){
           actual: null,
           ramp: false,
           rampSeverity: null,
+          suspectData: false,
           disabled: true
         }
       } else {

@@ -8,6 +8,7 @@ import turf from '../../../node_modules/@turf/turf/turf.min.js';
 import windFarmIcon from '../../images/windfarm.png';
 import windFarmDisabledIcon from '../../images/windfarm-disabled.png';
 import windFarmSelectedIcon from '../../images/windfarm-selected.png';
+import windFarmSuspectDataIcon from '../../images/windfarm-suspect-data.png'
 import './Map.scss';
 import mapboxStyle from '../../styles/dark-matter-style';
 import { mapStateToProps, mapDispatchToProps } from './selectors';
@@ -218,6 +219,11 @@ export class Map extends React.Component {
         if(err) return;
         map.addImage('windfarm-disabled', image);
       });
+      // Add the custom image icon for wind farms to use later
+      map.loadImage(windFarmSuspectDataIcon, (err, image) => {
+        if(err) return;
+        map.addImage('windfarm-suspect-data', image);
+      });
       // Add translines
       map.addSource('translines', {
           type: "vector",
@@ -271,6 +277,7 @@ export class Map extends React.Component {
           'all',
           ['!=', 'selected', true],
           ['!=', 'disabled', true],
+          ['!=', 'suspectData', true]
         ],
         paint: {
           'icon-opacity': 1
@@ -298,7 +305,6 @@ export class Map extends React.Component {
         }
       });
 
-      // This icon layer shows a different icon for the selected farm
       map.addLayer({
         id: 'windfarms-disabled-symbol',
         type: 'symbol',
@@ -316,15 +322,26 @@ export class Map extends React.Component {
       });
 
       map.addLayer({
-        "id": "windfarms-highlighted",
-        "type": "circle",
-        "source": "windfarms",
-        "paint": {
-          'circle-color': 'hsla(240, 100%, 50%, 0)',
-          'circle-radius': 1,
+        id: 'windfarms-suspect-data-symbol',
+        type: 'symbol',
+        source: 'windfarms',
+        layout: {
+          'icon-image': 'windfarm-suspect-data',
+          'icon-size': .3,
+          'icon-allow-overlap': true,
+          'icon-keep-upright': true
         },
-         "filter": ["in", "fid", ""],
-      }); // Place polygon under these labels.
+        filter: [
+          'all',
+          ['!=', 'selected', true],
+          ['!=', 'disabled', true],
+          ['==', 'suspectData', true]
+        ],
+        paint: {
+          'icon-opacity': 1
+        }
+      });
+
 
 
       map.on('draw.create', function(e){
@@ -363,14 +380,17 @@ export class Map extends React.Component {
       // Handle the relevant events on the windfarms layer
       map.on('click', 'windfarms-symbol', this.whenFeatureClicked);
       map.on('click', 'windfarms-selected-symbol', this.whenFeatureClicked);
+      map.on('click', 'windfarms-suspect-data-symbol', this.whenFeatureClicked);
 
       // Change the cursor to a pointer when the mouse is over the places layer.
       map.on('mouseenter', 'windfarms-symbol', this.whenFeatureMouseOver);
       map.on('mouseenter', 'windfarms-selected-symbol', this.whenFeatureMouseOver);
+      map.on('mouseenter', 'windfarms-suspect-data-symbol', this.whenFeatureMouseOver);
 
       // Change it back to a pointer when it leaves.
       map.on('mouseleave', 'windfarms-symbol', this.whenFeatureMouseOut);
       map.on('mouseleave', 'windfarms-selected-symbol', this.whenFeatureMouseOut);
+      map.on('mouseleave', 'windfarms-suspect-data-symbol', this.whenFeatureMouseOut);
 
       // All the events that might change the visible extent are encapsulated in
       // the moveend event

@@ -18,7 +18,8 @@
         "models": [
           "XL50"
         ],
-        "total_capacity": 0.05
+        "total_capacity": 0.05,
+        "data_confidence": 0.1
       },
       "geometry": {
         "type": "Point",
