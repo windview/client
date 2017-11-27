@@ -9,6 +9,7 @@ import windFarmIcon from '../../images/windfarm.png';
 import windFarmDisabledIcon from '../../images/windfarm-disabled.png';
 import windFarmSelectedIcon from '../../images/windfarm-selected.png';
 import windFarmSuspectDataIcon from '../../images/windfarm-suspect-data.png'
+import windFarmSelectedSuspsectDataIcon from '../../images/windfarm-selected-suspect-data.png'
 import './Map.scss';
 import mapboxStyle from '../../styles/dark-matter-style';
 import { mapStateToProps, mapDispatchToProps } from './selectors';
@@ -224,6 +225,11 @@ export class Map extends React.Component {
         if(err) return;
         map.addImage('windfarm-suspect-data', image);
       });
+      // Add the custom image icon for wind farms to use later
+      map.loadImage(windFarmSelectedSuspsectDataIcon, (err, image) => {
+        if(err) return;
+        map.addImage('windfarm-selected-suspect-data', image);
+      });
       // Add translines
       map.addSource('translines', {
           type: "vector",
@@ -334,6 +340,27 @@ export class Map extends React.Component {
         filter: [
           'all',
           ['!=', 'selected', true],
+          ['!=', 'disabled', true],
+          ['==', 'suspectData', true]
+        ],
+        paint: {
+          'icon-opacity': 1
+        }
+      });
+
+      map.addLayer({
+        id: 'windfarms-selected-suspect-data-symbol',
+        type: 'symbol',
+        source: 'windfarms',
+        layout: {
+          'icon-image': 'windfarm-selected-suspect-data',
+          'icon-size': .4,
+          'icon-allow-overlap': true,
+          'icon-keep-upright': true
+        },
+        filter: [
+          'all',
+          ['==', 'selected', true],
           ['!=', 'disabled', true],
           ['==', 'suspectData', true]
         ],
