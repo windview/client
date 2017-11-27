@@ -16,10 +16,20 @@ export const NavBar = ({activePane, onClick, appTitle, buttons, onSelectAggregat
 
   const aggregatedOptions = [
     { value: 'visibleFarms', label: 'Currently Visible Wind Farms'},
-    { value: 'polygonFarms', label: 'Selected Wind Farms with Polygon Selection Tool'}
+    { value: 'polygonFarms', label: 'Selected Wind Farms with Polygon Selection Tool'},
+    { value: 'groupedFarms', label: 'Grouped Wind Farms'}
   ];
 
   const aggregatedOptionElements = aggregatedOptions.map((option) =>
+    <option key={option.value} value={option.value}>{option.label}</option>
+  );
+
+  const groupedFarmsOptions = [
+    { value: 'one', label: 'Group 1'},
+    { value: 'two', label: 'Group 2'},
+  ];
+
+  const groupedFarmsOptionsElements = groupedFarmsOptions.map((option) =>
     <option key={option.value} value={option.value}>{option.label}</option>
   );
 
@@ -31,6 +41,12 @@ export const NavBar = ({activePane, onClick, appTitle, buttons, onSelectAggregat
     let e = document.getElementById("aggregatedSource");
     let source = e.options[e.selectedIndex]
     onSelectAggregation(source);
+    if (source.value !== 'groupedFarms') {
+      $('.groupedFarmsDropdown').addClass('hidden')
+    }
+    if (source.value === 'groupedFarms') {
+      $('.groupedFarmsDropdown').removeClass('hidden')
+    }
   }
 
   return (
@@ -58,6 +74,12 @@ export const NavBar = ({activePane, onClick, appTitle, buttons, onSelectAggregat
                   <p className="selectbox">Aggregated Forecast Model</p>
                   <select id="aggregatedSource" onChange={handleChangeEvent}>
                     {aggregatedOptionElements}
+                  </select>
+                </li>
+                <li key="groupedFarmsSelect" className="groupedFarmsDropdown hidden">
+                  <p className="selectbox">Grouped Farms</p>
+                  <select id="groupedFarmsSelect" onChange={handleChangeEvent}>
+                    {groupedFarmsOptionsElements}
                   </select>
                 </li>
               </ul>
