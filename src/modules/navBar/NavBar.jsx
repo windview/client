@@ -6,8 +6,9 @@ import { connect } from 'react-redux';
 export const NavBar = ({activePane, windFarms, onClick, appTitle, buttons, onSelectAggregation}) => {
 
   const modelOptions = [
-    { value: 'one', label: 'Forecast One'},
-    { value: 'local', label: 'Local Forecast'}
+    { value: 'best', label: 'Best/Most Recent'},
+    { value: 'one', label: 'Forecaster 1'},
+    { value: 'local', label: 'Forecaster 2'}
   ];
 
   const modelOptionElements = modelOptions.map((option) =>
@@ -64,7 +65,7 @@ export const NavBar = ({activePane, windFarms, onClick, appTitle, buttons, onSel
     groupedFarms.map((group) => {
       if (group.groupTitle === source.value) {
         group.value.map((wf) => {
-          
+
         })
       }
     })

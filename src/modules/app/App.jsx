@@ -4,7 +4,7 @@ import Map from '../map/Map';
 import ForecastChart from '../forecastChart/ForecastChart';
 import FarmDetail from '../farmDetail/FarmDetail';
 import ForecastMeta from '../forecastMeta/ForecastMeta';
-import AggregatedForecastChart from '../aggregatedForecastChart/AggregatedForecastChart';
+import BotChartSelector from '../botChartSelector/BotChartSelector';
 import Slider from '../slider/Slider';
 import AppSettings from '../appSettings/AppSettings';
 import Help from '../help/Help';
@@ -14,7 +14,10 @@ import { NAV_BAR_BUTTONS } from './constants';
 import classNames from 'classnames';
 import './App.scss';
 
-export const App = ({ activePane }) => {
+export const App = ({ activePane, selectedFeature }) => {
+
+  let farmName = selectedFeature ? selectedFeature.properties.label : null;
+
   return (
     <div id="app" className="">
       <NavBar appTitle="Wind View" buttons={NAV_BAR_BUTTONS} />
@@ -24,13 +27,14 @@ export const App = ({ activePane }) => {
             <Map />
           </section>
           <section id="map-sidebar" className="main-pane-right">
+            <div className='detail-title'>{farmName}</div>
             <ForecastChart />
             <FarmDetail />
             <ForecastMeta />
           </section>
           <section id="map-footer" className="main-pane-bottom">
             <Slider />
-            <AggregatedForecastChart />
+            <BotChartSelector />            
           </section>
         </div>
         <div className={classNames({'hidden': activePane!=='settings'})}>

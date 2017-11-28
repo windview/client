@@ -25,7 +25,9 @@ const defaultValue = {
   selectedStyle: 'ramp',
   timezoom: 24,
   dataSource: 'visibleFarms',
-  chartTitle: 'Currently Visible Wind Farms'
+  chartTitle: 'Currently Visible Wind Farms',
+  botChartType: 'aggregation',
+  multiChartMap: {}
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -69,6 +71,21 @@ export default (state=defaultValue, action) => {
       return {
         ...state,
         timezoom: action.timezoom
+      };
+    case t.SELECT_BOT_CHART:
+      return{
+        ...state,
+        botChartType: action.chartType
+      };
+    case t.ADD_MULTI_CHART:
+      state.multiChartMap[action.selectedFeature.properties.fid] = action.selectedFeature;
+      return {
+        ...state
+      };
+    case t.REMOVE_MULTI_CHART:
+      delete state.multiChartMap[action.fid];
+      return {
+        ...state
       };
     default:
       return state;
