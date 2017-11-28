@@ -11,7 +11,7 @@ HighchartsMore(Highcharts);
 export class ChartElement extends React.Component {
 
   constructor(props) {
-    super(props);    
+    super(props);
     this.addMultiChart = this.addMultiChart.bind(this);
     this.removeMultiChart = this.removeMultiChart.bind(this);
   }
@@ -40,7 +40,7 @@ export class ChartElement extends React.Component {
 
     let chart = Highcharts.chart(container, {
       chart: {
-        height: 280,
+        height: 240,
         spacingBottom: 5
       },
       credits: {
@@ -187,7 +187,7 @@ export class ChartElement extends React.Component {
     this.chart = chart;
   }
 
-  componentDidMount() {    
+  componentDidMount() {
     if(this.props.feature || this.props.multiChart) {
       this.chartIt();
       if(this.props.selectedTimestamp) {
@@ -196,7 +196,7 @@ export class ChartElement extends React.Component {
     }
   }
 
-  componentDidUpdate(prevProps) {    
+  componentDidUpdate(prevProps) {
     if(this.props.feature || this.props.multiChart) {
       if(prevProps.feature) {
         // if the currently selected feature is not the same as the previously selected
@@ -277,7 +277,7 @@ export class ChartElement extends React.Component {
 
   addMultiChart() {
     this.props.onAddMultiChart(this.props.feature);
-  }  
+  }
   removeMultiChart(fid){
     this.props.onRemoveMultiChart(fid);
   }

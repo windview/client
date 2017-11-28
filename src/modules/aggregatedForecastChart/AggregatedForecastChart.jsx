@@ -51,7 +51,7 @@ export class AggregatedForecastChart extends React.Component {
 
     let chart = Highcharts.chart('aggregated-chart', {
       chart: {
-        spacingBottom: 5
+        spacingBottom: 10
       },
       title: {
         text: 'Aggregated Forecast for Currently Visible Wind Farms',
@@ -100,6 +100,7 @@ export class AggregatedForecastChart extends React.Component {
         lineWidth: 2,
         dashStyle: 'Solid',
         marker: {
+          enabled: false,
           lineWidth: 1,
           lineColor: '#699173',
           symbol: "circle"

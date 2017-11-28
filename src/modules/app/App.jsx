@@ -14,7 +14,10 @@ import { NAV_BAR_BUTTONS } from './constants';
 import classNames from 'classnames';
 import './App.scss';
 
-export const App = ({ activePane }) => {
+export const App = ({ activePane, selectedFeature }) => {
+
+  let farmName = selectedFeature ? selectedFeature.properties.label : null;
+
   return (
     <div id="app" className="">
       <NavBar appTitle="Wind View" buttons={NAV_BAR_BUTTONS} />
@@ -24,6 +27,7 @@ export const App = ({ activePane }) => {
             <Map />
           </section>
           <section id="map-sidebar" className="main-pane-right">
+            <div className='detail-title'>{farmName}</div>
             <ForecastChart />
             <FarmDetail />
             <ForecastMeta />

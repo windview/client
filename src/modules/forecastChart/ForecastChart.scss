@@ -1,3 +1,5 @@
+@import '../app/layout.scss';
+
 #chart-wrapper {
   padding: 10px;
 }
@@ -10,17 +12,10 @@
 }
 
 .chart-wrapper {
-  background: #fff;
+  background: $component-background;
   border: 1px solid #e2e2e2;
   border-radius: 3px;
   margin-bottom: 5px;
-
-  .chart-title {
-    color: #525252;
-    font-size: 14px;
-    font-weight: 800;
-    padding: 0px 10px 4px;
-  }
 
   .chart-stage {
     overflow: hidden;
