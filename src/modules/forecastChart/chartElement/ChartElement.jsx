@@ -1,7 +1,7 @@
 import { BaseElement, LoadingElement } from '../ForecastChart';
 import React from 'react';
 import { connect } from 'react-redux';
-import { mapStateToProps } from './selectors';
+import { mapStateToProps, mapDispatchToProps } from './selectors';
 import '../ForecastChart.scss';
 import Highcharts from 'highcharts/highcharts';
 import HighchartsMore from 'highcharts/highcharts-more';
@@ -10,8 +10,20 @@ HighchartsMore(Highcharts);
 
 export class ChartElement extends React.Component {
 
+  constructor(props) {
+    super(props);
+    this.addMultiChart = this.addMultiChart.bind(this);
+    this.removeMultiChart = this.removeMultiChart.bind(this);
+  }
+
   chartIt() {
-    const data = this.getChartData(this.props.feature.properties.forecastData),
+    var selectedFeature = this.props.feature;
+    var container = "forecast-chart";
+    if(this.props.multiChart){
+      selectedFeature = this.props.analysis.multiChartMap[this.props.index];
+      container = this.props.container;
+    }
+    const data = this.getChartData(selectedFeature.properties.forecastData),
           forecast = data[0],
           range = data[1],
           twentyFive = data[2],
@@ -26,7 +38,7 @@ export class ChartElement extends React.Component {
       this.chart.destroy();
     }
 
-    let chart = Highcharts.chart('forecast-chart', {
+    let chart = Highcharts.chart(container, {
       chart: {
         height: 240,
         spacingBottom: 5
@@ -158,7 +170,7 @@ export class ChartElement extends React.Component {
       }]
     });
 
-    const rampBins = this.props.feature.properties.forecastData.alerts.rampBins;
+    const rampBins = selectedFeature.properties.forecastData.alerts.rampBins;
     rampBins.forEach((bin)=>{
       const color = bin.increments[bin.increments.length-1] > 0 ? "rgba(205, 186, 45, 0.63)" : "rgba(117, 140, 225, 0.53)",
             borderColor = bin.severity > 1 ? "rgba(255, 0, 0, 0.7" : color;
@@ -176,7 +188,7 @@ export class ChartElement extends React.Component {
   }
 
   componentDidMount() {
-    if(this.props.feature) {
+    if(this.props.feature || this.props.multiChart) {
       this.chartIt();
       if(this.props.selectedTimestamp) {
         this.drawPlotLine(this.props.selectedTimestamp);
@@ -185,10 +197,11 @@ export class ChartElement extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if(this.props.feature) {
+    if(this.props.feature || this.props.multiChart) {
       if(prevProps.feature) {
         // if the currently selected feature is not the same as the previously selected
-        if(this.props.feature.properties.fid !== prevProps.feature.properties.fid) {
+        if(this.props.feature.properties.fid !== prevProps.feature.properties.fid
+          || this.props.index !== prevProps.index) {
           this.chartIt();
         }
       } else {
@@ -241,13 +254,33 @@ export class ChartElement extends React.Component {
   }
 
   render() {
-    const feature = this.props.feature;
+    var selectedFeature = this.props.feature;
+    var container = "forecast-chart";
+    var button = <button type="button" onClick={this.addMultiChart}>+</button>;
+    if(this.props.multiChart){
+      selectedFeature = this.props.analysis.multiChartMap[this.props.index];
+      container = this.props.container;
+      button = <button type="button" id={'btn'+selectedFeature.properties.fid} value={selectedFeature.properties.fid} onClick={() => this.removeMultiChart(selectedFeature.properties.fid)}>-</button>;
+    }
+
+    const feature = selectedFeature;
+    const id = container;
+    const btn = button;
     return feature.loading ? <LoadingElement feature={feature} /> : (
-      <BaseElement>
-        <div id="forecast-chart"></div>
+      <BaseElement multiChart={this.props.multiChart}>
+        <div className='chart-title'>Details and Forecast for {feature.properties.label} {btn}
+        </div>
+        <div id={id} className={this.props.multiChart ? 'multi-forecast-chart':''}></div>
       </BaseElement>
     )
   }
+
+  addMultiChart() {
+    this.props.onAddMultiChart(this.props.feature);
+  }
+  removeMultiChart(fid){
+    this.props.onRemoveMultiChart(fid);
+  }
 }
 
-export default connect(mapStateToProps, null)(ChartElement);
+export default connect(mapStateToProps, mapDispatchToProps)(ChartElement);

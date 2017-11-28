@@ -64,8 +64,8 @@ export const selectStyle = (style) => ({
 });
 
 export const selectTimestamp = (timestamp) => ({
-    type: t.SELECT_TIME,
-    timestamp: timestamp
+  type: t.SELECT_TIME,
+  timestamp: timestamp
 });
 
 export const selectTimezoom = (timezoom) => ({
@@ -115,3 +115,20 @@ export const fetchWindFarms = () => {
       )
   }
 }
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Bot Chart Actions
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+export const selectBotChart = (chartType) => ({
+  type: t.SELECT_BOT_CHART,
+  chartType: chartType
+});
+export const addMultiChart = (selectedFeature) => ({
+  type: t.ADD_MULTI_CHART,
+  selectedFeature: selectedFeature
+});
+export const removeMultiChart = (fid) => ({
+  type: t.REMOVE_MULTI_CHART,
+  fid: fid
+});

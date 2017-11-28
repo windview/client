@@ -1,0 +1,30 @@
+@import '../../styles/color-gradient.scss';
+
+.multi-chart-container {
+  top: 0px;
+  right: 0px;
+  left: 0px;
+  height: 800px;
+  padding: 0px;
+  border: 1px solid #e2e2e2;
+  border-radius: 3px;
+  background-color: #fff;
+  overflow-y: auto;
+  max-height: 800px;
+}
+
+#multi-chart {
+  height: 128px;
+}
+
+.bin-up {
+   background-image: url('http://localhost:8088/images/up.svg');
+   background-size: contain;
+   background-repeat: repeat-y;
+}
+
+.bin-down {
+  background-image: url('http://localhost:8088/images/down.svg');
+  background-size: contain;
+  background-repeat: repeat-y;
+}

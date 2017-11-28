@@ -1,0 +1,47 @@
+@import '../../styles/color-gradient.scss';
+
+.bot-chart-area {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+  height: 130px;
+  padding: 0px;
+  border: 1px solid #e2e2e2;
+  border-radius: 3px;
+  background-color: #fff;
+}
+
+.bot-chart-option{
+	text-align: right;
+  display: inline-block;
+	height: 30px;
+  width: 100%;
+}
+
+.bot-chart-container {
+  position: absolute;
+  top: 30px;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+  height: 130px;
+  padding: 0px;
+  border: 1px solid #e2e2e2;
+  border-radius: 3px;
+  background-color: #fff;
+}
+
+.bot-multichart-container{
+  display: inline-block;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+  height: 800px;
+  max-height: 800px;
+  width: 100%;
+  padding: 0px;
+  border: 1px solid #e2e2e2;
+  border-radius: 3px;
+  background-color: #fff;
+}
