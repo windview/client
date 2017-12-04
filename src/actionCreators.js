@@ -69,6 +69,11 @@ export const selectFeature = (feature) => ({
   feature: feature
 });
 
+export const selectFeaturesByGroup = (feature) => ({
+  type: t.SELECT_FEATURES_BY_GROUP,
+  feature: feature
+});
+
 export const selectFeaturesByPolygon = (feature) => ({
   type: t.SELECT_FEATURES_BY_POLYGON,
   feature: feature

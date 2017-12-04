@@ -41,22 +41,32 @@ export default (state=defaultValue, action) => {
         ...state,
         visibleWindFarms: action.features
       };
-      case t.SELECT_AGGREGATION:
-       return {
-         ...state,
-         dataSource: action.dataSource,
-         chartTitle: action.title
-       };
-     case t.SELECT_FEATURE:
+    case t.SELECT_AGGREGATION:
+      return {
+        ...state,
+        dataSource: action.dataSource,
+        chartTitle: action.title
+      };
+    case t.SELECT_FEATURE:
       return {
         ...state,
         selectedFeature: action.feature
       };
-      case t.SELECT_FEATURES_BY_POLYGON:
-       return {
-         ...state,
-         selectedWindFarmsByPolygon: action.feature
-       };
+    case t.SELECT_FEATURES_BY_GROUP:
+      return {
+        ...state,
+        selectedWindFarmsByGroup: action.feature
+      };
+    case t.SELECT_FEATURES_BY_POLYGON:
+      return {
+        ...state,
+        selectedWindFarmsByPolygon: action.feature
+      };
+    case t.SELECT_FEATURES_BY_POLYGON:
+      return {
+        ...state,
+        selectedWindFarmsByPolygon: action.feature
+      };
     case t.SELECT_STYLE:
       return {
         ...state,
@@ -78,12 +88,12 @@ export default (state=defaultValue, action) => {
         botChartType: action.chartType
       };
     case t.ADD_MULTI_CHART:
-      state.multiChartMap[action.selectedFeature.properties.fid] = action.selectedFeature;
+    state.multiChartMap[action.selectedFeature.properties.fid] = action.selectedFeature;
       return {
         ...state
       };
     case t.REMOVE_MULTI_CHART:
-      delete state.multiChartMap[action.fid];
+    delete state.multiChartMap[action.fid];
       return {
         ...state
       };

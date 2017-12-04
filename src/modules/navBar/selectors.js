@@ -18,5 +18,8 @@ export const mapDispatchToProps = (dispatch) => {
     onSelectAggregation: (dataSource) => {
       dispatch(actions.selectAggregation(dataSource));
     },
+    onSelectFeaturesByGroup: (feature) => {
+      dispatch(actions.selectFeaturesByGroup(feature));
+    },
   }
 }
