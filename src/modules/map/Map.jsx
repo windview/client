@@ -399,6 +399,35 @@ export class Map extends React.Component {
         this.props.onSelectFeaturesByPolygon(selectedFeatures[0])
       }.bind(this));
 
+      map.on('draw.update', function(e){
+
+        // Remove all other features, so that current one is the only one on map.
+        var currentId = e.features[0].id
+        var otherFeatures = draw.getAll().features.filter(function(feature) { return feature.id != currentId });
+        draw.delete(otherFeatures.map(function(feature) { return feature.id }));
+        var userPolygon = e.features[0];
+        // generate bounding box from polygon the user drew
+        var polygonBoundingBox = turf.bbox(userPolygon);
+
+        var southWest = [polygonBoundingBox[0], polygonBoundingBox[1]];
+        var northEast = [polygonBoundingBox[2], polygonBoundingBox[3]];
+        var northEastPointPixel = map.project(northEast);
+        var southWestPointPixel = map.project(southWest);
+        var select = []
+        var features = map.queryRenderedFeatures([southWestPointPixel, northEastPointPixel], { layers: ['windfarms-symbol', 'windfarms-selected-symbol', 'windfarms-disabled-symbol'] });
+        var selectedFeatures = features.map(function(feature) {
+          var polygon = turf.polygon(userPolygon.geometry.coordinates)
+          var point = turf.point(feature.geometry.coordinates)
+          if (turf.inside(point, polygon)) {
+              select.push(feature)
+            // only add the property, if the feature intersects with the polygon drawn by the user
+          }
+          return select
+        });
+        this.props.onSelectFeaturesByPolygon(selectedFeatures[0])
+      }.bind(this));
+      //pull this out into it's own function that can be called with draw.create and draw.update so that code is not repeated
+
       map.on('draw.delete', function(e) {
         this.props.onSelectFeaturesByPolygon(null)
       }.bind(this))
