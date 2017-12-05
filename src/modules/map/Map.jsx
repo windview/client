@@ -386,7 +386,7 @@ export class Map extends React.Component {
         var northEastPointPixel = map.project(northEast);
         var southWestPointPixel = map.project(southWest);
         var select = []
-        var features = map.queryRenderedFeatures([southWestPointPixel, northEastPointPixel], { layers: ['windfarms-symbol', 'windfarms-selected-symbol', 'windfarms-disabled-symbol'] });
+        var features = map.queryRenderedFeatures([southWestPointPixel, northEastPointPixel], { layers: ['windfarms-symbol', 'windfarms-selected-symbol', 'windfarms-disabled-symbol', 'windfarms-suspect-data-symbol'] });
         var selectedFeatures = features.map(function(feature) {
           var polygon = turf.polygon(userPolygon.geometry.coordinates)
           var point = turf.point(feature.geometry.coordinates)
@@ -414,7 +414,7 @@ export class Map extends React.Component {
         var northEastPointPixel = map.project(northEast);
         var southWestPointPixel = map.project(southWest);
         var select = []
-        var features = map.queryRenderedFeatures([southWestPointPixel, northEastPointPixel], { layers: ['windfarms-symbol', 'windfarms-selected-symbol', 'windfarms-disabled-symbol'] });
+        var features = map.queryRenderedFeatures([southWestPointPixel, northEastPointPixel], { layers: ['windfarms-symbol', 'windfarms-selected-symbol', 'windfarms-disabled-symbol', 'windfarms-suspect-data-symbol'] });
         var selectedFeatures = features.map(function(feature) {
           var polygon = turf.polygon(userPolygon.geometry.coordinates)
           var point = turf.point(feature.geometry.coordinates)

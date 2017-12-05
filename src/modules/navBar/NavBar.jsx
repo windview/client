@@ -67,9 +67,10 @@ export class NavBar extends React.Component {
 
   setGroupedFarms() {
     var groupedFarms = [
-      {groupTitle: 'one', value: ['boulder_nrel_wind', 'kit_carson_windpower']},
-      {groupTitle: 'two', value: ['aurora_wal_mart']},
+      {groupTitle: 'one', value: ['kit_carson_windpower', 'wray_school_district']},
+      {groupTitle: 'two', value: ['boulder_nrel_wind', 'aurora_wal_mart']},
     ]
+    // these will be replaced with the groups set by the user in config
 
 
     let e = document.getElementById("groupedFarmsSelect")
