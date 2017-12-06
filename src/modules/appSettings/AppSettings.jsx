@@ -51,9 +51,6 @@ export class AppSettings extends React.Component {
               <option value="red">Red</option>
             </select>
           </div>
-          <div>
-            <button type="submit">Submit</button>
-          </div>
         </label>
       </form>
     </div>

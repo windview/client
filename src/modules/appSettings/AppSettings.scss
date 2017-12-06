@@ -16,10 +16,6 @@
   border-bottom: 1px solid white;
 }
 
-input[type='radio'] {
-  width: 20px!important;
-}
-
 span.select {
   width: 25px;
   height: 25px;
@@ -27,16 +23,4 @@ span.select {
   border: 1px solid gray;
   vertical-align: middle;
   border-radius: 3px;
-}
-
-span.red {
-  background-color: red;
-}
-
-span.orange {
-  background-color: orange;
-}
-
-span.yellow {
-  background-color: yellow;
 }
