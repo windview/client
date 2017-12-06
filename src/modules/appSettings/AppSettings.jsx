@@ -5,7 +5,14 @@ import './AppSettings.scss';
 export class AppSettings extends React.Component {
 
   handleChange() {
-    //add code to remove selected option from other dropdowns
+    $('select.alert-severity option').attr('disabled', false);
+    $('select.alert-severity').each(function() {
+      var val = $(this).find('option:selected').val();
+      if (!val) return;
+      $('select.alert-severity option').filter(function() {
+        return $(this).val() == val;
+      }).attr('disabled', 'disabled');
+    });
   }
 
   render() {
@@ -16,6 +23,7 @@ export class AppSettings extends React.Component {
         <label>
           <span>Alert Level</span>
           <select className= "alert-severity" name="select" onChange={this.handleChange}>
+            <option value=""></option>
             <option value="low">Low</option>
             <option value="moderate">Moderate</option>
             <option value="critical">Critical</option>
@@ -43,12 +51,10 @@ export class AppSettings extends React.Component {
             <input type="radio" id="select-color-yellow"
              name="yellow" value="yellow"/>
             <label htmlFor="select-color-yellow"><span className="select yellow"></span></label>
-
           </div>
           <div>
             <button type="submit">Submit</button>
           </div>
-
         </label>
       </form>
     </div>
@@ -63,7 +69,6 @@ export class AppSettings extends React.Component {
           <li>Forecast preferences</li>
           <li>... and so on</li>
         </ul>
-
       </div>
       <div>
       {alertSettings}
