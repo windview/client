@@ -4,12 +4,14 @@ import './AppSettings.scss';
 
 export class AppSettings extends React.Component {
 
-  handleChange() {
-    $('select.alert-severity option').attr('disabled', false);
-    $('select.alert-severity').each(function() {
+  handleChange(e) {
+    var type = `select.${e.target.className}`
+    var typeOption = `select.${e.target.className} option`
+    $(typeOption).attr('disabled', false);
+    $(type).each(function() {
       var val = $(this).find('option:selected').val();
       if (!val) return;
-      $('select.alert-severity option').filter(function() {
+      $(typeOption).filter(function() {
         return $(this).val() == val;
       }).attr('disabled', 'disabled');
     });
@@ -22,7 +24,7 @@ export class AppSettings extends React.Component {
       <form>
         <label>
           <span>Alert Level</span>
-          <select className= "alert-severity" name="select" onChange={this.handleChange}>
+          <select className= "alert-severity" name="select" onChange={(e)=>this.handleChange(e)}>
             <option value=""></option>
             <option value="low">Low</option>
             <option value="moderate">Moderate</option>
@@ -42,15 +44,12 @@ export class AppSettings extends React.Component {
         <label>
           <span>Alert Color</span>
           <div>
-            <input type="radio" id="select-color-red"
-             name="red" value="red"/>
-            <label htmlFor="select-color-red"><span className="select red"></span></label>
-            <input type="radio" id="select-color-orange"
-             name="orange" value="orange"/>
-            <label htmlFor="select-color-orange"><span className="select orange"></span></label>
-            <input type="radio" id="select-color-yellow"
-             name="yellow" value="yellow"/>
-            <label htmlFor="select-color-yellow"><span className="select yellow"></span></label>
+            <select className= "alert-color" name="select" onChange={(e)=>this.handleChange(e)}>
+              <option value=""></option>
+              <option value="yellow">Yellow</option>
+              <option value="orange">Orange</option>
+              <option value="red">Red</option>
+            </select>
           </div>
           <div>
             <button type="submit">Submit</button>
