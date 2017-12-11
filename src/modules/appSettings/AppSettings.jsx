@@ -4,6 +4,10 @@ import './AppSettings.scss';
 
 export class AppSettings extends React.Component {
 
+  componentDidMount() {
+    this.setTimeDropdown()
+  }
+
   handleChange(e) {
     var type = `select.${e.target.className}`
     var typeOption = `select.${e.target.className} option`
@@ -15,6 +19,13 @@ export class AppSettings extends React.Component {
         return $(this).val() == val;
       }).attr('disabled', 'disabled');
     });
+  }
+
+  setTimeDropdown() {
+    var $select = $(".1-30");
+    for (var i=1;i<=30;i++){
+        $select.append($('<option></option>').val(i).html(i))
+      }
   }
 
   render() {
@@ -54,9 +65,16 @@ export class AppSettings extends React.Component {
       </form>
     </div>
 
+    const forecastTimeSettings =
+    <div id="forecast-time-settings">
+      <div className="forecast-settings-description">Set the desired number of days to forecast ahead.</div>
+      <select className="1-30"></select>
+      <span> Days </span>
+    </div>
+
     return (
       <div className="settings-container">
-      <div id="app-settings">
+      <section id="app-settings">
         Application Settings would be configurable here including things like
         <ul>
           <li>Default map area</li>
@@ -64,12 +82,16 @@ export class AppSettings extends React.Component {
           <li>Forecast preferences</li>
           <li>... and so on</li>
         </ul>
-      </div>
+      </section>
       <section>
       <h3>Alerts</h3>
         {alertSettings}
         {alertSettings}
         {alertSettings}
+      </section>
+      <section>
+      <h3>Forecast Time Horizon</h3>
+        {forecastTimeSettings}
       </section>
       </div>
   )}
