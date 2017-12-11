@@ -20,7 +20,6 @@ export class AppSettings extends React.Component {
   render() {
     const alertSettings =
     <div id="alert-settings">
-      <h3>Alerts</h3>
       <form>
         <label>
           <span>Alert Level</span>
@@ -66,11 +65,12 @@ export class AppSettings extends React.Component {
           <li>... and so on</li>
         </ul>
       </div>
-      <div>
-      {alertSettings}
-      {alertSettings}
-      {alertSettings}
-      </div>
+      <section>
+      <h3>Alerts</h3>
+        {alertSettings}
+        {alertSettings}
+        {alertSettings}
+      </section>
       </div>
   )}
 }

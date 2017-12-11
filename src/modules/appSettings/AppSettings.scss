@@ -2,18 +2,32 @@
   margin: 50px;
 }
 
+section {
+  border-bottom: 2px solid white;
+}
+
 #app-settings {
   padding: 10px;
 }
 
 #alert-settings {
+  margin: 20px 0 20px 0;
+
   span {
     margin: 0 5px 0 3px;
   }
   input {
     width: 50px;
   }
+
+  form {
+    margin-bottom: 10px;
+  }
+
+  &:not(:last-of-type) {
   border-bottom: 1px solid white;
+}
+
 }
 
 span.select {
