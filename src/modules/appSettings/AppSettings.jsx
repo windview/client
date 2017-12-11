@@ -30,47 +30,66 @@ export class AppSettings extends React.Component {
 
   render() {
     const alertSettings =
-    <div id="alert-settings">
-      <form>
-        <label>
-          <span>Alert Level</span>
-          <select className= "alert-severity" name="select" onChange={(e)=>this.handleChange(e)}>
-            <option value=""></option>
-            <option value="low">Low</option>
-            <option value="moderate">Moderate</option>
-            <option value="critical">Critical</option>
-          </select>
-        </label><br/>
-        <label>
-          <span>Change in forecast power by</span>
-          <input type="text" name="power"/>
-          <span>MW</span>
-        </label>
-        <label>
-          <span>over</span>
-          <input type="text" name="time"/>
-          <span>minutes</span>
-        </label><br/>
-        <label>
-          <span>Alert Color</span>
-          <div>
-            <select className= "alert-color" name="select" onChange={(e)=>this.handleChange(e)}>
+      <div id="alert-settings">
+        <form>
+          <label>
+            <span>Alert Level</span>
+            <select className= "alert-severity" name="select" onChange={(e)=>this.handleChange(e)}>
               <option value=""></option>
-              <option value="yellow">Yellow</option>
-              <option value="orange">Orange</option>
-              <option value="red">Red</option>
+              <option value="low">Low</option>
+              <option value="moderate">Moderate</option>
+              <option value="critical">Critical</option>
             </select>
-          </div>
-        </label>
-      </form>
-    </div>
+          </label><br/>
+          <label>
+            <span>Change in forecast power by</span>
+            <input type="text" name="power"/>
+            <span>MW</span>
+          </label>
+          <label>
+            <span>over</span>
+            <input type="text" name="time"/>
+            <span>minutes</span>
+          </label><br/>
+          <label>
+            <span>Alert Color</span>
+            <div>
+              <select className= "alert-color" name="select" onChange={(e)=>this.handleChange(e)}>
+                <option value=""></option>
+                <option value="yellow">Yellow</option>
+                <option value="orange">Orange</option>
+                <option value="red">Red</option>
+              </select>
+            </div>
+          </label>
+        </form>
+      </div>
 
     const forecastTimeSettings =
-    <div id="forecast-time-settings">
-      <div className="forecast-settings-description">Set the desired number of days to forecast ahead.</div>
-      <select className="1-30"></select>
-      <span> Days </span>
-    </div>
+      <div id="forecast-time-settings">
+        <h3>Forecast Time Horizon</h3>
+        <div className="settings-description">Set the desired number of days to forecast ahead.</div>
+        <select className="1-30"></select>
+        <span> Days </span>
+      </div>
+
+    const aggregationGroups =
+      <div id="aggreagation-group-settings">
+        <h3>Aggregation Groups</h3>
+        <div className="settings-description">Create groups of wind farms for the aggregated forecast. Once created, these groups can be selected in the top navigation bar.</div>
+        <form>
+          <label>
+            <span>Group Name</span>
+            <input type="text" name="group-name"/>
+          </label><br/>
+          <label>
+            <span>Wind Farms</span>
+            <select className= "select-windfarms" name="select">
+              <option value="select">Select Wind Farms</option>
+            </select>
+          </label>
+        </form>
+      </div>
 
     return (
       <div className="settings-container">
@@ -90,8 +109,10 @@ export class AppSettings extends React.Component {
         {alertSettings}
       </section>
       <section>
-      <h3>Forecast Time Horizon</h3>
         {forecastTimeSettings}
+      </section>
+      <section>
+        {aggregationGroups}
       </section>
       </div>
   )}

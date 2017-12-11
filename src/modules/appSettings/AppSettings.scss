@@ -13,9 +13,6 @@ section {
 #alert-settings {
   margin: 20px 0 20px 0;
 
-  span {
-    margin: 0 5px 0 3px;
-  }
   input {
     width: 50px;
   }
@@ -43,7 +40,20 @@ span.select {
   margin: 20px 0 20px 0;
 }
 
-.forecast-settings-description {
+.settings-description {
   font-weight: bold;
   margin-bottom: 10px;
+}
+
+.select-windfarms {
+  font-weight: normal;
+}
+
+
+label {
+  margin-bottom: 8px;
+}
+
+span {
+  margin: 0 5px 0 3px;
 }
