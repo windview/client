@@ -4,10 +4,24 @@ import windFarmIcon from '../../images/windfarm.png';
 import windFarmDisabledIcon from '../../images/windfarm-disabled.png';
 import windFarmSelectedIcon from '../../images/windfarm-selected.png';
 
-export default (props) => {
+export class Legend extends React.Component {
+  constructor(props) {
+  super(props);
+  this.state = {isToggleOn: true};
+
+  this.handleClick = this.handleClick.bind(this);
+}
+
+  handleClick() {
+    this.setState(prevState => ({
+      isToggleOn: !prevState.isToggleOn
+    }));
+  }
+
+render() {
   return (
     <div id="legend" className="legend-wrapper">
-      <table>
+      <table className={this.state.isToggleOn ? "show-legend" : "hide-legend"}>
         <tbody>
           <tr><td className="legend-item"><img alt="wind farm" src={windFarmIcon} height="22" width="22"></img></td><td className="legend-label">Wind Farm Site</td></tr>
           <tr><td className="legend-item"><img alt="wind farm" src={windFarmSelectedIcon} height="22" width="22"></img></td><td className="legend-label">Selected Site</td></tr>
@@ -78,6 +92,11 @@ export default (props) => {
           </tr>
         </tbody>
       </table>
+      <div className="toggleLegend" onClick={this.handleClick}>
+       {this.state.isToggleOn ? <p>Legend &#9660;</p> : <p>Legend &#9650;</p>}
+      </div>
     </div>
-  )
+  )}
 }
+
+export default Legend;
