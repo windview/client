@@ -41,15 +41,6 @@ export class AggregatedForecastChart extends React.Component {
     if(!aggData) {
       if(this.chart) {
         this.chart.destroy();
-        if (this.props.aggregatedSource === 'polygonFarms') {
-          $('#aggregated-chart').text('Select desired wind farms using the polygon selection tool in the upper right corner of the map.')
-        }
-        if (this.props.aggregatedSource === 'visibleFarms') {
-          $('#aggregated-chart').text('Move the map or zoom out so wind farms are visible.')
-        }
-        if (this.props.aggregatedSource === 'groupedFarms') {
-          $('#aggregated-chart').text('Select the desired group of wind farms from the dropdown menu in the navigation bar.')
-        }
       }
       return;
     }
