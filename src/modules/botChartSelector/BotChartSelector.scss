@@ -28,6 +28,7 @@
   position: absolute;
   right: 10px;
   padding-top: 5px;
+  height: 10px;
 
   label {
     margin-right: 10px;
@@ -42,20 +43,10 @@
   height: 110px;
   padding: 0px;
   border: 0px;
-  background-color: magenta;
   border-top: 1px solid #e2e2e2;
 }
 
 .bot-multichart-container{
-  display: inline-block;
-  bottom: 0px;
-  right: 0px;
-  left: 0px;
-  height: 800px;
-  max-height: 800px;
-  width: 100%;
   padding: 0px;
-  border: 1px solid #e2e2e2;
-  border-radius: 3px;
-  background-color: #fff;
+  border: 0px;
 }

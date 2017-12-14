@@ -36,19 +36,21 @@ export class BotChartSelector extends React.Component {
     const el = (this.props.botChartType === "aggregation") ? <AggregatedForecastChart /> : <MultiChart />;
 
     return <div className="bot-chart-area">
-			<div className="bot-chart-title">
-				{this.getTitle()}
+			<div className="bot-chart-header">
+				<div className="bot-chart-title">
+					{this.getTitle()}
+				</div>
+	    	<div className="bot-chart-option">
+	    		<label>
+		    		<input type="radio" name="botchart" value="aggregation" checked={this.props.botChartType === "aggregation"} onChange={this.whenAggregationChecked} />
+		    		Aggregated Chart
+	    		</label>
+	    		<label>
+	    			<input type="radio" name="botchart" value="multiple" checked={this.props.botChartType === "multiple"} onChange={this.whenMultipleChecked} />
+	    			Multi Chart
+	    		</label>
+	    	</div>
 			</div>
-    	<div className="bot-chart-option">
-    		<label>
-	    		<input type="radio" name="botchart" value="aggregation" checked={this.props.botChartType === "aggregation"} onChange={this.whenAggregationChecked} />
-	    		Aggregated Chart
-    		</label>
-    		<label>
-    			<input type="radio" name="botchart" value="multiple" checked={this.props.botChartType === "multiple"} onChange={this.whenMultipleChecked} />
-    			Multi Chart
-    		</label>
-    	</div>
     	<div className={this.props.botChartType === "multiple" ? "bot-multichart-container" : "bot-chart-container"}>
     		{el}
     	</div>
