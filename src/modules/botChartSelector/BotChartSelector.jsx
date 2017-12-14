@@ -7,7 +7,7 @@ import MultiChart from '../multiChart/MultiChart';
 
 export class BotChartSelector extends React.Component {
 	componentDidMount() {
-	
+
   }
   constructor(props) {
     super(props);
@@ -16,22 +16,25 @@ export class BotChartSelector extends React.Component {
   }
 
   render() {
-    
+
     const el = (this.props.state.analysis.botChartType === "aggregation") ? <AggregatedForecastChart /> : <MultiChart />;
 
     return <div className="bot-chart-area">
+			<div className="bot-chart-title">
+				Aggregated Forecast for Selected Wind Farms
+			</div>
     	<div className="bot-chart-option">
     		<label>
-	    		<input type="radio" name="botchart" value="aggregation" checked={this.props.state.analysis.botChartType === "aggregation"} onChange={this.whenAggregationChecked} /> 
+	    		<input type="radio" name="botchart" value="aggregation" checked={this.props.state.analysis.botChartType === "aggregation"} onChange={this.whenAggregationChecked} />
 	    		Aggregated Chart
     		</label>
     		<label>
-    			<input type="radio" name="botchart" value="multiple" checked={this.props.state.analysis.botChartType === "multiple"} onChange={this.whenMultipleChecked} /> 
+    			<input type="radio" name="botchart" value="multiple" checked={this.props.state.analysis.botChartType === "multiple"} onChange={this.whenMultipleChecked} />
     			Multi Chart
     		</label>
-    	</div>  	
+    	</div>
     	<div className={this.props.state.analysis.botChartType === "multiple" ? "bot-multichart-container" : "bot-chart-container"}>
-    		{el}  
+    		{el}
     	</div>
     </div>
   }

@@ -65,12 +65,7 @@ export class AggregatedForecastChart extends React.Component {
         spacingBottom: 10
       },
       title: {
-        text: `Aggregated Forecast for ${this.props.chartTitle}`,
-        style: {
-          fontSize: "13px"
-        },
-        align: 'left',
-        margin: 0
+        text: ''
       },
       xAxis: {
         type: 'datetime',
