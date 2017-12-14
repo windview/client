@@ -21,7 +21,6 @@ import * as wfActualStyle from './mapStyles/windFarmActual';
 import * as wfForecastStyle from './mapStyles/windFarmForecast';
 import * as wfRampStyle from './mapStyles/windFarmRamp';
 import * as wfSizeStyle from './mapStyles/windFarmSize';
-import * as openeiFarmStyle from './mapStyles/openeiFarms';
 
 export class Map extends React.Component {
 
@@ -167,7 +166,6 @@ export class Map extends React.Component {
   }
 
   renderMap() {
-    let self = this;
     //Create map
     let map = new mapboxgl.Map({
       container: 'wind-map', // container id
@@ -180,11 +178,6 @@ export class Map extends React.Component {
 
     // Disable default box zooming.
     map.boxZoom.disable();
-
-    // Create a popup, but don't add it to the map yet.
-    var popup = new mapboxgl.Popup({
-        closeButton: false
-    });
 
     // Add tool for drawing polygon on map
     var draw = new MapboxDraw({
@@ -235,12 +228,6 @@ export class Map extends React.Component {
           type: "vector",
           url: process.env.TILE_SERVER_URL + "/osm-translines/metadata.json"
       });
-      // Add OpenEI wind farm points
-      map.addSource('openei-farms', {
-        type: "vector",
-        url: process.env.TILE_SERVER_URL + "/openei-farms/metadata.json"
-      });
-
 
       // TODO move app alerting to own module
       if(!this.props.windFarms) {
@@ -259,12 +246,10 @@ export class Map extends React.Component {
       wfSizeStyle.initializeStyle(map, 'windfarms');
       wfForecastStyle.initializeStyle(map, 'windfarms');
       wfRampStyle.initializeStyle(map, 'windfarms', this.props.forecast);
-      openeiFarmStyle.initializeStyle(map, 'openei-farms');
 
       // Show these layers
       this.toggleStyle('tlines');
       this.toggleStyle(this.props.selectedStyle);
-      this.toggleStyle('openei-farms');
 
       // The icon layer is always present, and needs to be for all the
       // event handlers so add it outside of the specific styles above
@@ -375,7 +360,9 @@ export class Map extends React.Component {
 
         // Remove all other features, so that current one is the only one on map.
         var currentId = e.features[0].id
-        var otherFeatures = draw.getAll().features.filter(function(feature) { return feature.id != currentId });
+        var otherFeatures = draw.getAll().features.filter(function(feature) {
+          return feature.id !== currentId;
+        });
         draw.delete(otherFeatures.map(function(feature) { return feature.id }));
         var userPolygon = e.features[0];
         // generate bounding box from polygon the user drew
@@ -403,7 +390,9 @@ export class Map extends React.Component {
 
         // Remove all other features, so that current one is the only one on map.
         var currentId = e.features[0].id
-        var otherFeatures = draw.getAll().features.filter(function(feature) { return feature.id != currentId });
+        var otherFeatures = draw.getAll().features.filter(function(feature) {
+          return feature.id !== currentId;
+        });
         draw.delete(otherFeatures.map(function(feature) { return feature.id }));
         var userPolygon = e.features[0];
         // generate bounding box from polygon the user drew
@@ -484,9 +473,6 @@ export class Map extends React.Component {
         break;
       case "tlines":
         tlinesStyle.toggleVisibility(this.map);
-        break;
-      case "openei-farms":
-        openeiFarmStyle.toggleVisibility(this.map);
         break;
       default:
         break;
