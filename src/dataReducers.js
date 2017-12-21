@@ -28,9 +28,11 @@ export default (state=defaultValue, action) => {
         newState.forecast.map((element) => {
           element.alerts.rampBins.map((alert) => {
             if (alert === action.id) {
-              return alert.display = !alert.display
+              alert.display = !alert.display
             }
+            return alert;
           });
+          return element;
         });
         return newState
     case t.FETCH_FORECAST_FAIL:

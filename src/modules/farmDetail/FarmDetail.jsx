@@ -26,10 +26,11 @@ export class FarmDetail extends React.Component {
               severity = rampBin.severity > 1 ? "severe ramp" : "moderate ramp",
               className = rampBin.severity > 1 ? "severe" : "moderate";
 
-              if (feature.displayAlerts !== false) {
+        if (feature.displayAlerts !== false) {
+          return <tr key={rampBin.startTime.getTime()} className={className}><td>RAMP ALERT</td><td className="right">A {severity} event is forecast starting at {startTime} and ending at {endTime}</td><td><button onClick={()=>this.handleAcknowledgeAlert(rampBin)} type="button">Toggle Alert</button></td></tr>;
+        }
 
-                return <tr key={rampBin.startTime.getTime()} className={className}><td>RAMP ALERT</td><td className="right">A {severity} event is forecast starting at {startTime} and ending at {endTime}</td><td><button onClick={()=>this.handleAcknowledgeAlert(rampBin)} type="button">Toggle Alert</button></td></tr>;
-              }
+        return null;
       });
     }
 

@@ -78,19 +78,17 @@ export class NavBar extends React.Component {
     groupedFarms.map(function(group) {
       if (group.groupTitle === source.value) {
         this.matchSelectedWF(group)
-
       }
+      return group;
     }, this)
   }
 
   matchSelectedWF(group) {
       for (var i = 0; i < group.value.length; i++) {
-      group.value[i] = WindFarm.getWindFarmById(group.value[i], this.props.windFarms.features);
-
+        group.value[i] = WindFarm.getWindFarmById(group.value[i], this.props.windFarms.features);
       }
       this.props.onSelectFeaturesByGroup(group.value);
   }
-
 
   render() {
     const appTitle = Object.values({ APP_TITLE })[0]

@@ -1,12 +1,17 @@
-// initialize animation properties
-const layerIds = [],
+// initialize properties
+let layerIds = [],
+    initialRadius = 20;
+
+// unused animation props
+/*
       framesPerSecond = 5,
       initialOpacity = 1,
-      initialRadius = 20,
+
       maxRadius = 38;
-let   opacity = initialOpacity,
+      opacity = initialOpacity,
       radius = initialRadius,
       animate = false;
+*/
 
 export const initializeStyle = (map, layerSource) => {
 

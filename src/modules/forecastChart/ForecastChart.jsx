@@ -6,7 +6,6 @@ import ChartElement from './chartElement/ChartElement';
 
 // internal use only display components.
 export const BaseElement = (props) => {
-  console.log(props)
   return (
     <div id="chart-wrapper" className={props.multiChart ? "multi-forecast-chart-wrapper": "chart-wrapper"}>
       {props.children}
@@ -25,9 +24,9 @@ const EmptyChartElement = () => {
 
 // This is the main export, simple as it is
 export const ForecastChart = (props) => {
-  
+
   const el = props.feature || props.multiChart ? <ChartElement multiChart={props.multiChart} index={props.index} container={props.container} /> : <EmptyChartElement />;
-  return (    
+  return (
     el
   );
 }

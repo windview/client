@@ -16,7 +16,7 @@ export class AppSettings extends React.Component {
       var val = $(this).find('option:selected').val();
       if (!val) return;
       $(typeOption).filter(function() {
-        return $(this).val() == val;
+        return $(this).val() === val;
       }).attr('disabled', 'disabled');
     });
   }
@@ -34,7 +34,7 @@ export class AppSettings extends React.Component {
         <form>
           <label>
             <span>Alert Level</span>
-            <select className= "alert-severity" name="select" onChange={(e)=>this.handleChange(e)}>
+            <select className="alert-severity" name="select" onChange={(e)=>this.handleChange(e)}>
               <option value=""></option>
               <option value="low">Low</option>
               <option value="moderate">Moderate</option>
@@ -54,7 +54,7 @@ export class AppSettings extends React.Component {
           <label>
             <span>Alert Color</span>
             <div>
-              <select className= "alert-color" name="select" onChange={(e)=>this.handleChange(e)}>
+              <select className="alert-color" name="select" onChange={(e)=>this.handleChange(e)}>
                 <option value=""></option>
                 <option value="yellow">Yellow</option>
                 <option value="orange">Orange</option>
@@ -84,7 +84,7 @@ export class AppSettings extends React.Component {
           </label><br/>
           <label>
             <span>Wind Farms</span>
-            <select className= "select-windfarms" name="select">
+            <select className="select-windfarms" name="select">
               <option value="select">Select Wind Farms</option>
             </select>
           </label>
