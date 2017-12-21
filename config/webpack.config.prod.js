@@ -108,9 +108,8 @@ module.exports = {
       // Process JS with Babel.
       {
         test: /\.(js|jsx)$/,
-        include: paths.appSrc,
-        loader: 'babel',
-
+        include: [paths.appSrc, path.resolve(paths.ownNodeModules, '@mapbox/mapbox-gl-draw/src')],
+        loader: 'babel'
       },
       // The notation here is somewhat confusing.
       // "postcss" loader applies autoprefixer to our CSS.

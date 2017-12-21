@@ -49,5 +49,6 @@ body {
     left: $spacer;
     right: $sidebar-width + $spacer * 2;;
     height: $footer-height;
+    border-radius: 0px 0px 3px 3px;
   }
 }

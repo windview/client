@@ -268,7 +268,7 @@ export class ChartElement extends React.Component {
     const btn = button;
     return feature.loading ? <LoadingElement feature={feature} /> : (
       <BaseElement multiChart={this.props.multiChart}>
-        <div className='chart-title'>Details and Forecast for {feature.properties.label} {btn}
+        <div className='chart-title'>{feature.properties.label} {btn}
         </div>
         <div id={id} className={this.props.multiChart ? 'multi-forecast-chart':''}></div>
       </BaseElement>

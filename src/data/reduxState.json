@@ -1,303 +1,344 @@
 {
-  "//": "A sample showing the shape of the redux state http://redux.js.org/docs/basics/Reducers.html#designing-the-state-shape",
-  "data": {
-    "forecastLoading": false,
-    "forecastLoadingError": "Some error",
-    "windFarmsLoading": false,
-    "windFarmsLoadingError": "Some error"
-  },
   "nav": {
     "activePane": "map-view"
   },
-  "map": {
-    "//": "number of features as well as number of forecast data points in each have been truncated for example purposes",
-    "selectedFeature": {
-      "geometry": {
-        "coordinates": [
-          "-104.77308993918668",
-          "39.76079356303547"
-        ],
-        "type": "Point"
-      },
-      "properties": {
-        "actual": null,
-        "disabled": false,
-        "fid": "aurora_wal_mart",
-        "forecast25MW": 1.588,
-        "forecast75MW": 5.618,
-        "forecastData": {
-          "data": [
-            {
-              "actual": 3.943,
-              "forecast25MW": 1.588,
-              "forecast75MW": 4.86,
-              "forecastMW": 2.874,
-              "ramp": false,
-              "rampSeverity": null,
-              "timestamp": "2017-04-14T06:45:56.000Z"
-            },
-            {
-              "actual": 3.252,
-              "forecast25MW": 1.588,
-              "forecast75MW": 5.308,
-              "forecastMW": 2.861,
-              "ramp": false,
-              "rampSeverity": null,
-              "timestamp": "2017-04-14T07:00:56.000Z"
-            }
-          ],
-          "meta": {
-            "farm_uuid": "aurora_wal_mart",
-            "forecast_begin_at": "2017-04-14T06:00:00Z",
-            "forecast_horizon_minutes": 1440,
-            "format_version": "1.0.1",
-            "job_completed_at": "2017-04-14T06:00:00Z",
-            "job_id": "4kKBGl4C2wVqRHXTRKbIXA==",
-            "job_service_version": "0.0.1",
-            "job_started_at": "2017-04-14T05:55:00Z",
-            "model_name": "argus-prima"
-          }
-        },
-        "forecastMW": 2.874,
-        "hasRamp": true,
-        "label": "Aurora Wal-Mart",
-        "manufacturers": [
-          "Bergey Energy"
-        ],
-        "maxRampSeverity": 2,
-        "models": [
-          "XL50"
-        ],
-        "ramp": false,
-        "rampBins": [
-          {
-            "endTime": "2017-04-14T20:45:56.000Z",
-            "increments": [
-              0,
-              8.265
-            ],
-            "severity": 1,
-            "startTime": "2017-04-14T20:30:56.000Z"
-          },
-          {
-            "endTime": "2017-04-14T23:45:56.000Z",
-            "increments": [
-              0,
-              -12.582,
-              -6.936
-            ],
-            "severity": 2,
-            "startTime": "2017-04-14T23:15:56.000Z"
-          }
-        ],
-        "rampSeverity": null,
-        "rampStart": "2017-04-14T20:30:56.000Z",
-        "selected": true,
-        "timestamp": "2017-04-14T18:45:56.000Z",
-        "total_capacity": 0.05
-      },
-      "type": "Feature"
-    },
-    "selectedStyle": "ramp",
-    "selectedTimestamp": 1492195500000,
-    "timezoom": 24,
-    "windFarms": {},
-    "forecast": {
+  "data": {
+    "windFarms": {
+      "type": "FeatureCollection",
       "crs": {
+        "type": "name",
         "properties": {
           "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
-        },
-        "type": "name"
+        }
       },
       "features": [
         {
-          "geometry": {
-            "coordinates": [
-              "-104.77308993918668",
-              "39.76079356303547"
-            ],
-            "type": "Point"
-          },
+          "type": "Feature",
           "properties": {
-            "actual": null,
-            "disabled": false,
             "fid": "aurora_wal_mart",
-            "forecast25MW": 1.588,
-            "forecast75MW": 5.618,
-            "forecastData": {
-              "data": [
-                {
-                  "actual": 3.943,
-                  "forecast25MW": 1.588,
-                  "forecast75MW": 4.86,
-                  "forecastMW": 2.874,
-                  "ramp": false,
-                  "rampSeverity": null,
-                  "timestamp": "2017-04-14T06:45:56.000Z"
-                },
-                {
-                  "actual": 3.252,
-                  "forecast25MW": 1.588,
-                  "forecast75MW": 5.308,
-                  "forecastMW": 2.861,
-                  "ramp": false,
-                  "rampSeverity": null,
-                  "timestamp": "2017-04-14T07:00:56.000Z"
-                }
-              ],
-              "meta": {
-                "farm_uuid": "aurora_wal_mart",
-                "forecast_begin_at": "2017-04-14T06:00:00Z",
-                "forecast_horizon_minutes": 1440,
-                "format_version": "1.0.1",
-                "job_completed_at": "2017-04-14T06:00:00Z",
-                "job_id": "4kKBGl4C2wVqRHXTRKbIXA==",
-                "job_service_version": "0.0.1",
-                "job_started_at": "2017-04-14T05:55:00Z",
-                "model_name": "argus-prima"
-              }
-            },
-            "forecastMW": 2.874,
-            "hasRamp": true,
             "label": "Aurora Wal-Mart",
             "manufacturers": [
               "Bergey Energy"
             ],
-            "maxRampSeverity": 2,
             "models": [
               "XL50"
             ],
-            "ramp": false,
-            "rampBins": [
-              {
-                "endTime": "2017-04-14T20:45:56.000Z",
-                "increments": [
-                  0,
-                  8.265
-                ],
-                "severity": 1,
-                "startTime": "2017-04-14T20:30:56.000Z"
-              },
-              {
-                "endTime": "2017-04-14T23:45:56.000Z",
-                "increments": [
-                  0,
-                  -12.582,
-                  -6.936
-                ],
-                "severity": 2,
-                "startTime": "2017-04-14T23:15:56.000Z"
-              }
-            ],
-            "rampSeverity": null,
-            "rampStart": "2017-04-14T20:30:56.000Z",
-            "selected": true,
-            "timestamp": "2017-04-14T18:45:56.000Z",
-            "total_capacity": 0.05
-          },
-          "type": "Feature"
-        },
-        {
-          "geometry": {
-            "coordinates": [
-              "-105.22440231753427",
-              "39.9086810741541"
-            ],
-            "type": "Point"
-          },
-          "properties": {
-            "actual": null,
-            "disabled": false,
-            "fid": "boulder_nrel_wind",
-            "forecast25MW": 1.588,
-            "forecast75MW": 4.116,
+            "total_capacity": 0.05,
+            "data_confidence": 0.1,
             "forecastData": {
+              "meta": {
+                "format_version": "1.0.1",
+                "farm_uuid": "aurora_wal_mart",
+                "job_service_version": "0.0.1",
+                "job_id": "4kKBGl4C2wVqRHXTRKbIXA==",
+                "job_started_at": "2017-04-14T05:55:00Z",
+                "job_completed_at": "2017-04-14T06:00:00Z",
+                "model_name": "argus-prima",
+                "forecast_begin_at": "2017-04-14T06:00:00Z",
+                "forecast_horizon_minutes": 1440
+              },
               "data": [
                 {
-                  "actual": 3.943,
+                  "timestamp": "2017-04-14T06:45:00.000Z",
+                  "forecastMW": 2.874,
                   "forecast25MW": 1.588,
                   "forecast75MW": 4.86,
-                  "forecastMW": 2.874,
+                  "actual": 3.943,
                   "ramp": false,
-                  "rampSeverity": null,
-                  "timestamp": "2017-04-14T06:00:00.000Z"
+                  "rampSeverity": null
                 },
                 {
-                  "actual": 3.252,
+                  "timestamp": "2017-04-14T07:00:00.000Z",
+                  "forecastMW": 2.861,
                   "forecast25MW": 1.588,
                   "forecast75MW": 5.308,
-                  "forecastMW": 2.861,
+                  "actual": 3.252,
                   "ramp": false,
-                  "rampSeverity": null,
-                  "timestamp": "2017-04-14T06:15:00.000Z"
-                }
+                  "rampSeverity": null
+                },
+                {
+                  "timestamp": "2017-04-14T07:15:00.000Z",
+                  "forecastMW": 2.874,
+                  "forecast25MW": 1.588,
+                  "forecast75MW": 5.17,
+                  "actual": 4.06,
+                  "ramp": false,
+                  "rampSeverity": null
+                },
+                {"and": "many more forecast data point objects"}
               ],
-              "meta": {
-                "farm_uuid": "boulder_nrel_wind",
-                "forecast_begin_at": "2017-04-14T06:00:00Z",
-                "forecast_horizon_minutes": 1440,
-                "format_version": "1.0.1",
-                "job_completed_at": "2017-04-14T06:00:00Z",
-                "job_id": "AvxRkJ714wvhiDKj5RYqag==",
-                "job_service_version": "0.0.1",
-                "job_started_at": "2017-04-14T05:55:00Z",
-                "model_name": "argus-prima"
-              }
-            },
-            "forecastMW": 2.118,
-            "hasRamp": true,
-            "label": "Boulder NREL Wind",
-            "manufacturers": [
-              "Alstrom",
-              "GE",
-              "Gamesa",
-              "Northern Power Systems",
-              "Siemens",
-              "Westinghouse",
-              "unknown"
-            ],
-            "maxRampSeverity": 2,
-            "models": [
-              "1.5SLE",
-              "ECO100",
-              "G97",
-              "NW100",
-              "SWT2.3_101",
-              "WWG0600",
-              "unknown"
-            ],
+            }
+          }
+        },
+        {
+          "and": "many more features"
+        }
+      ]
+    },
+    "windFarmsLoading": false,
+    "windFarmsLoadingError": null,
+    "forecast": [
+      {
+        "meta": {
+          "format_version": "1.0.1",
+          "farm_uuid": "aurora_wal_mart",
+          "job_service_version": "0.0.1",
+          "job_id": "4kKBGl4C2wVqRHXTRKbIXA==",
+          "job_started_at": "2017-04-14T05:55:00Z",
+          "job_completed_at": "2017-04-14T06:00:00Z",
+          "model_name": "argus-prima",
+          "forecast_begin_at": "2017-04-14T06:00:00Z",
+          "forecast_horizon_minutes": 1440
+        },
+        "data": [
+          {
+            "timestamp": "2017-04-14T06:45:00.000Z",
+            "forecastMW": 2.874,
+            "forecast25MW": 1.588,
+            "forecast75MW": 4.86,
+            "actual": 3.943,
             "ramp": false,
+            "rampSeverity": null
+          },
+          {
+            "timestamp": "2017-04-14T07:00:00.000Z",
+            "forecastMW": 2.861,
+            "forecast25MW": 1.588,
+            "forecast75MW": 5.308,
+            "actual": 3.252,
+            "ramp": false,
+            "rampSeverity": null
+          },
+          {
+            "and": "Many more forecast data objects"
+          }
+        ],
+        "alerts": {
+          "rampStart": "2017-04-14T20:30:56.000Z",
+          "hasRamp": true,
+          "maxRampSeverity": 2,
+          "rampBins": [
+            {
+              "startTime": "2017-04-14T20:30:56.000Z",
+              "endTime": "2017-04-14T20:45:56.000Z",
+              "severity": 1,
+              "increments": [
+                0,
+                8.265
+              ],
+              "display": true
+            },
+            {
+              "startTime": "2017-04-14T23:15:56.000Z",
+              "endTime": "2017-04-14T23:45:56.000Z",
+              "severity": 2,
+              "increments": [
+                0,
+                -12.582,
+                -6.936
+              ],
+              "display": true
+            }
+          ]
+        }
+      },
+      {
+        "And many more forecast objects"
+      }
+    ],
+    "forecastLoading": false,
+    "forecastLoadingError": null,
+    "forecastMeta": {
+      "dataEnd": "2017-04-15T11:15:00.000Z",
+      "dataStart": "2017-04-14T06:00:00.000Z",
+      "interval": 15
+    }
+  },
+  "analysis": {
+    "selectedFeature": {
+      "type": "Feature",
+      "properties": {
+        "fid": "kit_carson_windpower",
+        "label": "Kit Carson Windpower",
+        "manufacturers": [
+          "GE"
+        ],
+        "models": [
+          "1.5SLE"
+        ],
+        "total_capacity": 1734,
+        "forecastData": {
+          "meta": {
+            "format_version": "1.0.1",
+            "farm_uuid": "kit_carson_windpower",
+            "job_service_version": "0.0.1",
+            "job_id": "mKE7L/avTjGAxSNGKSLb5g==",
+            "job_started_at": "2017-04-14T05:55:00Z",
+            "job_completed_at": "2017-04-14T06:00:00Z",
+            "model_name": "argus-prima",
+            "forecast_begin_at": "2017-04-14T06:00:00Z",
+            "forecast_horizon_minutes": 1440
+          },
+          "data": [
+            {
+              "timestamp": "2017-04-14T11:00:00.000Z",
+              "forecastMW": 2.874,
+              "forecast25MW": 1.588,
+              "forecast75MW": 4.86,
+              "actual": 3.943,
+              "ramp": false,
+              "rampSeverity": null
+            },
+            {
+              "and": "all the forecast data points for the selected feature"
+            }
+          ],
+          "alerts": {
+            "rampStart": "2017-04-15T00:39:44.000Z",
+            "hasRamp": true,
+            "maxRampSeverity": 2,
             "rampBins": [
               {
-                "endTime": "2017-04-14T20:00:00.000Z",
+                "startTime": "2017-04-15T00:39:44.000Z",
+                "endTime": "2017-04-15T00:54:44.000Z",
+                "severity": 1,
                 "increments": [
                   0,
                   8.265
                 ],
-                "severity": 1,
-                "startTime": "2017-04-14T19:45:00.000Z"
+                "display": true
               },
               {
-                "endTime": "2017-04-14T23:00:00.000Z",
+                "startTime": "2017-04-15T03:24:44.000Z",
+                "endTime": "2017-04-15T03:54:44.000Z",
+                "severity": 2,
                 "increments": [
                   0,
                   -12.582,
                   -6.936
                 ],
-                "severity": 2,
-                "startTime": "2017-04-14T22:30:00.000Z"
+                "display": true
               }
-            ],
-            "rampSeverity": null,
-            "rampStart": "2017-04-14T19:45:00.000Z",
-            "selected": false,
-            "timestamp": "2017-04-14T18:45:00.000Z",
-            "total_capacity": -9999
-          },
-          "type": "Feature"
+            ]
+          }
+        },
+        "maxRampSeverity": 2,
+        "timestamp": "2017-04-14T11:15:00.000Z",
+        "forecastMW": 2.861,
+        "forecast25MW": 1.588,
+        "forecast75MW": 5.308,
+        "actual": 3.252,
+        "ramp": false,
+        "rampSeverity": null,
+        "disabled": false,
+        "currentForecast": {
+          "timestamp": "2017-04-14T11:15:00.000Z",
+          "forecastMW": 2.861,
+          "forecast25MW": 1.588,
+          "forecast75MW": 5.308,
+          "actual": 3.252,
+          "ramp": false,
+          "rampSeverity": null,
+          "disabled": false
+        },
+        "selected": true
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -102.32884644404338,
+          39.36791698339977
+        ]
+      }
+    },
+    "selectedTimestamp": 1492168500000,
+    "selectedStyle": "ramp",
+    "timezoom": 24,
+    "dataSource": "visibleFarms",
+    "chartTitle": "Currently Visible Wind Farms",
+    "botChartType": "aggregation",
+    "multiChartMap": {
+      "kit_carson_windpower": {
+        "type": "Feature",
+        "properties": {
+          "fid": "kit_carson_windpower",
+          "label": "Kit Carson Windpower",
+          "manufacturers": [
+            "GE"
+          ],
+          "models": [
+            "1.5SLE"
+          ],
+          "and": "all the rest of the wind farm feature props including forecast data etc",
         }
-      ],
-      "type": "FeatureCollection"
-    }
+      },
+      "maybe others": {
+        "and": "another whole feature obj"
+      }
+    },
+    "visibleWindFarms": [
+      {
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -103.79745483398438,
+            40.93997104411028
+          ]
+        },
+        "type": "Feature",
+        "properties": {
+          "fid": "cedar_creek_2_ge",
+          "label": "Cedar Creek 2 (GE)",
+          "manufacturers": "[\"GE\"]",
+          "models": "[\"1.5SLE\"]",
+          "total_capacity": 5953.5,
+          "forecastData": "{\"meta\":{\"format_version\":\"1.0.1\",\"farm_uuid\":\"cedar_creek_2_ge\",\"job_service_version\":\"0.0.1\",\"job_id\":\"O7/fFhG9+gpYkiwtFD1bTg==\",\"job_started_at\":\"2017-04-14T05:55:00Z\",\"job_completed_at\":\"2017-04-14T06:00:00Z\",\"model_name\":\"argus-prima\",\"forecast_begin_at\":\"2017-04-14T06:00:00Z\",\"forecast_horizon_minutes\":1440},\"data\":[{\"timestamp\":\"2017-04-14T08:30:00.000Z\",\"forecastMW\":2.874,\"forecast25MW\":1.588,\"forecast75MW\":4.86}",
+          "timestamp": "2017-04-14T11:15:00.000Z",
+          "forecastMW": 3.046,
+          "forecast25MW": 1.986,
+          "forecast75MW": 5.466,
+          "actual": 3.538,
+          "ramp": false,
+          "rampSeverity": "null",
+          "disabled": false,
+          "currentForecast": "{\"timestamp\":\"2017-04-14T11:15:00.000Z\",\"forecastMW\":3.046,\"forecast25MW\":1.986,\"forecast75MW\":5.466,\"actual\":3.538,\"ramp\":false,\"rampSeverity\":null,\"disabled\":false}"
+        },
+        "layer": {
+          "id": "windfarms-symbol",
+          "type": "symbol",
+          "source": "windfarms",
+          "filter": [
+            "all",
+            [
+              "!=",
+              "selected",
+              true
+            ],
+            [
+              "!=",
+              "disabled",
+              true
+            ],
+            [
+              "!=",
+              "suspectData",
+              true
+            ]
+          ],
+          "layout": {
+            "icon-image": "windfarm",
+            "icon-size": 0.3,
+            "icon-allow-overlap": true,
+            "icon-keep-upright": true
+          },
+          "paint": {
+            "icon-opacity": 1
+          }
+        }
+      },
+      {
+        "and": "all the other visible farms"
+      }
+    ]
   }
 }

@@ -4,8 +4,8 @@ import * as actions from '../../actionCreators';
 
 export const mapStateToProps = (state, ownProps) => {
   return {
-    state: state,
-    ownProps: ownProps,
+    aggregatedSource: state.analysis.dataSource,
+    botChartType: state.analysis.botChartType
   }
 }
 export const mapDispatchToProps = (dispatch) => {
