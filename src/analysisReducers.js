@@ -62,11 +62,6 @@ export default (state=defaultValue, action) => {
         ...state,
         selectedWindFarmsByPolygon: action.feature
       };
-    case t.SELECT_FEATURES_BY_POLYGON:
-      return {
-        ...state,
-        selectedWindFarmsByPolygon: action.feature
-      };
     case t.SELECT_STYLE:
       return {
         ...state,
