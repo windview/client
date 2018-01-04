@@ -104,6 +104,7 @@ export const fetchForecast = (windFarms) => {
   return function(dispatch) {
     // notify the app that data is loading
     dispatch(fetchForecastRequest());
+
     Forecast.fetchBatchForecast(windFarms.features, 24)
       .then((forecast) => {
         dispatch(fetchForecastSuccess(forecast.data, forecast.meta));
@@ -120,18 +121,29 @@ export const fetchWindFarms = () => {
     dispatch(fetchWindFarmsRequest());
 
     // return a promise
-    return API.goFetch(`usgs_wind_farms.geo.json`)
+    return API.goFetch(`farms?limit=5`)
       .then(
-        response => response.json(),
+        response => {
+          response.json().then(
+            json => {
+              json = {
+                "type": "FeatureCollection",
+                "features": json.farms.map((f) => {
+                  return {
+                    "type": "Feature",
+                    "geometry": { "type": "Point", "coordinates": [ f.longitude, f.latitude ] },
+                    "properties": f
+                  }
+                })
+              };
+              dispatch(fetchWindFarmsSuccess(json));
+              dispatch(fetchForecast(json));
+            }
+          );
+        },
         error => {
           // in case anyone is interested
           dispatch(fetchWindFarmsFail(error));
-        }
-      )
-      .then(
-        json => {
-          dispatch(fetchWindFarmsSuccess(json));
-          dispatch(fetchForecast(json));
         }
       )
   }

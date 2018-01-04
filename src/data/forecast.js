@@ -129,7 +129,7 @@ let Forecast = (function(){
     *  - Rounding numbers
     *  - Converting timestamp string to Date object
     */
-  let _formatForecastDataPoint = (dataPoint) => {
+  let _formatProbabilisticForecastDataPoint = (dataPoint) => {
     let actual = dataPoint[4] ? Math.round(dataPoint[4]*1000)/1000 : null,
         ts     = _convertTimestampToDate(dataPoint[0]);
 
@@ -151,17 +151,44 @@ let Forecast = (function(){
     };
   }
 
+  let _formatPointForecastDataPoint = (dataPoint) => {
+    let actual = dataPoint[1] ? Math.round(dataPoint[1]*1000)/1000 : null,
+        ts     = _convertTimestampToDate(dataPoint[0]);
+
+    // Hack for demo purposes
+    const fakeNow = window.fakeNow;
+    if(fakeNow) {
+      actual = ts.getTime() > fakeNow ? null : Math.round(dataPoint[1]*1000)/1000;
+    }
+    // End hack
+
+    return {
+      timestamp: ts,
+      forecastMW: null, //Math.round(dataPoint[1]*1000)/1000,
+      forecast25MW: null, //Math.round(dataPoint[2]*1000)/1000,
+      forecast75MW: null, //Math.round(dataPoint[3]*1000)/1000,
+      actual: actual,
+      ramp: false,
+      rampSeverity: null
+    };
+  }
   /**
     * Invoke formating on an array of forecast data points for a single farm
     */
   let _formatForecastData = (forecast) => {
     let formattedData = [];
-    //remove the header row
-    forecast.data.shift();
     // Loop through and process the data, outputting a format consumable by the app
-    forecast.data.forEach((dataPoint) => {
-      formattedData.push(_formatForecastDataPoint(dataPoint));
-    }, this);
+
+    if (forecast.data.type === "probabilistic") {
+      forecast.data.forEach((dataPoint) => {
+        formattedData.push(_formatProbabilisticForecastDataPoint(dataPoint));
+      }, this);
+    }
+    else {
+      forecast.data.forEach((dataPoint) => {
+        formattedData.push(_formatPointForecastDataPoint(dataPoint));
+      }, this);
+    }
     return formattedData;
   }
 
@@ -174,7 +201,7 @@ let Forecast = (function(){
   }
 
   let _postProcessForecastData = (forecast, timezoom) => {
-    let formattedData = _formatForecastData(forecast);
+    let formattedData = _formatForecastData(forecast.forecast);
     formattedData = _applyTimezoom(timezoom, formattedData);
     forecast.data = Alerts.detectRampsInForecast(formattedData);
     forecast.alerts = Alerts.getAlertsForForecast(forecast);
@@ -187,7 +214,8 @@ let Forecast = (function(){
     * @return a fetch promise
     */
   let fetchForecast = (farm, timezoom) => {
-    return API.goFetch(`${farm.properties.fid}.json`)
+
+    return API.goFetch(`/forecasts/latest?farm_id=${farm.properties.id}`)
       .then(
         response => {
           if(response.ok) {

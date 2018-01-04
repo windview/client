@@ -14,7 +14,7 @@ export const initializeStyle = (map, layerSource) => {
       'circle-stroke-width': 6,
       'circle-stroke-color': 'hsla(240, 100%, 60%, .7)',
     },
-    filter: [">=", "total_capacity", 30000],
+    filter: [">=", "capacity_mw", 30],
     layout: {
       visibility: 'none'
     }
@@ -31,7 +31,7 @@ export const initializeStyle = (map, layerSource) => {
       'circle-stroke-width': 4,
       'circle-stroke-color': 'hsla(240, 100%, 40%, .7)',
     },
-    filter: ["all", [">=", "total_capacity", 10000], ["<", "total_capacity", 30000]],
+    filter: ["all", [">=", "capacity_mw", 10], ["<", "capacity_mw", 30]],
     layout: {
       visibility: 'none'
     }
@@ -48,7 +48,7 @@ export const initializeStyle = (map, layerSource) => {
       'circle-stroke-width': 2,
       'circle-stroke-color': 'hsla(240, 100%, 25%, 1)',
     },
-    filter: ["all", [">", "total_capacity", 0], ["<", "total_capacity", 10000]],
+    filter: ["all", [">", "capacity_mw", 0], ["<", "capacity_mw", 10]],
     layout: {
       visibility: 'none'
     }

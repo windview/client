@@ -4,11 +4,11 @@ let API = new function() {
     let c = process.env.API_URL,
         r;
     if(c === "//") {
-      r = window.location.href.split('?')[0]
+      r = window.location.href.split('?')[0] + '/data';
     } else {
       r = c;
     }
-    return `${r}/data`;
+    return r;
   })();
 
   this.normalizeUrl = (endpoint, params) => {
