@@ -121,7 +121,7 @@ export const fetchWindFarms = () => {
     dispatch(fetchWindFarmsRequest());
 
     // return a promise
-    return API.goFetch(`farms?limit=5`)
+    return API.goFetch(`farms`)
       .then(
         response => {
           response.json().then(
