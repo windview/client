@@ -37,7 +37,7 @@ let Alerts = new function() {
         while(nextTimeslice && nextTimeslice.ramp) {
           // TODO If the ramp changes direction between consecutive slices, treat
           // that as a new rampBin
-          rampBin.increments.push(nextTimeslice.forecastMW - timeslice.forecastMW);
+          rampBin.increments.push(nextTimeslice.rampForecastMW - timeslice.rampForecastMW);
           rampBin.severity = rampBin.severity < nextTimeslice.rampSeverity ? nextTimeslice.rampSeverity : rampBin.severity;
           timeslice = nextTimeslice;
           nextTimeslice = forecastData[++i];
@@ -53,7 +53,7 @@ let Alerts = new function() {
     let previous = timeslices[0],
         r = 5; // ramping threshold
     timeslices.forEach((timeslice, i) => {
-      const diff = timeslice.forecastMW - previous.forecastMW;
+      const diff = timeslice.rampForecastMW - previous.rampForecastMW;
       // if the change in power is greater than r going up or down
       if(Math.abs(diff) >= r) {
         timeslice.ramp = true;

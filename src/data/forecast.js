@@ -130,46 +130,55 @@ let Forecast = (function(){
     *  - Converting timestamp string to Date object
     */
   let _formatProbabilisticForecastDataPoint = (dataPoint) => {
-    let actual = dataPoint[4] ? Math.round(dataPoint[4]*1000)/1000 : null,
+    let prob50thQuantForecastMW = dataPoint[3] ? Math.round(dataPoint[3]*1000)/1000 : null,
         ts     = _convertTimestampToDate(dataPoint[0]);
 
     // Hack for demo purposes
     const fakeNow = window.fakeNow;
-    if(fakeNow) {
-      actual = ts.getTime() > fakeNow ? null : Math.round(dataPoint[4]*1000)/1000;
+    if(fakeNow && ts.getTime() > fakeNow) {
+      prob50thQuantForecastMW = null;
     }
     // End hack
 
     return {
+      type: 'probabilistic',
       timestamp: ts,
-      forecastMW: Math.round(dataPoint[1]*1000)/1000,
-      forecast25MW: Math.round(dataPoint[2]*1000)/1000,
-      forecast75MW: Math.round(dataPoint[3]*1000)/1000,
-      actual: actual,
+      prob1stQuantForecastMW: Math.round(dataPoint[1]*1000)/1000,
+      prob25thQuantForecastMW: Math.round(dataPoint[2]*1000)/1000,
+      prob50thQuantForecastMW: prob50thQuantForecastMW,
+      prob75thQuantForecastMW: Math.round(dataPoint[4]*1000)/1000,
+      prob99thQuantForecastMW: Math.round(dataPoint[5]*1000)/1000,
+      bestForecastMW: prob50thQuantForecastMW,
+      actual: null,
+
+      // ramping
+      rampForecastMW: prob50thQuantForecastMW,
       ramp: false,
-      rampSeverity: null
+      rampSeverity: null,
     };
   }
 
   let _formatPointForecastDataPoint = (dataPoint) => {
-    let actual = dataPoint[1] ? Math.round(dataPoint[1]*1000)/1000 : null,
+    let forecastValue = dataPoint[1] ? Math.round(dataPoint[1]*1000)/1000 : null,
         ts     = _convertTimestampToDate(dataPoint[0]);
 
     // Hack for demo purposes
     const fakeNow = window.fakeNow;
-    if(fakeNow) {
-      actual = ts.getTime() > fakeNow ? null : Math.round(dataPoint[1]*1000)/1000;
+    if(fakeNow && ts.getTime() > fakeNow) {
+      forecastValue = null;
     }
     // End hack
 
     return {
+      type: 'point',
       timestamp: ts,
-      forecastMW: null, //Math.round(dataPoint[1]*1000)/1000,
-      forecast25MW: null, //Math.round(dataPoint[2]*1000)/1000,
-      forecast75MW: null, //Math.round(dataPoint[3]*1000)/1000,
-      actual: actual,
+      bestForecastMW: forecastValue,
+      actual: null,
+
+      // ramping
+      rampForecastMW: forecastValue,
       ramp: false,
-      rampSeverity: null
+      rampSeverity: null,
     };
   }
   /**
@@ -179,7 +188,7 @@ let Forecast = (function(){
     let formattedData = [];
     // Loop through and process the data, outputting a format consumable by the app
 
-    if (forecast.data.type === "probabilistic") {
+    if (forecast.type === "probabilistic") {
       forecast.data.forEach((dataPoint) => {
         formattedData.push(_formatProbabilisticForecastDataPoint(dataPoint));
       }, this);
@@ -312,7 +321,7 @@ let Forecast = (function(){
 
       let reducedVals = forecastsAtTime.reduce((accumulator, forecast) => {
         let dataPoint = forecast.data.find(d => {return d.timestamp.getTime() === ts;}),
-            forecastMW = accumulator.forecastMW + dataPoint.forecastMW,
+            forecastMW = accumulator.forecastMW + dataPoint.bestForecastMW,
             actual = undefined;
 
         if(dataPoint.actual) {
@@ -388,8 +397,8 @@ let Forecast = (function(){
         currentForecast = {
           timestamp: null,
           forecastMW: null,
-          forecast25MW: null,
-          forecast75MW: null,
+          prob25thQuantForecastMW: null,
+          prob75thQuantForecastMW: null,
           actual: null,
           ramp: false,
           rampSeverity: null,

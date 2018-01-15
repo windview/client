@@ -233,23 +233,37 @@ export class ChartElement extends React.Component {
    * for forecast, arearange, 25th, 75th, and the actuals
    */
   getChartData(featureData) {
-    /*
-    * Add temporary random forecast1MW, forecast99MW Data
-    */
-    let rand_1MW, rand_99MW;
     let retval = [[], [], [], [], [], [], [], []];  //3 coulmns are added at the last: range, forecast1MW, forcast99MW
-    featureData.data.forEach((row)=>{
-      rand_1MW = 1.0 + (Math.random() * 3);
-      rand_99MW = 1.0 + (Math.random() * 3);
-      retval[0].push([row.timestamp.getTime(), row.forecastMW]);
-      retval[1].push([row.timestamp.getTime(), row.forecast25MW, row.forecast75MW]);
-      retval[2].push([row.timestamp.getTime(), row.forecast25MW]);
-      retval[3].push([row.timestamp.getTime(), row.forecast75MW]);
-      retval[4].push([row.timestamp.getTime(), row.actual]);
-      retval[5].push([row.timestamp.getTime(), (row.forecast25MW - rand_1MW < 0 ? 0 : row.forecast25MW - rand_1MW), row.forecast75MW + rand_99MW]);
-      retval[6].push([row.timestamp.getTime(), (row.forecast25MW - rand_1MW < 0 ? 0 : row.forecast25MW - rand_1MW)]);
-      retval[7].push([row.timestamp.getTime(), row.forecast75MW + rand_99MW]);
-    });
+    if (featureData.forecast.type === 'point') {
+      featureData.data.forEach((row)=>{
+        retval[0].push([row.timestamp.getTime(), row.bestForecastMW]);
+        retval[1].push([row.timestamp.getTime(), null, null]);
+        retval[2].push([row.timestamp.getTime(), null]);
+        retval[3].push([row.timestamp.getTime(), null]);
+        retval[4].push([row.timestamp.getTime(), row.bestForecastMW]);
+        retval[5].push([row.timestamp.getTime(), null, null]);
+        retval[6].push([row.timestamp.getTime(), null]);
+        retval[7].push([row.timestamp.getTime(), null]);
+      });
+    }
+    else {
+      /*
+      * Add temporary random forecast1MW, forecast99MW Data
+      */
+      let rand_1MW, rand_99MW;
+      featureData.data.forEach((row)=>{
+        rand_1MW = 1.0 + (Math.random() * 3);
+        rand_99MW = 1.0 + (Math.random() * 3);
+        retval[0].push([row.timestamp.getTime(), row.bestForecastMW]);
+        retval[1].push([row.timestamp.getTime(), row.prob25thQuantForecastMW, row.prob75thQuantForecastMW]);
+        retval[2].push([row.timestamp.getTime(), row.prob25thQuantForecastMW]);
+        retval[3].push([row.timestamp.getTime(), row.prob75thQuantForecastMW]);
+        retval[4].push([row.timestamp.getTime(), row.bestForecastMW]);
+        retval[5].push([row.timestamp.getTime(), (row.prob25thQuantForecastMW - rand_1MW < 0 ? 0 : row.prob25thQuantForecastMW - rand_1MW), row.prob75thQuantForecastMW + rand_99MW]);
+        retval[6].push([row.timestamp.getTime(), (row.prob25thQuantForecastMW - rand_1MW < 0 ? 0 : row.prob25thQuantForecastMW - rand_1MW)]);
+        retval[7].push([row.timestamp.getTime(), row.prob75thQuantForecastMW + rand_99MW]);
+      });
+    }
     return retval;
   }
 

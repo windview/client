@@ -36,17 +36,15 @@ export class FarmDetail extends React.Component {
 
     if(feature.properties.timestamp) {
       const displayTime = moment.utc(feature.properties.timestamp).format('HH:mm M/D UTC'),
-            forecastMW = commafy(feature.properties.forecastMW) + " MW",
-            forecast25MW = commafy(feature.properties.forecast25MW) + " MW",
-            forecast75MW = commafy(feature.properties.forecast75MW) + " MW",
-            actual = feature.properties.actual + " MW";
+            forecastMW = commafy(feature.properties.bestForecastMW) + " MW",
+            prob25thQuantForecastMW = commafy(feature.properties.prob25thQuantForecastMW) + " MW",
+            prob75thQuantForecastMW = commafy(feature.properties.prob75thQuantForecastMW) + " MW",
+            actual = (feature.properties.actual ? feature.properties + " MW" : "unknown");
       appendRows.push(<tr key={feature.properties.fid + "-ts"}><td>Forecast Time</td><td className="right">{displayTime}</td></tr>)
       appendRows.push(<tr key={feature.properties.fid + "-fcst"}><td>Forecast Power</td><td className="right">{forecastMW}</td></tr>);
-      appendRows.push(<tr key={feature.properties.fid + "-25"}><td>Forecast Power 25th Percentile</td><td className="right">{forecast25MW}</td></tr>);
-      appendRows.push(<tr key={feature.properties.fid + "-75"}><td>Forecast Power 75th Percentile</td><td className="right">{forecast75MW}</td></tr>);
-      if(actual) {
-        appendRows.push(<tr key={feature.properties.fid + "-actl"}><td>Actual Power</td><td className="right">{actual}</td></tr>);
-      }
+      appendRows.push(<tr key={feature.properties.fid + "-25"}><td>Forecast Power 25th Percentile</td><td className="right">{prob25thQuantForecastMW}</td></tr>);
+      appendRows.push(<tr key={feature.properties.fid + "-75"}><td>Forecast Power 75th Percentile</td><td className="right">{prob75thQuantForecastMW}</td></tr>);
+      appendRows.push(<tr key={feature.properties.fid + "-actl"}><td>Actual Power</td><td className="right">{actual}</td></tr>);
     }
     const el = (
       <div>
