@@ -37,14 +37,18 @@ export class FarmDetail extends React.Component {
     if(feature.properties.timestamp) {
       const displayTime = moment.utc(feature.properties.timestamp).format('HH:mm M/D UTC'),
             forecastMW = commafy(feature.properties.bestForecastMW) + " MW",
+            prob1stQuantForecastMW = commafy(feature.properties.prob1stQuantForecastMW) + " MW",
             prob25thQuantForecastMW = commafy(feature.properties.prob25thQuantForecastMW) + " MW",
             prob75thQuantForecastMW = commafy(feature.properties.prob75thQuantForecastMW) + " MW",
+            prob99thQuantForecastMW = commafy(feature.properties.prob99thQuantForecastMW) + " MW",
             actual = (feature.properties.actual ? feature.properties + " MW" : "unknown");
       appendRows.push(<tr key={feature.properties.fid + "-ts"}><td>Forecast Time</td><td className="right">{displayTime}</td></tr>)
-      appendRows.push(<tr key={feature.properties.fid + "-fcst"}><td>Forecast Power</td><td className="right">{forecastMW}</td></tr>);
-      appendRows.push(<tr key={feature.properties.fid + "-25"}><td>Forecast Power 25th Percentile</td><td className="right">{prob25thQuantForecastMW}</td></tr>);
-      appendRows.push(<tr key={feature.properties.fid + "-75"}><td>Forecast Power 75th Percentile</td><td className="right">{prob75thQuantForecastMW}</td></tr>);
-      appendRows.push(<tr key={feature.properties.fid + "-actl"}><td>Actual Power</td><td className="right">{actual}</td></tr>);
+      appendRows.push(<tr key={feature.properties.id + "-fst"}><td>Forecast Power</td><td className="right">{forecastMW}</td></tr>);
+      appendRows.push(<tr key={feature.properties.id + "-1"}><td>Forecast Power 1st Percentile</td><td className="right">{prob1stQuantForecastMW}</td></tr>);
+      appendRows.push(<tr key={feature.properties.id + "-25"}><td>Forecast Power 25th Percentile</td><td className="right">{prob25thQuantForecastMW}</td></tr>);
+      appendRows.push(<tr key={feature.properties.id + "-75"}><td>Forecast Power 75th Percentile</td><td className="right">{prob75thQuantForecastMW}</td></tr>);
+      appendRows.push(<tr key={feature.properties.id + "-99"}><td>Forecast Power 99th Percentile</td><td className="right">{prob99thQuantForecastMW}</td></tr>);
+      appendRows.push(<tr key={feature.properties.id + "-actl"}><td>Actual Power</td><td className="right">{actual}</td></tr>);
     }
     const el = (
       <div>
