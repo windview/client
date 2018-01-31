@@ -7,11 +7,11 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 
 const getSliderDisplayFromValue = (rawValue) => {
-  return moment.utc(rawValue).format('H:mm M/D');
+  return moment.utc(rawValue).format('H:mm M/D/YY');
 }
 
 const getSliderValueFromDisplay = (displayValue) => {
-  return moment.utc(displayValue, 'H:mm M/D').valueOf();
+  return moment.utc(displayValue, 'H:mm M/D/YY').valueOf();
 }
 
 export class Slider extends React.Component {
@@ -120,7 +120,7 @@ export class Slider extends React.Component {
       pips: {
         // TODO to make this look good and fit the window is relative to the
         // number of timesteps as well as the width of the screen. Should
-        // consider writing a dynamic property generator 
+        // consider writing a dynamic property generator
         mode: 'count',
         values: '13',
         density: '5',
