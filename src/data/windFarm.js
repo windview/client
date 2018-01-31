@@ -1,5 +1,5 @@
 import API from './api';
-
+import CONFIG from './config';
 
 let windFarms = []
 
@@ -13,19 +13,20 @@ let getWindFarmById = (fid) => {
   * @return a fetch promise that will fulfill with the farm when it is loaded
   */
 let fetchFarm = (farmId) => {
-
   return API.goFetch(`/farms/${farmId}`)
     .then(
       response => {
         if(response.ok) {
-          let farm = response.json();
-          windFarms.push(farm)
-          return farm;
+          return response.json();
         } else {
           throw("Error fetching farm:", farmId);
         }
       }
     )
+    .then(json => {
+      windFarms.push(json);
+      return json;
+    })
 }
 
 /**
@@ -49,7 +50,7 @@ let fetchBatchFarms = (windFarmIds) => {
         })
         .then(() => {
           if(--queueCount === 0) {
-            resolve({
+            resolve ({
               data: windFarms,
             });
           }
@@ -65,26 +66,48 @@ let fetchBatchFarms = (windFarmIds) => {
   * farms when they are all loaded
   */
 let fetchAllFarms = () => {
-
   return API.goFetch(`/farms`)
     .then(
       response => {
         if(response.ok) {
-          let farms = response.json();
-          windFarms.push(farms)
-          return farms;
+          return response.json()
         } else {
           throw("Error fetching all farms");
         }
       }
     )
+    .then(json => {
+      const maxFarms = CONFIG.maxFarms || 250;
+      let farms = json.farms
+      if(farms.length > maxFarms) {
+        farms = farms.slice(0, maxFarms);
+      }
+      windFarms.concat(farms);
+      return {
+        data: farms
+      };
+    });
 }
 
+let getGeoJsonForFarms = () => {
+  let json = {
+    "type": "FeatureCollection",
+    "features": windFarms.map((f) => {
+      return {
+        "type": "Feature",
+        "geometry": { "type": "Point", "coordinates": [ f.longitude, f.latitude ] },
+        "properties": f
+      }
+    })
+  };
+  return json;
+}
 
 module.exports = {
   windFarms: windFarms,
   getWindFarmById: getWindFarmById,
   fetchFarm: fetchFarm,
   fetchBatchFarms: fetchBatchFarms,
-  fetchAllFarms: fetchAllFarms
+  fetchAllFarms: fetchAllFarms,
+  getGeoJsonForFarms: getGeoJsonForFarms
 }

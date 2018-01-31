@@ -4,9 +4,8 @@
 // http://redux.js.org/docs/basics/Actions.html
 
 import * as t from './actionTypes';
-import API from './data/api';
 import Forecast from './data/forecast';
-import CONFIG from './data/config';
+import WindFarm from './data/windFarm';
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -106,7 +105,7 @@ export const fetchForecast = (windFarms) => {
     // notify the app that data is loading
     dispatch(fetchForecastRequest());
 
-    Forecast.fetchBatchForecast(windFarms.features, 24)
+    Forecast.fetchBatchForecast(windFarms, 24)
       .then((forecast) => {
         dispatch(fetchForecastSuccess(forecast.data, forecast.meta));
       })
@@ -122,33 +121,11 @@ export const fetchWindFarms = () => {
     dispatch(fetchWindFarmsRequest());
 
     // return a promise
-    return API.goFetch(`farms`)
-      .then(
-        response => {
-          response.json().then(
-            json => {
-              let maxFarms = CONFIG.maxFarms || 250;
-              let farms = json.farms.length > maxFarms? json.farms.slice(0, maxFarms) : json.farms;
-              json = {
-                "type": "FeatureCollection",
-                "features": farms.map((f) => {
-                  return {
-                    "type": "Feature",
-                    "geometry": { "type": "Point", "coordinates": [ f.longitude, f.latitude ] },
-                    "properties": f
-                  }
-                })
-              };
-              dispatch(fetchWindFarmsSuccess(json));
-              dispatch(fetchForecast(json));
-            }
-          );
-        },
-        error => {
-          // in case anyone is interested
-          dispatch(fetchWindFarmsFail(error));
-        }
-      )
+    return WindFarm.fetchAllFarms()
+      .then((response) => {
+        dispatch(fetchWindFarmsSuccess(response.data));
+        dispatch(fetchForecast(response.data));
+      })
   }
 }
 

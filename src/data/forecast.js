@@ -222,14 +222,14 @@ let _postProcessForecastData = (forecast, timezoom) => {
   * @return a fetch promise
   */
 let fetchForecast = (farm, timezoom) => {
-
-  return API.goFetch(`/forecasts/latest?farm_id=${farm.properties.id}`)
+  return API.goFetch(`/forecasts/latest?farm_id=${farm.id}`)
     .then(
       response => {
         if(response.ok) {
+          // returns a promise, not a JSON obj
           return response.json();
         } else {
-          throw("Error fetching forecast for", farm.properties.fid);
+          throw("Error fetching forecast for", farm.id);
         }
       }
     )
@@ -243,6 +243,7 @@ let fetchForecast = (farm, timezoom) => {
         // a substandard data format onto the state like this
         farm.properties.maxRampSeverity = forecastData.alerts.maxRampSeverity;
         forecasts.push(forecastData);
+        // This will become the argument in subsequent promise chains (.thens)
         return forecastData;
       }
     )
@@ -266,7 +267,7 @@ let fetchBatchForecast = function(windFarms, timezoom) {
       fetchForecast(farm, timezoom)
         .catch(error => {
           console.log(error);
-          farm.properties.disabled = true;
+          farm.disabled = true;
         })
         .then(() => {
           if(--queueCount === 0) {

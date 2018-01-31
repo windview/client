@@ -236,10 +236,12 @@ export class Map extends React.Component {
         return;
       }
 
+      debugger;
+      
       // Add windfarms
       map.addSource('windfarms', {
         type: "geojson",
-        data: this.props.windFarms,
+        data: WindFarm.getGeoJsonForFarms()
       });
 
       // Initialize all of the layers
