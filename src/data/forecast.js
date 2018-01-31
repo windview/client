@@ -1,11 +1,12 @@
 
 import API from './api';
 import Alerts from './alerts';
+import CONFIG from './config';
 
 let Forecast = (function(){
 
   // TODO get from forecast or configuration
-  let forecastInterval = 15;
+  let forecastInterval = CONFIG.forecastInterval;
 
 
   // The latest timestamp in all the data for all the farms

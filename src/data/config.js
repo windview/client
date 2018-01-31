@@ -2,6 +2,10 @@
 
 let Config = new function() {
 
+  this.maxFarms = 25;
+  this.forecastInterval = 60;
+  this.fakeNow = new Date("2012-12-08T07:00:00Z").getTime();
+
   this.getQueryParam = (paramName) => {
     let parts = window.location.href.split("?"),
         retval = null;
@@ -30,8 +34,10 @@ let Config = new function() {
         now = 1492219800000;
         break;
       default:
-        now = 1492168500000;
+        // This is in the middle of the Texas data Andy provided
+        now = this.fakeNow
     }
+
     window.fakeNow = now;
   }
 }();

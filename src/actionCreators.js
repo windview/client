@@ -6,6 +6,7 @@
 import * as t from './actionTypes';
 import API from './data/api';
 import Forecast from './data/forecast';
+import CONFIG from './data/config';
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -126,9 +127,11 @@ export const fetchWindFarms = () => {
         response => {
           response.json().then(
             json => {
+              let maxFarms = CONFIG.maxFarms || 250;
+              let farms = json.farms.length > maxFarms? json.farms.slice(0, maxFarms) : json.farms;
               json = {
                 "type": "FeatureCollection",
-                "features": json.farms.map((f) => {
+                "features": farms.map((f) => {
                   return {
                     "type": "Feature",
                     "geometry": { "type": "Point", "coordinates": [ f.longitude, f.latitude ] },

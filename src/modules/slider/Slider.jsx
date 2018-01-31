@@ -118,8 +118,13 @@ export class Slider extends React.Component {
         }
       },
       pips: {
-        mode: 'positions',
-        values: [4, 12, 22, 32, 42, 52, 62, 72, 82, 92],
+        // TODO to make this look good and fit the window is relative to the
+        // number of timesteps as well as the width of the screen. Should
+        // consider writing a dynamic property generator 
+        mode: 'count',
+        values: '13',
+        density: '5',
+        stepped: true,
         format: {
           to: function(value) {
             return getSliderDisplayFromValue(value);
