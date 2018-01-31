@@ -49,7 +49,7 @@ let Alerts = new function() {
     return rampBins;
   }
 
-  this.detectRampsInForecast = function(timeslices) {
+  this.detectRampsInForecast = timeslices => {
     let previous = timeslices[0],
         r = 5; // ramping threshold
     timeslices.forEach((timeslice, i) => {
@@ -68,7 +68,7 @@ let Alerts = new function() {
     return timeslices;
   }
 
-  this.getAlertsForForecast = (forecastData) => {
+  this.getAlertsForForecast = forecastData => {
     let alerts = {
       rampStart: this.getFirstRampStart(forecastData),
       hasRamp: this.hasRamp(forecastData),
@@ -78,17 +78,17 @@ let Alerts = new function() {
     return alerts;
   }
 
-  this.getFirstRamp = (forecastData) => {
+  this.getFirstRamp = forecastData => {
     forecastData = forecastData.data;
     return forecastData.find((timeslice)=>{ return timeslice.ramp === true; });
   }
 
-  this.getFirstRampStart = (forecastData) => {
+  this.getFirstRampStart = forecastData => {
     const firstRamp = this.getFirstRamp(forecastData);
     return firstRamp ? firstRamp.timestamp : null;
   }
 
-  this.getMaxRampSeverity = (forecastData) => {
+  this.getMaxRampSeverity = forecastData => {
     forecastData = forecastData.data;
     let maxSeverity = 0,
         rampEvents = forecastData.filter(function(timeslice){ return timeslice.ramp;});
@@ -98,7 +98,7 @@ let Alerts = new function() {
     return maxSeverity;
   };
 
-  this.hasRamp = (forecastData) => {
+  this.hasRamp = forecastData => {
     forecastData = forecastData.data;
     return forecastData.find((timeslice)=>{ return timeslice.ramp; }) !== undefined;
   }
