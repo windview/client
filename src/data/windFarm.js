@@ -82,7 +82,7 @@ let fetchAllFarms = () => {
       if(farms.length > maxFarms) {
         farms = farms.slice(0, maxFarms);
       }
-      windFarms.concat(farms);
+      windFarms = windFarms.concat(farms);
       return {
         data: farms
       };
