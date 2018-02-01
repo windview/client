@@ -226,14 +226,12 @@ export class Map extends React.Component {
           url: process.env.TILE_SERVER_URL + "/osm-translines/metadata.json"
       });
 
-      debugger;
       let farmData = WindFarm.getGeoJsonForFarms();
       // TODO move app alerting to own module
       if(farmData.features.length === 0) {
         alert("Wind farm data could not be loaded.");
         return;
       }
-
 
       // Add windfarms
       map.addSource('windfarms', {
