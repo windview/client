@@ -42,7 +42,7 @@ let getDataStart = (data, interval) => {
 }
 
 // Create a master timeline of ms since 1970 NOT Date objects
-let _getMasterTimeline = forecasts => {
+let getMasterTimeline = forecasts => {
   let interval = forecastInterval,
       intervalMillisec = interval*60*1000,
       firstTime = getDataStart(forecasts, interval).getTime(),
@@ -98,7 +98,7 @@ let _applyTimezoom = (timezoom, data) => {
 let _coerceForecastsToTimeline = forecasts => {
   let interval = forecastInterval,
       intervalMillisec = interval*60*1000,
-      masterTimeline = _getMasterTimeline(forecasts);
+      masterTimeline = getMasterTimeline(forecasts);
 
   // Coerce the farm values
   forecasts.forEach(f => {
@@ -235,14 +235,15 @@ let fetchForecast = (farm, timezoom) => {
     )
     .then(
       data => {
-        const forecastData = _postProcessForecastData(data, timezoom);
-        farm.properties.forecastData = forecastData;
-        // A limitation of MapboxGL is that it doesn't support nested properties
-        // in styles, so we have to promote any prop used in a style to the top
-        // TODO format the data for the map in the map instead of forcing
-        // a substandard data format onto the state like this
-        farm.properties.maxRampSeverity = forecastData.alerts.maxRampSeverity;
+        let forecastData = _postProcessForecastData(data, timezoom);
         forecasts.push(forecastData);
+        farm.forecastId = forecastData.forecast.id;
+
+        // FIXME
+        //farm.forecastData = forecastData;
+        // FIXME
+        // farm.maxRampSeverity = forecastData.alerts.maxRampSeverity;
+
         // This will become the argument in subsequent promise chains (.thens)
         return forecastData;
       }
@@ -300,7 +301,7 @@ let getAggregatedForecast = forecasts => {
 
   if(!forecasts || forecasts.length === 0) return null;
 
-  let masterTimeline = _getMasterTimeline(forecasts),
+  let masterTimeline = getMasterTimeline(forecasts),
       forecastCount = forecasts.length,
       forecastsAtTime = [],
       aggregatedForecast = {
@@ -375,7 +376,7 @@ let getForecastForFarm = (fid, forecasts) => {
  * or soonest after (within 15 minutes of) the provided timestamp
  */
 let setCurrentForecastByTimestamp = (ts, windFarmFeatures) => {
-  if(!ts) return;
+  if(!ts || !windFarmFeatures) return;
 
   windFarmFeatures.forEach(farm => {
     let currentForecast = farm.properties.forecastData.data.find(dataPoint => {
@@ -428,6 +429,7 @@ module.exports = {
   getDataEnd: getDataEnd,
   getDataStart: getDataStart,
   getForecastForFarm: getForecastForFarm,
+  getMasterTimeline: getMasterTimeline,
   setCurrentForecastByTimestamp: setCurrentForecastByTimestamp,
   setSelectedFeature: setSelectedFeature
 }
