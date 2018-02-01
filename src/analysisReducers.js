@@ -26,7 +26,10 @@ const defaultValue = {
   timezoom: 24,
   dataSource: 'visibleFarms',
   chartTitle: 'Currently Visible Wind Farms',
-  multiChartMap: []
+  multiChartMap: [],
+  visibleWindFarms: [],
+  selectedWindFarmsByPolygon: [],
+  selectedWindFarmsByGroup: []
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -13,11 +13,14 @@
   },
   "analysis": {
     "selectedFeature": null,
-    "selectedTimestamp": 1517514644438,
+    "selectedTimestamp": 1517515833799,
     "selectedStyle": "ramp",
     "timezoom": 24,
     "dataSource": "visibleFarms",
     "chartTitle": "Currently Visible Wind Farms",
-    "multiChartMap": [1, 2, 3, 11]
+    "multiChartMap": [],
+    "visibleWindFarms": [],
+    "selectedWindFarmsByPolygon": [],
+    "selectedWindFarmsByGroup": []
   }
 }
