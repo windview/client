@@ -18,7 +18,9 @@ if(process.env.LOG_ACTIONS === 'true') {
 }
 
 const store = createStore(rootReducer, applyMiddleware.apply(this, middlewares));
-window.STORE = store; //for debugging the redux store
+
+// FIXME for development/debugging only
+window.STORE = store;
 
 render(
   <Provider store={store}>
