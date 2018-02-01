@@ -72,7 +72,7 @@ let fetchAllFarms = () => {
         if(response.ok) {
           return response.json()
         } else {
-          throw("Error fetching all farms");
+          throw new Error("Error fetching all farms");
         }
       }
     )
@@ -90,6 +90,8 @@ let fetchAllFarms = () => {
 }
 
 let getGeoJsonForFarms = () => {
+  // TODO could tighten this up by only using properties necessary for
+  // MapBox to have in the GeoJSON result
   let json = {
     "type": "FeatureCollection",
     "features": windFarms.map((f) => {
