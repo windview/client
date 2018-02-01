@@ -49,7 +49,6 @@ export class Map extends React.Component {
     }
   }
 
-
   componentDidMount() {
     Config.setGlobalFakeNow();
     // dispatch any actions configured in selectors
@@ -190,9 +189,6 @@ export class Map extends React.Component {
     });
     map.addControl(draw);
 
-
-
-
     // Add zoom and rotation controls to the map.
     map.addControl(new mapboxgl.NavigationControl());
 
@@ -230,18 +226,19 @@ export class Map extends React.Component {
           url: process.env.TILE_SERVER_URL + "/osm-translines/metadata.json"
       });
 
+      debugger;
+      let farmData = WindFarm.getGeoJsonForFarms();
       // TODO move app alerting to own module
-      if(!this.props.windFarms) {
+      if(farmData.features.length === 0) {
         alert("Wind farm data could not be loaded.");
         return;
       }
 
-      debugger;
-      
+
       // Add windfarms
       map.addSource('windfarms', {
         type: "geojson",
-        data: WindFarm.getGeoJsonForFarms()
+        data: farmData
       });
 
       // Initialize all of the layers
