@@ -26,8 +26,7 @@ const defaultValue = {
   timezoom: 24,
   dataSource: 'visibleFarms',
   chartTitle: 'Currently Visible Wind Farms',
-  botChartType: 'aggregation',
-  multiChartMap: {}
+  multiChartMap: []
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -39,7 +38,7 @@ export default (state=defaultValue, action) => {
     case t.MAP_MOVE:
       return {
         ...state,
-        visibleWindFarms: action.features
+        visibleWindFarms: action.features.map(f=>{return f.id;})
       };
     case t.SELECT_AGGREGATION:
       return {
@@ -50,7 +49,7 @@ export default (state=defaultValue, action) => {
     case t.SELECT_FEATURE:
       return {
         ...state,
-        selectedFeature: action.feature
+        selectedFeature: action.feature.id
       };
     case t.SELECT_FEATURES_BY_GROUP:
       return {
@@ -77,18 +76,18 @@ export default (state=defaultValue, action) => {
         ...state,
         timezoom: action.timezoom
       };
-    case t.SELECT_BOT_CHART:
-      return{
-        ...state,
-        botChartType: action.chartType
-      };
     case t.ADD_MULTI_CHART:
-    state.multiChartMap[action.selectedFeature.properties.fid] = action.selectedFeature;
+      if(state.multiChartMap.indexOf(action.selectedFeature.id) === -1) {
+        state.multiChartMap.push(action.selectedFeature.id);
+      }
       return {
         ...state
       };
     case t.REMOVE_MULTI_CHART:
-    delete state.multiChartMap[action.fid];
+      const i = state.multiChartMap.indexOf(action.id);
+      if(i !== -1) {
+        state.multiChartMap.splice(i, 1)
+      }
       return {
         ...state
       };

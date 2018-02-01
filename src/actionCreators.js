@@ -33,10 +33,8 @@ export const fetchForecastRequest = () => ({
   type: t.FETCH_FORECAST_REQUEST
 });
 
-export const fetchForecastSuccess = (data, meta) => ({
-  type: t.FETCH_FORECAST_SUCCESS,
-  data: data,
-  meta: meta
+export const fetchForecastSuccess = () => ({
+  type: t.FETCH_FORECAST_SUCCESS
 });
 
 export const fetchWindFarmsFail = (error) => ({
@@ -48,9 +46,8 @@ export const fetchWindFarmsRequest = () => ({
   type: t.FETCH_WIND_FARMS_REQUEST
 });
 
-export const fetchWindFarmsSuccess = (data) => ({
-  type: t.FETCH_WIND_FARMS_SUCCESS,
-  data: data
+export const fetchWindFarmsSuccess = () => ({
+  type: t.FETCH_WIND_FARMS_SUCCESS
 });
 
 export const mapMove = (features) => ({
