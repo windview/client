@@ -5,6 +5,8 @@ import './Slider.scss';
 import { mapStateToProps, mapDispatchToProps } from './selectors.js';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import CONFIG from '../../data/config';
+import Forecast from '../../data/forecast';
 
 const getSliderDisplayFromValue = (rawValue) => {
   return moment.utc(rawValue).format('H:mm M/D/YY');
@@ -30,8 +32,8 @@ export class Slider extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if(prevProps.forecast == null && this.props.forecast !== null) {
-      this.renderSlider(this.props.forecast);
+    if(!prevProps.forecastLoaded && this.props.forecastLoaded) {
+      this.renderSlider();
       // Hacky for demo May 5 2017
       this.sliderEl.noUiSlider.set(getSliderDisplayFromValue(window.fakeNow));
       // End hack
@@ -49,7 +51,7 @@ export class Slider extends React.Component {
     const sliderObj = this.sliderEl.noUiSlider,
           currentVal = sliderObj.get(),
           timestamp = getSliderValueFromDisplay(currentVal),
-          interval = 1000*60*this.props.forecastMeta.interval,
+          interval = 1000*60*CONFIG.forecastInterval,
           startTs = sliderObj.options.range.min,
           endTs = sliderObj.options.range.max;
     let   newVal = '';
@@ -88,9 +90,9 @@ export class Slider extends React.Component {
 
   renderSlider(forecast) {
     const sliderEl = document.getElementById('slider'),
-          interval = this.props.forecastMeta.interval,
-          startTime = this.props.forecastMeta.dataStart,
-          endTime = this.props.forecastMeta.dataEnd,
+          interval = CONFIG.forecastInterval,
+          startTime = Forecast.getDataStart(),
+          endTime = Forecast.getDataEnd(),
           stepInterval = (1000*60*interval);
 
     this.sliderEl = sliderEl;

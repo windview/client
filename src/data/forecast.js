@@ -14,7 +14,7 @@ window.FORECAST_META = ()=>{return meta};
 let forecastInterval = CONFIG.forecastInterval;
 
 // The latest timestamp in all the data for all the farms
-let getDataEnd = (forecasts, interval) => {
+let getDataEnd = () => {
   let ts = 0;
   forecasts.forEach( forecast => {
     forecast.data.forEach(function(row) {
@@ -24,6 +24,7 @@ let getDataEnd = (forecasts, interval) => {
 
   let dataEnd = new Date(ts),
       minute = dataEnd.getMinutes(),
+      interval = CONFIG.forecastInterval,
       remainder = minute >= interval ? minute%interval : interval-minute;
   dataEnd.setMinutes(minute+=remainder);
   dataEnd.setSeconds(0);
@@ -31,9 +32,9 @@ let getDataEnd = (forecasts, interval) => {
 }
 
 // The earliest timestamp in all the data for all the farms
-let getDataStart = (data, interval) => {
+let getDataStart = () => {
   let ts = new Date().getTime() + (1000*60*60*24*365); //1 year in the future
-  data.forEach( forecast => {
+  forecasts.forEach( forecast => {
     forecast.data.forEach(function(row) {
       ts = row.timestamp.getTime() < ts ? row.timestamp.getTime() : ts;
     });
@@ -41,6 +42,7 @@ let getDataStart = (data, interval) => {
 
   let dataStart = new Date(ts),
       minute = dataStart.getMinutes(),
+      interval = CONFIG.forecastInterval,
       remainder = minute >= interval ? minute%interval : minute;
   dataStart.setMinutes(minute-=remainder);
   dataStart.setSeconds(0);
