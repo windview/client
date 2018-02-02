@@ -374,8 +374,6 @@ let getAggregatedForecast = forecasts => {
 }
 
 let getForecastForFarm = (fid) => {
-  debugger;
-  // FIXME insure that this is looking up the right one
   let retval = null;
   if( fid && forecasts && forecasts.length > 0) {
     retval = forecasts.find(fc=>fc.farm_id === fid)

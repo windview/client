@@ -9,11 +9,9 @@ import './ForecastMeta.scss';
 export class ForecastMeta extends React.Component {
 
   getDetailMarkup(selectedForecast) {
-    const runtime = moment.utc(selectedForecast.meta.job_completed_at).format('HH:mm M/D UTC'),
-          model = selectedForecast.meta.model_name,
-          horizon = selectedForecast.meta.forecast_horizon_minutes;
-
-    console.log(selectedForecast)
+    const runtime = moment.utc(selectedForecast.generated_at).format('HH:mm M/D UTC'),
+          model = selectedForecast.provider_id,
+          horizon = selectedForecast.horizon_minutes;
 
     const el = (
       <div id="forecast-meta" className="forecast-meta">
@@ -39,13 +37,7 @@ export class ForecastMeta extends React.Component {
   }
 
   getSelectedForecast() {
-    let farm = this.props.selectedFeature,
-        forecast = this.props.forecast,
-        selectedForecast = null;
-    if(farm && forecast) {
-      selectedForecast = Forecast.getForecastForFarm(farm.properties.fid, forecast);
-    }
-    return selectedForecast;
+    return Forecast.getForecastForFarm(this.props.selectedFarmId);
   }
 
   render() {
