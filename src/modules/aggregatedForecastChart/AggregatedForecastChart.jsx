@@ -148,8 +148,8 @@ export class AggregatedForecastChart extends React.Component {
   }
 
   componentDidMount() {
-    let aggDataSource = this.getAggregatedSourceData();
-    if(aggDataSource && this.props.forecast) {
+    let aggDataSource = this.getAggregatedDataIds(this.props);
+    if(aggDataSource && this.props.forecastLoaded) {
       this.chartIt();
       if(this.props.selectedTimestamp) {
         this.drawPlotLine(this.props.selectedTimestamp);
@@ -158,10 +158,10 @@ export class AggregatedForecastChart extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    let aggDataSource = this.getAggregatedSourceData();
-    let prevDataSource = this.getAggregatedPrevData(prevProps);
-    if(this.props.forecast) {
-      if(aggDataSource) {
+    let aggDataSource = this.getAggregatedDataIds(this.props);
+    let prevDataSource = this.getAggregatedDataIds(prevProps);
+    if(this.props.forecastLoaded) {
+      if(aggDataSource.length > 0) {
         if(prevDataSource) {
           if(this.farmsHaveChanged(prevDataSource, aggDataSource)) {
             this.chartIt();
@@ -197,39 +197,27 @@ export class AggregatedForecastChart extends React.Component {
   }
 
   farmsHaveChanged(prev, current) {
-    let prevFids = prev.map(i=>i.properties.fid),
-        currentFids = current.map(i=>i.properties.fid);
-
     // Super simple check may bypass the need for doing any introspection
-    if(prevFids.length !== currentFids.length) {
+    if(prev.length !== current.length) {
       return true;
     } else {
       // here we know the sets are the same length, and we don't care about
       // the details of the diff only that there is a diff, so a simple one-way
       // id check is sufficient
-      const leftovers = currentFids.filter( fid=>!prevFids.includes(fid) )
+      const leftovers = current.filter( fid=>!prev.includes(fid) )
       return leftovers.length > 0
     }
   }
 
-  getAggregatedPrevData(prevProps) {
+  getAggregatedDataIds(props) {
     if (this.props.aggregatedSource === 'visibleFarms') {
-      return prevProps.visibleWindFarms
+      return props.visibleWindFarms
     }
     if (this.props.aggregatedSource === 'polygonFarms') {
-      return prevProps.selectedWindFarmsByPolygon
-    }
-  }
-
-  getAggregatedSourceData() {
-    if (this.props.aggregatedSource === 'visibleFarms') {
-      return this.props.visibleWindFarms
-    }
-    if (this.props.aggregatedSource === 'polygonFarms') {
-      return this.props.selectedWindFarmsByPolygon
+      return props.selectedWindFarmsByPolygon
     }
     if (this.props.aggregatedSource === 'groupedFarms') {
-      return this.props.selectedWindFarmsByGroup
+      return props.selectedWindFarmsByGroup
     }
   }
 
@@ -248,10 +236,10 @@ export class AggregatedForecastChart extends React.Component {
 
   getForecasts() {
     let retval = [];
-    let aggDataSource = this.getAggregatedSourceData();
-    if(aggDataSource) {
-      aggDataSource.forEach(farm=>{
-        retval.push(Forecast.getForecastForFarm(farm.properties.fid, this.props.forecast));
+    let aggDataSource = this.getAggregatedDataIds(this.props);
+    if(aggDataSource.length > 0) {
+      aggDataSource.forEach(farmId=>{
+        retval.push(Forecast.getForecastForFarm(farmId));
       })
     }
     return retval.filter(r=>r); // filter out falsy values

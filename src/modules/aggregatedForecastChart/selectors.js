@@ -2,7 +2,7 @@
 
 export const mapStateToProps = (state, ownProps) => {
   return {
-    forecast: state.data.forecast,
+    forecastLoaded: state.data.forecastLoaded,
     selectedTimestamp: state.analysis.selectedTimestamp,
     visibleWindFarms: state.analysis.visibleWindFarms,
     selectedWindFarmsByPolygon: state.analysis.selectedWindFarmsByPolygon,
