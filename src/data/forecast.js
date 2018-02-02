@@ -3,7 +3,13 @@ import API from './api';
 import Alerts from './alerts';
 import CONFIG from './config';
 
-let forecasts = [];
+let forecasts = [],
+    meta = {};
+
+// FIXME for debugging only
+window.FORECASTS = ()=>{return forecasts};
+window.FORECAST_META = ()=>{return meta};
+
 
 let forecastInterval = CONFIG.forecastInterval;
 
@@ -133,10 +139,10 @@ let _formatProbabilisticForecastDataPoint = (dataPoint) => {
       ts     = _convertTimestampToDate(dataPoint[0]);
 
   // Hack for demo purposes
-  const fakeNow = window.fakeNow;
-  if(fakeNow && ts.getTime() > fakeNow) {
-    prob50thQuantForecastMW = null;
-  }
+  // const fakeNow = window.fakeNow;
+  // if(fakeNow && ts.getTime() > fakeNow) {
+  //   prob50thQuantForecastMW = null;
+  // }
   // End hack
 
   return {
@@ -162,10 +168,10 @@ let _formatPointForecastDataPoint = (dataPoint) => {
       ts     = _convertTimestampToDate(dataPoint[0]);
 
   // Hack for demo purposes
-  const fakeNow = window.fakeNow;
-  if(fakeNow && ts.getTime() > fakeNow) {
-    forecastValue = null;
-  }
+  // const fakeNow = window.fakeNow;
+  // if(fakeNow && ts.getTime() > fakeNow) {
+  //   forecastValue = null;
+  // }
   // End hack
 
   return {
@@ -180,19 +186,17 @@ let _formatPointForecastDataPoint = (dataPoint) => {
     rampSeverity: null,
   };
 }
+
 /**
   * Invoke formating on an array of forecast data points for a single farm
   */
 let _formatForecastData = (forecast) => {
   let formattedData = [];
-  // Loop through and process the data, outputting a format consumable by the app
-
   if (forecast.type === "probabilistic") {
     forecast.data.forEach((dataPoint) => {
       formattedData.push(_formatProbabilisticForecastDataPoint(dataPoint));
     }, this);
-  }
-  else {
+  } else {
     forecast.data.forEach((dataPoint) => {
       formattedData.push(_formatPointForecastDataPoint(dataPoint));
     }, this);
@@ -209,10 +213,14 @@ let _getBatchForecastMeta = (forecasts) => {
 }
 
 let _postProcessForecastData = (forecast, timezoom) => {
-  let formattedData = _formatForecastData(forecast.forecast);
+  let formattedData = _formatForecastData(forecast);
   formattedData = _applyTimezoom(timezoom, formattedData);
   forecast.data = Alerts.detectRampsInForecast(formattedData);
   forecast.alerts = Alerts.getAlertsForForecast(forecast);
+  // FIXME just trying this out quick and dirty
+  let timeslicesByTimstamp = {};
+  forecast.data.forEach(dataSlice=>{timeslicesByTimstamp[dataSlice.timestamp.getTime()] = dataSlice});
+  forecast.dataByTime = timeslicesByTimstamp;
   return forecast;
 }
 
@@ -235,9 +243,9 @@ let fetchForecast = (farm, timezoom) => {
     )
     .then(
       data => {
-        let forecastData = _postProcessForecastData(data, timezoom);
+        let forecastData = _postProcessForecastData(data.forecast, timezoom);
         forecasts.push(forecastData);
-        farm.forecastId = forecastData.forecast.id;
+        farm.forecastId = forecastData.id;
 
         // FIXME
         //farm.forecastData = forecastData;
@@ -273,7 +281,8 @@ let fetchBatchForecast = function(windFarms, timezoom) {
         .then(() => {
           if(--queueCount === 0) {
             forecasts = _coerceForecastsToTimeline(forecasts);
-            let meta = _getBatchForecastMeta(forecasts);
+            meta = _getBatchForecastMeta(forecasts);
+
             resolve({
               data: forecasts,
               meta: meta
@@ -364,13 +373,19 @@ let getAggregatedForecast = forecasts => {
   return aggregatedForecast;
 }
 
-let getForecastForFarm = (fid, forecasts) => {
+let getForecastForFarm = (fid) => {
+  debugger;
+  // FIXME insure that this is looking up the right one
   let retval = null;
   if( fid && forecasts && forecasts.length > 0) {
-    retval = forecasts.find(fc=>fc.meta.farm_uuid === fid)
+    retval = forecasts.find(fc=>fc.farm_id === fid)
   }
   return retval || null;
 }
+
+let getForecastForTime = (timestampMS, forecast) =>
+  (forecast && timestampMS) ? forecast.dataByTime[timestampMS] : null;
+
 
 /* Set the currentForecast property of each provided farm to the value at
  * or soonest after (within 15 minutes of) the provided timestamp
@@ -416,11 +431,6 @@ let setCurrentForecastByTimestamp = (ts, windFarmFeatures) => {
   });
 }
 
-let setSelectedFeature = (feature, features) => {
-  features.forEach(f=>{f.properties.selected = false});
-  feature.properties.selected = true;
-}
-
 module.exports = {
   fetchBatchForecast: fetchBatchForecast,
   fetchForecast: fetchForecast,
@@ -429,7 +439,7 @@ module.exports = {
   getDataEnd: getDataEnd,
   getDataStart: getDataStart,
   getForecastForFarm: getForecastForFarm,
+  getForecastForTime: getForecastForTime,
   getMasterTimeline: getMasterTimeline,
   setCurrentForecastByTimestamp: setCurrentForecastByTimestamp,
-  setSelectedFeature: setSelectedFeature
 }

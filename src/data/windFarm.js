@@ -3,8 +3,12 @@ import CONFIG from './config';
 
 let windFarms = []
 
+// FIXME for debugging only
+window.FARMS = ()=>{return windFarms};
+
+
 let getWindFarmById = (fid) => {
-  return windFarms.find((farm)=>{ return farm.properties.id === fid; });
+  return windFarms.find((farm)=>{ return farm.id === fid; });
 }
 
 /**
@@ -105,11 +109,18 @@ let getGeoJsonForFarms = () => {
   return json;
 }
 
+let setSelectedFarm = (farm) => {
+  windFarms.forEach(f=>{f.selected = false});
+  farm.selected = true;
+}
+
+
 module.exports = {
   windFarms: windFarms,
   getWindFarmById: getWindFarmById,
   fetchFarm: fetchFarm,
   fetchBatchFarms: fetchBatchFarms,
   fetchAllFarms: fetchAllFarms,
-  getGeoJsonForFarms: getGeoJsonForFarms
+  getGeoJsonForFarms: getGeoJsonForFarms,
+  setSelectedFarm: setSelectedFarm
 }
