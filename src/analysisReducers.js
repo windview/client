@@ -87,7 +87,7 @@ export default (state=defaultValue, action) => {
         ...state
       };
     case t.REMOVE_MULTI_CHART:
-      const i = state.multiChartMap.indexOf(action.id);
+      const i = state.multiChartMap.indexOf(action.fid);
       if(i !== -1) {
         state.multiChartMap.splice(i, 1)
       }
