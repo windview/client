@@ -4,7 +4,7 @@ import { mapStateToProps, mapDispatchToProps} from './selectors';
 import { connect } from 'react-redux';
 import { NAV_BAR_BUTTONS } from './constants';
 import { APP_TITLE } from './constants';
-import WindFarm from '../../data/windFarm';
+
 
 export class NavBar extends React.Component {
 
@@ -24,9 +24,9 @@ export class NavBar extends React.Component {
 
   aggregatedOptionElements() {
     const aggregatedOptions = [
-      { value: 'visibleFarms', label: 'Currently Visible Wind Farms'},
-      { value: 'polygonFarms', label: 'Selected Wind Farms with Polygon Selection Tool'},
-      { value: 'groupedFarms', label: 'Grouped Wind Farms'}
+      { value: 'visibleFarms', label: 'Currently Visible'},
+      { value: 'polygonFarms', label: 'Manual Selection'},
+      { value: 'groupedFarms', label: 'Group Presets'}
     ];
 
     return aggregatedOptions.map((option) => {
@@ -66,11 +66,12 @@ export class NavBar extends React.Component {
   }
 
   setGroupedFarms() {
+
+    // FIXME these will be replaced with the groups set by the user in config
     var groupedFarms = [
       {groupTitle: 'one', value: ['kit_carson_windpower', 'wray_school_district']},
       {groupTitle: 'two', value: ['boulder_nrel_wind', 'aurora_wal_mart']},
     ]
-    // these will be replaced with the groups set by the user in config
 
 
     let e = document.getElementById("groupedFarmsSelect")
@@ -84,9 +85,9 @@ export class NavBar extends React.Component {
   }
 
   matchSelectedWF(group) {
-      for (var i = 0; i < group.value.length; i++) {
-        group.value[i] = WindFarm.getWindFarmById(group.value[i], this.props.windFarms.features);
-      }
+      // for (var i = 0; i < group.value.length; i++) {
+      //   group.value[i] = WindFarm.getWindFarmById(group.value[i]);
+      // }
       this.props.onSelectFeaturesByGroup(group.value);
   }
 
@@ -108,19 +109,19 @@ export class NavBar extends React.Component {
                 <ul className="nav navbar-nav">
                   {this.buttonElements()}
                   <li key="forecastModel">
-                    <p className="selectbox">Active Forecast Model</p>
+                    <p className="selectbox">Forecast Model</p>
                     <select>
                       {this.modelOptionElements()}
                     </select>
                   </li>
                   <li key="aggregatedForecastModel">
-                    <p className="selectbox">Aggregated Forecast Model</p>
+                    <p className="selectbox">Aggregation Set</p>
                     <select id="aggregatedSource" onChange={()=>this.handleChangeEvent()}>
                       {this.aggregatedOptionElements()}
                     </select>
                   </li>
                   <li key="groupedFarmsSelect" className="groupedFarmsDropdown hidden">
-                    <p className="selectbox">Grouped Farms</p>
+                    <p className="selectbox">Presets</p>
                     <select id="groupedFarmsSelect" onChange={()=>this.setGroupedFarms()}>
                       {this.groupedFarmsOptionsElements()}
                     </select>

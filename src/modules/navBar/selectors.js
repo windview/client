@@ -1,12 +1,10 @@
 // navBar/selectors
 
-import { activateView } from '../../actionCreators';
-import * as actions from '../../actionCreators';
+import { activateView, selectAggregation, selectFeaturesByGroup } from '../../actionCreators';
 
 export const mapStateToProps = (state, ownProps) => {
   return {
     activePane: state.nav.activePane,
-    windFarms: state.data.windFarms
   }
 }
 
@@ -16,10 +14,10 @@ export const mapDispatchToProps = (dispatch) => {
       dispatch(activateView(viewName));
     },
     onSelectAggregation: (dataSource) => {
-      dispatch(actions.selectAggregation(dataSource));
+      dispatch(selectAggregation(dataSource));
     },
     onSelectFeaturesByGroup: (feature) => {
-      dispatch(actions.selectFeaturesByGroup(feature));
-    },
+      dispatch(selectFeaturesByGroup(feature));
+    }
   }
 }
