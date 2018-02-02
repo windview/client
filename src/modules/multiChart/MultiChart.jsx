@@ -29,7 +29,6 @@ const EmptyChartElement = () => {
 export class MultiChart extends React.Component {
 
   render() {
-    console.log(this.props)
     var divs = [];
     var keys = Object.keys(this.props.state.analysis.multiChartMap);
 
