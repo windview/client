@@ -104,7 +104,7 @@ export const fetchForecast = (windFarms) => {
 
     Forecast.fetchBatchForecast(windFarms, 24)
       .then((forecast) => {
-        dispatch(fetchForecastSuccess(forecast.data, forecast.meta));
+        dispatch(fetchForecastSuccess());
       })
       .catch((error) => {
         dispatch(fetchForecastFail(error))
@@ -120,7 +120,7 @@ export const fetchWindFarms = () => {
     // return a promise
     return WindFarm.fetchAllFarms()
       .then((response) => {
-        dispatch(fetchWindFarmsSuccess(response.data));
+        dispatch(fetchWindFarmsSuccess());
         dispatch(fetchForecast(response.data));
       })
   }
