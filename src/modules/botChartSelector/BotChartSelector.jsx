@@ -7,10 +7,6 @@ import MultiChart from '../multiChart/MultiChart';
 
 export class BotChartSelector extends React.Component {
 
-	componentDidMount() {
-
-  }
-
   constructor(props) {
     super(props);
     this.whenAggregationChecked = this.whenAggregationChecked.bind(this);
