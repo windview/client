@@ -4,10 +4,9 @@ import * as actions from '../../../actionCreators';
 
 export const mapStateToProps = (state, ownProps) => {
   return {
-    feature: state.analysis.selectedFeature,
-    forecast: state.data.forecast,
+    selectedFarmId: state.analysis.selectedFeature,
     selectedTimestamp: state.analysis.selectedTimestamp,
-    analysis: state.analysis
+    multiChartMap: state.analysis.multiChartMap
   }
 }
 
