@@ -42,5 +42,6 @@ module.exports = {
   maxFarms: maxFarms,
   forecastInterval: forecastInterval,
   fakeNow: fakeNow,
+  getQueryParam: getQueryParam,
   setGlobalFakeNow: setGlobalFakeNow
 }
