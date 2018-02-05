@@ -1,11 +1,14 @@
 import API from './api';
 import CONFIG from './config';
+import Forecast from './forecast';
 
-let windFarms = []
+
+let windFarms = [];
 
 // FIXME for debugging only
-window.FARMS = ()=>{return windFarms};
+window.FARMS = ()=>windFarms;
 
+let getFarms = ()=>windFarms;
 
 let getWindFarmById = (fid) => {
   return windFarms.find((farm)=>{ return farm.id === fid; });
@@ -93,16 +96,53 @@ let fetchAllFarms = () => {
     });
 }
 
-let getGeoJsonForFarms = () => {
+/**
+  * Properties used by the map for styling include
+  * - id
+  * - bestForecastMW
+  * - prob1stQuantForecastMW
+  * - prob25thQuantForecastMW
+  * - prob75thQuantForecastMW
+  * - prob99thQuantForecastMW
+  * - capacity_mw
+  * - maxRampSeverity
+  * - rampSeverity
+  */
+let getGeoJsonForFarms = (selectedTimestamp) => {
   // TODO could tighten this up by only using properties necessary for
   // MapBox to have in the GeoJSON result
   let json = {
     "type": "FeatureCollection",
-    "features": windFarms.map((f) => {
+    "features": windFarms.map((farm) => {
+      let forecast = Forecast.getForecastForFarm(farm.id),
+          forecastProps = {},
+          forecastForTime,
+          farmProps = {
+            fid: farm.id,
+            capacity_mw: farm.capacity_mw,
+            label: farm.name
+          }
+
+      if(forecast) {
+        forecastProps.maxRampSeverity = forecast.alerts.maxRampSeverity;
+        forecastForTime = Forecast.getForecastForTime(selectedTimestamp, forecast);
+        if(forecastForTime) {
+          Object.assign(forecastProps, {
+            bestForecastMW: forecastForTime.bestForecastMW,
+            prob1stQuantForecastMW: forecastForTime.prob1stQuantForecastMW,
+            prob25thQuantForecastMW: forecastForTime.prob25thQuantForecastMW,
+            prob75thQuantForecastMW: forecastForTime.prob75thQuantForecastMW,
+            prob99thQuantForecastMW: forecastForTime.prob99thQuantForecastMW,
+            rampSeverity: forecastForTime.rampSeverity,
+            maxRampSeverity: forecast.alerts.maxRampSeverity
+          });
+        }
+      }
+
       return {
         "type": "Feature",
-        "geometry": { "type": "Point", "coordinates": [ f.longitude, f.latitude ] },
-        "properties": f
+        "geometry": { "type": "Point", "coordinates": [ farm.longitude, farm.latitude ] },
+        "properties": Object.assign({}, farmProps, forecastProps)
       }
     })
   };
@@ -116,6 +156,7 @@ let setSelectedFarm = (farm) => {
 
 
 module.exports = {
+  getFarms: getFarms,
   windFarms: windFarms,
   getWindFarmById: getWindFarmById,
   fetchFarm: fetchFarm,

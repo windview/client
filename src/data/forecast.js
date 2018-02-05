@@ -7,8 +7,8 @@ let forecasts = [],
     meta = {};
 
 // FIXME for debugging only
-window.FORECASTS = ()=>{return forecasts};
-window.FORECAST_META = ()=>{return meta};
+window.FORECASTS = ()=>forecasts;
+window.FORECAST_META = ()=>meta;
 
 
 let forecastInterval = CONFIG.forecastInterval;
@@ -48,6 +48,8 @@ let getDataStart = () => {
   dataStart.setSeconds(0);
   return dataStart;
 }
+
+let getForecasts = () => forecasts;
 
 // Create a master timeline of ms since 1970 NOT Date objects
 let getMasterTimeline = forecasts => {
@@ -434,6 +436,7 @@ let setCurrentForecastByTimestamp = (ts, windFarmFeatures) => {
 module.exports = {
   fetchBatchForecast: fetchBatchForecast,
   fetchForecast: fetchForecast,
+  getForecasts: getForecasts,
   forecasts: forecasts,
   getAggregatedForecast: getAggregatedForecast,
   getDataEnd: getDataEnd,
