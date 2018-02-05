@@ -22,23 +22,24 @@ import * as wfForecastStyle from './mapStyles/windFarmForecast';
 import * as wfRampStyle from './mapStyles/windFarmRamp';
 import * as wfSizeStyle from './mapStyles/windFarmSize';
 
+
 export class Map extends React.Component {
 
   afterMapRender() {
     this.onChangeVisibleExtent({type:'manual'});
     // select first farm
-    this.whenFeatureClicked(null, this.props.windFarms.features[0]);
+    this.whenFeatureClicked(null, WindFarm.getFarms()[0]);
   }
 
   applySelectedFeature(feature, forcePopup) {
-    Forecast.setSelectedFeature(feature, this.props.windFarms.features);
+    WindFarm.setSelectedFarm(feature);
     this.bumpMapFarms();
   }
 
   // Triggers the MapBox map to redraw the WindFarm features
   bumpMapFarms() {
-    if(this.map && this.map.getSource('windfarms') && this.props.windFarms) {
-      this.map.getSource('windfarms').setData(this.props.windFarms);
+    if(this.map && this.map.getSource('windfarms') && this.props.windFarmsLoaded) {
+      this.map.getSource('windfarms').setData(WindFarm.getGeoJsonForFarms());
     }
   }
 
@@ -63,21 +64,18 @@ export class Map extends React.Component {
   // that wrap integration do this under the covers. e.g.
   //https://github.com/PaulLeCam/react-leaflet
   componentDidUpdate(prevProps) {
-    if(prevProps.forecast) {
-
-    }
     if(prevProps.selectedStyle !== this.props.selectedStyle) {
       // Turn one off and the other on
       this.toggleStyle(prevProps.selectedStyle);
       this.toggleStyle(this.props.selectedStyle);
     }
     if(prevProps.selectedTimestamp !== this.props.selectedTimestamp) {
-      if(this.props.windFarms) {
-        Forecast.setCurrentForecastByTimestamp(this.props.selectedTimestamp, this.props.windFarms.features);
+      if(this.props.windFarmsLoaded) {
+        Forecast.setCurrentForecastByTimestamp(this.props.selectedTimestamp, WindFarm.getGeoJsonForFarms());
         this.bumpMapFarms();
       }
     }
-    if(prevProps.windFarms === null && this.props.windFarms !== null && !this.map) {
+    if(!prevProps.windFarmsLoaded && this.props.windFarmsLoaded && !this.map) {
       if(this.props.windFarmsLoadingError) {
         alert("Wind farm data could not be loaded");
       }
@@ -446,7 +444,7 @@ export class Map extends React.Component {
         if(!map.loaded()) {
           setTimeout(()=>{checkMap(map)}, 50)
         } else {
-          this.afterMapRender();
+          this.afterMapRender(WindFarm.getFarms()[0]);
         }
       }
       checkMap(map);
@@ -481,7 +479,7 @@ export class Map extends React.Component {
     // The click event has a feature wherein the properties have been turned into strings.
     // Need to supply the proper object form so we find it in our local copy of the data
     if(!feature) {
-      feature = WindFarm.getWindFarmById(e.features[0].properties.id, this.props.windFarms.features);
+      feature = WindFarm.getWindFarmById(e.features[0].properties.fid);
     }
     this.applySelectedFeature(feature, true);
     this.props.onSelectFeature(feature);

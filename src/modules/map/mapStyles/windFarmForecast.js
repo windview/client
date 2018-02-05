@@ -107,7 +107,7 @@ export const initializeStyle = (map, layerSource) => {
     paint: {
       'circle-radius': initialRadius,
       'circle-color': '#B00',
-    'circle-opacity': 0.8,
+      'circle-opacity': 0.8,
     },
     filter: [">=", "rampSeverity", 2],
     layout: {

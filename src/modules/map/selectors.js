@@ -4,14 +4,14 @@ import * as actions from '../../actionCreators';
 
 export const mapStateToProps = (state, ownProps) => {
   return {
-    feature: state.analysis.selectedFeature,
+    selectedFarmId: state.analysis.selectedFeature,
     selectedStyle: state.analysis.selectedStyle,
     selectedTimestamp: state.analysis.selectedTimestamp,
     timezoom: state.analysis.timezoom,
-    windFarms: state.data.windFarms,
+    windFarmsLoaded: state.data.windFarmsLoaded,
     windFarmsLoading: state.data.windFarmsLoading,
     windFarmsLoadingError: state.data.windFarmsLoadingError,
-    forecast: state.data.forecast,
+    forecastLoaded: state.data.forecastLoaded,
     forecastLoading: state.data.forecastLoading,
     forecastLoadingError: state.data.forecastLoadingError
   }
@@ -23,7 +23,7 @@ export const mapDispatchToProps = (dispatch) => {
       dispatch(actions.fetchWindFarms());
     },
     onBumpForecast: (data) => {
-      dispatch(actions.fetchForecastSuccess(data));
+      dispatch(actions.fetchForecastSuccess());
     },
     onMapMove: (features) => {
       dispatch(actions.mapMove(features));
