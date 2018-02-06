@@ -51,6 +51,10 @@ let getDataStart = () => {
 
 let getForecasts = () => forecasts;
 
+let getForecastById = (fid) => {
+  return getForecasts().find((forecast)=>{ return forecast.id === fid; });
+}
+
 // Create a master timeline of ms since 1970 NOT Date objects
 let getMasterTimeline = forecasts => {
   let interval = forecastInterval,
@@ -142,13 +146,6 @@ let _formatProbabilisticForecastDataPoint = (dataPoint) => {
   let prob50thQuantForecastMW = dataPoint[3] ? Math.round(dataPoint[3]*1000)/1000 : null,
       ts     = _convertTimestampToDate(dataPoint[0]);
 
-  // Hack for demo purposes
-  // const fakeNow = window.fakeNow;
-  // if(fakeNow && ts.getTime() > fakeNow) {
-  //   prob50thQuantForecastMW = null;
-  // }
-  // End hack
-
   return {
     type: 'probabilistic',
     timestamp: ts,
@@ -170,13 +167,6 @@ let _formatProbabilisticForecastDataPoint = (dataPoint) => {
 let _formatPointForecastDataPoint = (dataPoint) => {
   let forecastValue = dataPoint[1] ? Math.round(dataPoint[1]*1000)/1000 : null,
       ts     = _convertTimestampToDate(dataPoint[0]);
-
-  // Hack for demo purposes
-  // const fakeNow = window.fakeNow;
-  // if(fakeNow && ts.getTime() > fakeNow) {
-  //   forecastValue = null;
-  // }
-  // End hack
 
   return {
     type: 'point',
@@ -234,7 +224,8 @@ let _postProcessForecastData = (forecast, timezoom) => {
   * @return a fetch promise
   */
 let fetchForecast = (farm, timezoom) => {
-  return API.goFetch(`/forecasts/latest?farm_id=${farm.id}`)
+  let forecasts = getForecasts();
+  return API.goFetch(`/forecasts/latest?type=probabilistic&farm_id=${farm.id}`)
     .then(
       response => {
         if(response.ok) {
@@ -248,13 +239,8 @@ let fetchForecast = (farm, timezoom) => {
     .then(
       data => {
         let forecastData = _postProcessForecastData(data.forecast, timezoom);
-        forecasts.push(forecastData);
         farm.forecastId = forecastData.id;
-
-        // FIXME
-        //farm.forecastData = forecastData;
-        // FIXME
-        // farm.maxRampSeverity = forecastData.alerts.maxRampSeverity;
+        forecasts.push(forecastData);
 
         // This will become the argument in subsequent promise chains (.thens)
         return forecastData;
@@ -310,7 +296,7 @@ let fetchBatchForecast = function(windFarms, timezoom) {
   *    timeslice only has values at one or two farms, that timeslice is
   *    going to have a misleadingly small value
   */
-let getAggregatedForecast = forecasts => {
+let getAggregatedForecast = (forecasts) => {
 
   if(!forecasts || forecasts.length === 0) return null;
 
@@ -378,71 +364,28 @@ let getAggregatedForecast = forecasts => {
 }
 
 let getForecastForFarm = (fid) => {
-  let retval = null;
+  let retval = null,
+      forecasts = getForecasts();
+
   if( fid && forecasts && forecasts.length > 0) {
     retval = forecasts.find(fc=>fc.farm_id === fid)
   }
-  return retval || null;
+  return retval;
 }
 
-let getForecastForTime = (timestampMS, forecast) =>
-  (forecast && timestampMS) ? forecast.dataByTime[timestampMS] : null;
-
-
-/* Set the currentForecast property of each provided farm to the value at
- * or soonest after (within 15 minutes of) the provided timestamp
- */
-let setCurrentForecastByTimestamp = (ts, windFarmFeatures) => {
-  if(!ts || !windFarmFeatures) return;
-
-  windFarmFeatures.forEach(farm => {
-    let currentForecast = farm.properties.forecastData.data.find(dataPoint => {
-      return dataPoint.timestamp.getTime() === ts;
-    });
-    let dataConfidence = farm.properties.data_confidence
-    if (dataConfidence <= .5) {
-      currentForecast.suspectData = true
-    }
-    if (dataConfidence > 0.5) {
-      currentForecast.suspectData = false
-    }
-    if(!currentForecast) {
-      // This is needed to wipe props while we are operating on the actual
-      // object used in styling the map
-      currentForecast = {
-        timestamp: null,
-        forecastMW: null,
-        prob25thQuantForecastMW: null,
-        prob75thQuantForecastMW: null,
-        actual: null,
-        ramp: false,
-        rampSeverity: null,
-        suspectData: false,
-        disabled: true
-      }
-    } else {
-      currentForecast.disabled = false;
-    }
-
-    // A limitation of MapboxGL is that it doesn't support nested properties
-    // in styles, so we have to promote any prop used in a style to the top
-    // TODO format the data for the map in the map instead of forcing
-    // a substandard data format onto the redux state like this
-    Object.assign(farm.properties, currentForecast);
-    farm.properties.currentForecast = currentForecast;
-  });
+let getForecastForTime = (timestampMS, forecast) => {
+  return (forecast && timestampMS) ? forecast.dataByTime[timestampMS] : null;
 }
 
 module.exports = {
   fetchBatchForecast: fetchBatchForecast,
   fetchForecast: fetchForecast,
   getForecasts: getForecasts,
-  forecasts: forecasts,
+  getForecastById: getForecastById,
   getAggregatedForecast: getAggregatedForecast,
   getDataEnd: getDataEnd,
   getDataStart: getDataStart,
   getForecastForFarm: getForecastForFarm,
   getForecastForTime: getForecastForTime,
   getMasterTimeline: getMasterTimeline,
-  setCurrentForecastByTimestamp: setCurrentForecastByTimestamp,
 }
