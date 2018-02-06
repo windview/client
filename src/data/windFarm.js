@@ -108,6 +108,9 @@ let fetchAllFarms = () => {
   * - capacity_mw
   * - maxRampSeverity
   * - rampSeverity
+  * - selected
+  * - disabled
+  * - suspectData
   */
 let getGeoJsonForFarms = (selectedTimestamp) => {
 
@@ -121,7 +124,6 @@ let getGeoJsonForFarms = (selectedTimestamp) => {
           farmProps = {
             fid: farm.id,
             capacity_mw: farm.capacity_mw,
-            label: farm.name,
             disabled: false,
             suspectData: false,
             selected: farm.selected
