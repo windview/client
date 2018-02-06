@@ -40,7 +40,7 @@ export class Slider extends React.Component {
     if(!prevProps.forecastLoaded && this.props.forecastLoaded) {
       this.renderSlider();
       // Hacky for demo May 5 2017
-      this.sliderEl.noUiSlider.set(getSliderDisplayFromValue(window.fakeNow));
+      this.sliderEl.noUiSlider.set(getSliderDisplayFromValue(CONFIG.fakeNow));
       // End hack
     }
   }

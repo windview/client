@@ -7,6 +7,7 @@ import Highcharts from 'highcharts/highcharts';
 import HighchartsMore from 'highcharts/highcharts-more';
 import Forecast from '../../../data/forecast';
 import WindFarm from '../../../data/windFarm';
+import CONFIG from '../../../data/config';
 
 // Stand up highcharts properly without the global var
 HighchartsMore(Highcharts);
@@ -41,7 +42,7 @@ export class ChartElement extends React.Component {
           range1_99 = data[5],
           one = data[6],
           ninetynine = data[7],
-          now = window.fakeNow;
+          now = CONFIG.fakeNow;
 
     if(this.chart) {
       this.chart.destroy();

@@ -331,7 +331,7 @@ let getAggregatedForecast = (forecasts) => {
 
       // actuals may or may not be present
       // Hack for demo purposes
-      const fakeNow = window.fakeNow;
+      const fakeNow = CONFIG.fakeNow;
       if(fakeNow && ts >= fakeNow) {
         actual = undefined
       }

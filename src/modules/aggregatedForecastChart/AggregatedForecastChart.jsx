@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import './AggregatedForecastChart.scss';
 import { mapStateToProps } from './selectors';
 import Forecast from '../../data/forecast';
+import CONFIG from '../../data/config';
 import Highcharts from 'highcharts/highcharts';
 import HighchartsMore from 'highcharts/highcharts-more';
 // Stand up highcharts properly without the global var
@@ -48,7 +49,7 @@ export class AggregatedForecastChart extends React.Component {
     const data = this.getChartData(aggData),
           forecast = data[0],
           actuals = data[1],
-          now = window.fakeNow;
+          now = CONFIG.fakeNow;
 
 
     let chart = Highcharts.chart('aggregated-chart', {
