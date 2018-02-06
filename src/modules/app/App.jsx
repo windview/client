@@ -18,8 +18,7 @@ import './App.scss';
 export const App = ({ activePane, selectedFeature }) => {
 
   let farmName = selectedFeature ? WindFarm.getWindFarmById(selectedFeature).name : null;
-  console.log("Selected Feature name:", farmName);
-
+  
   return (
     <div id="app" className="">
       <NavBar appTitle="Wind View" buttons={NAV_BAR_BUTTONS} />
