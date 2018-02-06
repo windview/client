@@ -39,7 +39,9 @@ export class Map extends React.Component {
   // Triggers the MapBox map to redraw the WindFarm features
   bumpMapFarms() {
     if(this.map && this.map.getSource('windfarms') && this.props.windFarmsLoaded) {
-      this.map.getSource('windfarms').setData(WindFarm.getGeoJsonForFarms());
+      let features = WindFarm.getGeoJsonForFarms(this.props.selectedTimestamp);
+      console.log(features);
+      this.map.getSource('windfarms').setData(features);
     }
   }
 
@@ -71,7 +73,6 @@ export class Map extends React.Component {
     }
     if(prevProps.selectedTimestamp !== this.props.selectedTimestamp) {
       if(this.props.windFarmsLoaded) {
-        Forecast.setCurrentForecastByTimestamp(this.props.selectedTimestamp, WindFarm.getGeoJsonForFarms());
         this.bumpMapFarms();
       }
     }

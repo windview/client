@@ -11,7 +11,7 @@ window.FARMS = ()=>windFarms;
 let getFarms = ()=>windFarms;
 
 let getWindFarmById = (fid) => {
-  return windFarms.find((farm)=>{ return farm.id === fid; });
+  return getFarms().find((farm)=>{ return farm.id === fid; });
 }
 
 /**
@@ -20,6 +20,7 @@ let getWindFarmById = (fid) => {
   * @return a fetch promise that will fulfill with the farm when it is loaded
   */
 let fetchFarm = (farmId) => {
+  let windFarms = getFarms();
   return API.goFetch(`/farms/${farmId}`)
     .then(
       response => {
@@ -58,7 +59,7 @@ let fetchBatchFarms = (windFarmIds) => {
         .then(() => {
           if(--queueCount === 0) {
             resolve ({
-              data: windFarms,
+              data: getFarms(),
             });
           }
         })
@@ -91,7 +92,7 @@ let fetchAllFarms = () => {
       }
       windFarms = windFarms.concat(farms);
       return {
-        data: farms
+        data: windFarms
       };
     });
 }
@@ -109,8 +110,8 @@ let fetchAllFarms = () => {
   * - rampSeverity
   */
 let getGeoJsonForFarms = (selectedTimestamp) => {
-  // TODO could tighten this up by only using properties necessary for
-  // MapBox to have in the GeoJSON result
+
+  let windFarms = getFarms();
   let json = {
     "type": "FeatureCollection",
     "features": windFarms.map((farm) => {
@@ -120,7 +121,10 @@ let getGeoJsonForFarms = (selectedTimestamp) => {
           farmProps = {
             fid: farm.id,
             capacity_mw: farm.capacity_mw,
-            label: farm.name
+            label: farm.name,
+            disabled: false,
+            suspectData: false,
+            selected: farm.selected
           }
 
       if(forecast) {
@@ -137,6 +141,8 @@ let getGeoJsonForFarms = (selectedTimestamp) => {
             maxRampSeverity: forecast.alerts.maxRampSeverity
           });
         }
+      } else {
+        farmProps.disabled = true;
       }
 
       return {
@@ -150,14 +156,13 @@ let getGeoJsonForFarms = (selectedTimestamp) => {
 }
 
 let setSelectedFarm = (farm) => {
-  windFarms.forEach(f=>{f.selected = false});
+  getFarms().forEach(f=>{f.selected = false});
   farm.selected = true;
 }
 
 
 module.exports = {
   getFarms: getFarms,
-  windFarms: windFarms,
   getWindFarmById: getWindFarmById,
   fetchFarm: fetchFarm,
   fetchBatchFarms: fetchBatchFarms,
