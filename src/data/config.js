@@ -1,7 +1,12 @@
 
-let maxFarms = 25;
-let forecastInterval = 60;
-let fakeNow = new Date("2018-02-28T07:00:00Z").getTime();
+let maxFarms = 250,
+    forecastInterval = 60,
+    fakeNow = new Date("2018-02-28T07:00:00Z").getTime();
+
+
+function get(prop) {
+  return this[prop];
+}
 
 let getQueryParam = (paramName) => {
   let parts = window.location.href.split("?"),
@@ -16,29 +21,15 @@ let getQueryParam = (paramName) => {
   return retval;
 }
 
-// Super hacky just for the demo on May 5, 2017
-let setGlobalFakeNow = () => {
-  let n = getQueryParam("n"),
-      now = 0;
-  switch(n) {
-    case '1':
-      now = 1492192800000;
-      break;
-    case '2':
-      now = 1492209000000;
-      break;
-    case '3':
-      now = 1492219800000;
-      break;
-    default:
-      // This is in the middle of the Texas data Andy provided
-      now = fakeNow
-  }
-
-  window.fakeNow = now;
+// Super hacky just for demoing
+function setGlobalFakeNow() {
+  let n = getQueryParam("n");
+  n = (n !== null) ? parseInt(n, 10) : 0;
+  this.fakeNow += 1000*60*60*n;
 }
 
 module.exports = {
+  get: get,
   maxFarms: maxFarms,
   forecastInterval: forecastInterval,
   fakeNow: fakeNow,
