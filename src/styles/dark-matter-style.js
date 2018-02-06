@@ -19,7 +19,7 @@ export default {
     },
     "openmaptiles:version": "3.x",
     "openmaptiles:mapbox:owner": "openmaptiles",
-    "openmaptiles:mapbox:source:url": ""
+    "openmaptiles:mapbox:source:url": "mapbox://openmaptiles.4qljc88t"
   },
   "center": [
     20.745027854803,
@@ -31,11 +31,11 @@ export default {
   "sources": {
     "openmaptiles": {
       "type": "vector",
-      "url": process.env.TILE_SERVER_URL + "/united_states_of_america/metadata.json"
+      "url": "https://free.tilehosting.com/data/v3.json?key={key}"
     }
   },
   "sprite": "https://openmaptiles.github.io/dark-matter-gl-style/sprite",
-  "glyphs": "https://free.tilehosting.com/fonts/{fontstack}/{range}.pbf",
+  "glyphs": "https://free.tilehosting.com/fonts/{fontstack}/{range}.pbf?key={key}",
   "layers": [
     {
       "id": "background",
@@ -256,14 +256,13 @@ export default {
         "LineString"
       ],
       "layout": {
-        "text-field": "{name}",
+        "text-field": "{name:latin}\n{name:nonlatin}",
         "symbol-placement": "line",
         "text-rotation-alignment": "map",
         "symbol-spacing": 500,
         "text-font": [
           "Metropolis Medium Italic",
-          "Klokantech Noto Sans Italic",
-          "Klokantech Noto Sans CJK Regular"
+          "Noto Sans Italic"
         ],
         "text-size": 12
       },
@@ -646,6 +645,7 @@ export default {
       },
       "source": "openmaptiles",
       "source-layer": "transportation",
+      "minzoom": 6,
       "maxzoom": 11,
       "filter": [
         "all",
@@ -682,8 +682,7 @@ export default {
             ]
           ]
         }
-      },
-      "minzoom": 6
+      }
     },
     {
       "id": "highway_motorway_casing",
@@ -843,6 +842,88 @@ export default {
       }
     },
     {
+      "id": "railway_transit",
+      "type": "line",
+      "metadata": {
+        "mapbox:group": "b6371a3f2f5a9932464fa3867530a2e5"
+      },
+      "source": "openmaptiles",
+      "source-layer": "transportation",
+      "minzoom": 16,
+      "filter": [
+        "all",
+        [
+          "==",
+          "$type",
+          "LineString"
+        ],
+        [
+          "all",
+          [
+            "==",
+            "class",
+            "transit"
+          ],
+          [
+            "!in",
+            "brunnel",
+            "tunnel"
+          ]
+        ]
+      ],
+      "layout": {
+        "visibility": "visible",
+        "line-join": "round"
+      },
+      "paint": {
+        "line-color": "rgb(35,35,35)",
+        "line-width": 3
+      }
+    },
+    {
+      "id": "railway_transit_dashline",
+      "type": "line",
+      "metadata": {
+        "mapbox:group": "b6371a3f2f5a9932464fa3867530a2e5"
+      },
+      "source": "openmaptiles",
+      "source-layer": "transportation",
+      "minzoom": 16,
+      "filter": [
+        "all",
+        [
+          "==",
+          "$type",
+          "LineString"
+        ],
+        [
+          "all",
+          [
+            "==",
+            "class",
+            "transit"
+          ],
+          [
+            "!in",
+            "brunnel",
+            "tunnel"
+          ]
+        ]
+      ],
+      "layout": {
+        "visibility": "visible",
+        "line-join": "round"
+      },
+      "paint": {
+        "line-color": "rgb(12,12,12)",
+        "line-width": 2,
+        "line-dasharray": [
+          3,
+          3
+        ]
+      }
+    },
+    {
       "id": "railway_minor",
       "type": "line",
       "metadata": {
@@ -942,6 +1023,10 @@ export default {
           "==",
           "class",
           "rail"
+        ],
+        [
+          "!has",
+          "service"
         ]
       ],
       "layout": {
@@ -985,6 +1070,10 @@ export default {
           "==",
           "class",
           "rail"
+        ],
+        [
+          "!has",
+          "service"
         ]
       ],
       "layout": {
@@ -1040,14 +1129,13 @@ export default {
         "symbol-spacing": 350,
         "text-font": [
           "Metropolis Regular",
-          "Klokantech Noto Sans Regular",
-          "Klokantech Noto Sans CJK Regular"
+          "Noto Sans Regular"
         ],
         "symbol-placement": "line",
         "visibility": "visible",
         "text-rotation-alignment": "map",
         "text-pitch-alignment": "viewport",
-        "text-field": "{name}"
+        "text-field": "{name:latin} {name:nonlatin}"
       },
       "paint": {
         "text-color": "rgba(80, 78, 78, 1)",
@@ -1086,8 +1174,7 @@ export default {
         "symbol-spacing": 350,
         "text-font": [
           "Metropolis Light",
-          "Klokantech Noto Sans Regular",
-          "Klokantech Noto Sans CJK Regular"
+          "Noto Sans Regular"
         ],
         "symbol-placement": "line",
         "visibility": "visible",
@@ -1221,8 +1308,7 @@ export default {
         "text-transform": "uppercase",
         "text-font": [
           "Metropolis Regular",
-          "Klokantech Noto Sans Regular",
-          "Klokantech Noto Sans CJK Regular"
+          "Noto Sans Regular"
         ],
         "text-justify": "center",
         "visibility": "visible",
@@ -1231,7 +1317,7 @@ export default {
           0
         ],
         "text-anchor": "center",
-        "text-field": "{name_en}"
+        "text-field": "{name:latin}\n{name:nonlatin}"
       },
       "paint": {
         "text-color": "rgb(101,101,101)",
@@ -1267,8 +1353,7 @@ export default {
         "text-transform": "uppercase",
         "text-font": [
           "Metropolis Regular",
-          "Klokantech Noto Sans Regular",
-          "Klokantech Noto Sans CJK Regular"
+          "Noto Sans Regular"
         ],
         "text-justify": "center",
         "visibility": "visible",
@@ -1277,7 +1362,7 @@ export default {
           0
         ],
         "text-anchor": "center",
-        "text-field": "{name_en}"
+        "text-field": "{name:latin}\n{name:nonlatin}"
       },
       "paint": {
         "text-color": "rgb(101,101,101)",
@@ -1313,8 +1398,7 @@ export default {
         "text-transform": "uppercase",
         "text-font": [
           "Metropolis Regular",
-          "Klokantech Noto Sans Regular",
-          "Klokantech Noto Sans CJK Regular"
+          "Noto Sans Regular"
         ],
         "text-justify": "left",
         "visibility": "visible",
@@ -1324,7 +1408,7 @@ export default {
         ],
         "icon-size": 0.4,
         "text-anchor": "left",
-        "text-field": "{name_en}"
+        "text-field": "{name:latin}\n{name:nonlatin}"
       },
       "paint": {
         "text-color": "rgb(101,101,101)",
@@ -1374,8 +1458,7 @@ export default {
         "text-transform": "uppercase",
         "text-font": [
           "Metropolis Regular",
-          "Klokantech Noto Sans Regular",
-          "Klokantech Noto Sans CJK Regular"
+          "Noto Sans Regular"
         ],
         "text-justify": "left",
         "visibility": "visible",
@@ -1397,7 +1480,7 @@ export default {
             ]
           ]
         },
-        "text-field": "{name_en}"
+        "text-field": "{name:latin}\n{name:nonlatin}"
       },
       "paint": {
         "text-color": "rgb(101,101,101)",
@@ -1424,17 +1507,14 @@ export default {
           "Point"
         ],
         [
-          "any",
-          [
-            "==",
-            "class",
-            "city"
-          ],
-          [
-            ">",
-            "rank",
-            2
-          ]
+          "==",
+          "class",
+          "city"
+        ],
+        [
+          ">",
+          "rank",
+          3
         ]
       ],
       "layout": {
@@ -1455,8 +1535,7 @@ export default {
         "text-transform": "uppercase",
         "text-font": [
           "Metropolis Regular",
-          "Klokantech Noto Sans Regular",
-          "Klokantech Noto Sans CJK Regular"
+          "Noto Sans Regular"
         ],
         "text-justify": "left",
         "visibility": "visible",
@@ -1478,7 +1557,7 @@ export default {
             ]
           ]
         },
-        "text-field": "{name_en}"
+        "text-field": "{name:latin}\n{name:nonlatin}"
       },
       "paint": {
         "text-color": "rgb(101,101,101)",
@@ -1505,17 +1584,14 @@ export default {
           "Point"
         ],
         [
-          "all",
-          [
-            "<=",
-            "rank",
-            3
-          ],
-          [
-            "==",
-            "class",
-            "city"
-          ]
+          "<=",
+          "rank",
+          3
+        ],
+        [
+          "==",
+          "class",
+          "city"
         ]
       ],
       "layout": {
@@ -1536,8 +1612,7 @@ export default {
         "text-transform": "uppercase",
         "text-font": [
           "Metropolis Regular",
-          "Klokantech Noto Sans Regular",
-          "Klokantech Noto Sans CJK Regular"
+          "Noto Sans Regular"
         ],
         "text-justify": "left",
         "visibility": "visible",
@@ -1559,7 +1634,7 @@ export default {
             ]
           ]
         },
-        "text-field": "{name}"
+        "text-field": "{name:latin}\n{name:nonlatin}"
       },
       "paint": {
         "text-color": "rgb(101,101,101)",
@@ -1593,11 +1668,10 @@ export default {
       ],
       "layout": {
         "visibility": "visible",
-        "text-field": "{name_en}",
+        "text-field": "{name:latin}\n{name:nonlatin}",
         "text-font": [
           "Metropolis Regular",
-          "Klokantech Noto Sans Regular",
-          "Klokantech Noto Sans CJK Regular"
+          "Noto Sans Regular"
         ],
         "text-transform": "uppercase",
         "text-size": 10
@@ -1626,26 +1700,80 @@ export default {
           "Point"
         ],
         [
-          "all",
-          [
-            "==",
-            "class",
-            "country"
-          ],
-          [
-            ">=",
-            "rank",
-            2
-          ]
+          "==",
+          "class",
+          "country"
+        ],
+        [
+          "!has",
+          "iso_a2"
         ]
       ],
       "layout": {
         "visibility": "visible",
-        "text-field": "{name_en}",
+        "text-field": "{name:latin}",
+        "text-font": [
+          "Metropolis Light Italic",
+          "Noto Sans Italic"
+        ],
+        "text-transform": "uppercase",
+        "text-size": {
+          "base": 1,
+          "stops": [
+            [
+              0,
+              9
+            ],
+            [
+              1,
+              11
+            ]
+          ]
+        }
+      },
+      "paint": {
+        "text-halo-width": 1.4,
+        "text-halo-color": "rgba(0,0,0,0.7)",
+        "text-color": "rgb(101,101,101)"
+      }
+    },
+    {
+      "id": "place_country_minor",
+      "type": "symbol",
+      "metadata": {
+        "mapbox:group": "101da9f13b64a08fa4b6ac1168e89e5f"
+      },
+      "source": "openmaptiles",
+      "source-layer": "place",
+      "maxzoom": 8,
+      "filter": [
+        "all",
+        [
+          "==",
+          "$type",
+          "Point"
+        ],
+        [
+          "==",
+          "class",
+          "country"
+        ],
+        [
+          ">=",
+          "rank",
+          2
+        ],
+        [
+          "has",
+          "iso_a2"
+        ]
+      ],
+      "layout": {
+        "visibility": "visible",
+        "text-field": "{name:latin}",
         "text-font": [
           "Metropolis Regular",
-          "Klokantech Noto Sans Regular",
-          "Klokantech Noto Sans CJK Regular"
+          "Noto Sans Regular"
         ],
         "text-transform": "uppercase",
         "text-size": {
@@ -1685,26 +1813,26 @@ export default {
           "Point"
         ],
         [
-          "all",
-          [
-            "<=",
-            "rank",
-            1
-          ],
-          [
-            "==",
-            "class",
-            "country"
-          ]
+          "<=",
+          "rank",
+          1
+        ],
+        [
+          "==",
+          "class",
+          "country"
+        ],
+        [
+          "has",
+          "iso_a2"
         ]
       ],
       "layout": {
         "visibility": "visible",
-        "text-field": "{name_en}",
+        "text-field": "{name:latin}",
         "text-font": [
           "Metropolis Regular",
-          "Klokantech Noto Sans Regular",
-          "Klokantech Noto Sans CJK Regular"
+          "Noto Sans Regular"
         ],
         "text-transform": "uppercase",
         "text-size": {
@@ -1734,4 +1862,4 @@ export default {
     }
   ],
   "id": "ciwf4jmfe00882qmzvu5vh0zx"
-};
+}
