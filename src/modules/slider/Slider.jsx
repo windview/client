@@ -8,12 +8,17 @@ import moment from 'moment';
 import CONFIG from '../../data/config';
 import Forecast from '../../data/forecast';
 
+// FIXME this will break the slider if the year of any timestamp is not
+// the current year, e.g. any forecast time period that wraps around New
+// Years day, or any data from a year in the past
+const DATE_FORMAT = 'H:mm M/D';
+
 const getSliderDisplayFromValue = (rawValue) => {
-  return moment.utc(rawValue).format('H:mm M/D/YY');
+  return moment.utc(rawValue).format(DATE_FORMAT);
 }
 
 const getSliderValueFromDisplay = (displayValue) => {
-  return moment.utc(displayValue, 'H:mm M/D/YY').valueOf();
+  return moment.utc(displayValue, DATE_FORMAT).valueOf();
 }
 
 export class Slider extends React.Component {
