@@ -1,7 +1,7 @@
 
 let maxFarms = 25;
 let forecastInterval = 60;
-let fakeNow = new Date("2012-12-08T07:00:00Z").getTime();
+let fakeNow = new Date("2018-02-28T07:00:00Z").getTime();
 
 let getQueryParam = (paramName) => {
   let parts = window.location.href.split("?"),
