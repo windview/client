@@ -41,7 +41,7 @@ export class AggregatedForecastChart extends React.Component {
     let aggData = Forecast.getAggregatedForecast(this.getForecasts())
     if(!aggData) {
       if(this.chart) {
-        this.chart.destroy();
+        this.clearChart();
       }
       return;
     }
@@ -148,6 +148,14 @@ export class AggregatedForecastChart extends React.Component {
     this.chart = chart;
   }
 
+  clearChart() {
+    if(this.chart) {
+      this.chart.destroy();
+      this.chart = null;
+      $("#aggregated-chart").text("Please select an aggregation set.");
+    }
+  }
+
   componentDidMount() {
     let aggDataSource = this.getAggregatedDataIds(this.props);
     if(aggDataSource && this.props.forecastLoaded) {
@@ -162,7 +170,7 @@ export class AggregatedForecastChart extends React.Component {
     let aggDataSource = this.getAggregatedDataIds(this.props);
     let prevDataSource = this.getAggregatedDataIds(prevProps);
     if(this.props.forecastLoaded) {
-      if(aggDataSource.length > 0) {
+      if(aggDataSource && aggDataSource.length > 0) {
         if(prevDataSource) {
           if(!prevProps.forecastLoaded || this.farmsHaveChanged(prevDataSource, aggDataSource)) {
             this.chartIt();
@@ -170,6 +178,8 @@ export class AggregatedForecastChart extends React.Component {
         } else {
           this.chartIt();
         }
+      } else {
+        this.clearChart();
       }
       if(this.props.aggregatedSource !== prevProps.aggregatedSource) {
         this.chartIt();
@@ -211,15 +221,17 @@ export class AggregatedForecastChart extends React.Component {
   }
 
   getAggregatedDataIds(props) {
+    let retVal = [];
     if (this.props.aggregatedSource === 'visibleFarms') {
-      return props.visibleFarmIds
+      retVal = props.visibleFarmIds;
     }
     if (this.props.aggregatedSource === 'polygonFarms') {
-      return props.selectedFarmIdsByPolygon
+      retVal = props.selectedFarmIdsByPolygon;
     }
     if (this.props.aggregatedSource === 'groupedFarms') {
-      return props.selectedFarmIdsByGroup
+      retVal = props.selectedFarmIdsByGroup;
     }
+    return retVal;
   }
 
   /*
