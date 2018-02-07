@@ -380,7 +380,8 @@ export class Map extends React.Component {
           }
           return select
         });
-        this.props.onSelectFeaturesByPolygon(selectedFeatures[0])
+        let selectedFeatureIds = selectedFeatures[0].map(f=>f.properties.fid);
+        this.props.onSelectFeaturesByPolygon(selectedFeatureIds)
       }.bind(this));
 
       map.on('draw.update', function(e){
@@ -415,7 +416,7 @@ export class Map extends React.Component {
       //pull this out into it's own function that can be called with draw.create and draw.update so that code is not repeated
 
       map.on('draw.delete', function(e) {
-        this.props.onSelectFeaturesByPolygon(null)
+        this.props.onSelectFeaturesByPolygon([])
       }.bind(this))
 
 
