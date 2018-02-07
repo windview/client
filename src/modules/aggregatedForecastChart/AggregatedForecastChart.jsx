@@ -164,21 +164,21 @@ export class AggregatedForecastChart extends React.Component {
     if(this.props.forecastLoaded) {
       if(aggDataSource.length > 0) {
         if(prevDataSource) {
-          if(this.farmsHaveChanged(prevDataSource, aggDataSource)) {
+          if(!prevProps.forecastLoaded || this.farmsHaveChanged(prevDataSource, aggDataSource)) {
             this.chartIt();
           }
         } else {
           this.chartIt();
         }
       }
-      if(this.props.selectedTimestamp && this.chart) {
-        this.drawPlotLine(this.props.selectedTimestamp);
-      }
       if(this.props.aggregatedSource !== prevProps.aggregatedSource) {
         this.chartIt();
       }
       if(aggDataSource === null) {
         this.chartIt();
+      }
+      if(this.props.selectedTimestamp && this.chart) {
+        this.drawPlotLine(this.props.selectedTimestamp);
       }
     }
   }
@@ -212,13 +212,13 @@ export class AggregatedForecastChart extends React.Component {
 
   getAggregatedDataIds(props) {
     if (this.props.aggregatedSource === 'visibleFarms') {
-      return props.visibleWindFarms
+      return props.visibleFarmIds
     }
     if (this.props.aggregatedSource === 'polygonFarms') {
-      return props.selectedWindFarmsByPolygon
+      return props.selectedFarmIdsByPolygon
     }
     if (this.props.aggregatedSource === 'groupedFarms') {
-      return props.selectedWindFarmsByGroup
+      return props.selectedFarmIdsByGroup
     }
   }
 
@@ -247,7 +247,7 @@ export class AggregatedForecastChart extends React.Component {
   }
 
   render() {
-    const el = this.props.forecast ? <ChartElement /> : <EmptyChartElement />;
+    const el = this.props.forecastLoaded ? <ChartElement /> : <EmptyChartElement />;
     return (
       el
     );
