@@ -1,7 +1,7 @@
 import API from './api';
 import CONFIG from './config';
 import Forecast from './forecast';
-
+import turf from '../../node_modules/@turf/turf/turf.min.js';
 
 let windFarms = [];
 
@@ -9,6 +9,17 @@ let windFarms = [];
 window.FARMS = ()=>windFarms;
 
 let getFarms = ()=>windFarms;
+
+let getFarmsByPolygon = (polygon) => {
+  let point,
+      farms = getFarms();
+
+  // Ascertain the ids for all farms within the drawing
+  return farms.filter((farm) => {
+    point = turf.point([farm.longitude, farm.latitude]);
+    return (!farm.disabled && turf.inside(point, polygon));
+  });
+}
 
 let getWindFarmById = (fid) => {
   return getFarms().find((farm)=>{ return farm.id === fid; });
@@ -165,6 +176,7 @@ let setSelectedFarm = (farm) => {
 
 module.exports = {
   getFarms: getFarms,
+  getFarmsByPolygon: getFarmsByPolygon,
   getWindFarmById: getWindFarmById,
   fetchFarm: fetchFarm,
   fetchBatchFarms: fetchBatchFarms,
