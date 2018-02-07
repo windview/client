@@ -21,17 +21,21 @@ export class ChartElement extends React.Component {
   }
 
   chartIt() {
-    let selectedFeatureId = this.props.selectedFarmId,
-        feature = selectedFeatureId ? WindFarm.getWindFarmById(selectedFeatureId) : null,
-        forecastData = feature ? Forecast.getForecastForFarm(feature.id) : null,
-        container = "forecast-chart";
+    let selectedFeatureId,
+        feature,
+        forecastData,
+        container;
 
-    if(this.props.multiChart){
+    if(this.props.multiChart) {
       selectedFeatureId = this.props.multiChartMap[this.props.index];
-      feature = selectedFeatureId ? WindFarm.getWindFarmById(selectedFeatureId) : null;
-      forecastData = feature ? Forecast.getForecastForFarm(feature.id) : null;
       container = this.props.container;
+    } else {
+      selectedFeatureId = this.props.selectedFarmId;
+      container = "forecast-chart";
     }
+
+    feature = selectedFeatureId ? WindFarm.getWindFarmById(selectedFeatureId) : null;
+    forecastData = feature ? Forecast.getForecastForFarm(feature.id) : null;
 
     const data = this.getChartData(forecastData),
           forecast = data[0],
@@ -241,40 +245,28 @@ export class ChartElement extends React.Component {
   /*
    * Formats the data for Highcharts. Creates 5 arrays, one each
    * for forecast, arearange, 25th, 75th, and the actuals
+   * forecast = data[0],
+   * range = data[1],
+   * twentyFive = data[2],
+   * seventyFive = data[3],
+   * actuals = data[4],
+   * range1_99 = data[5],
+   * one = data[6],
+   * ninetynine = data[7],
    */
   getChartData(forecast) {
     // FIXME where are the real probabilistic forecast values?
     let retval = [[], [], [], [], [], [], [], []];  //3 coulmns are added at the last: range, forecast1MW, forcast99MW
-    if (forecast.type === 'point') {
-      forecast.data.forEach((row)=>{
-        retval[0].push([row.timestamp.getTime(), row.bestForecastMW]);
-        retval[1].push([row.timestamp.getTime(), null, null]);
-        retval[2].push([row.timestamp.getTime(), null]);
-        retval[3].push([row.timestamp.getTime(), null]);
-        retval[4].push([row.timestamp.getTime(), row.bestForecastMW]);
-        retval[5].push([row.timestamp.getTime(), null, null]);
-        retval[6].push([row.timestamp.getTime(), null]);
-        retval[7].push([row.timestamp.getTime(), null]);
-      });
-    }
-    else {
-      /*
-      * Add temporary random forecast1MW, forecast99MW Data
-      */
-      let rand_1MW, rand_99MW;
-      forecast.data.forEach((row)=>{
-        rand_1MW = 1.0 + (Math.random() * 3);
-        rand_99MW = 1.0 + (Math.random() * 3);
-        retval[0].push([row.timestamp.getTime(), row.bestForecastMW]);
-        retval[1].push([row.timestamp.getTime(), row.prob25thQuantForecastMW, row.prob75thQuantForecastMW]);
-        retval[2].push([row.timestamp.getTime(), row.prob25thQuantForecastMW]);
-        retval[3].push([row.timestamp.getTime(), row.prob75thQuantForecastMW]);
-        retval[4].push([row.timestamp.getTime(), row.bestForecastMW]);
-        retval[5].push([row.timestamp.getTime(), (row.prob25thQuantForecastMW - rand_1MW < 0 ? 0 : row.prob25thQuantForecastMW - rand_1MW), row.prob75thQuantForecastMW + rand_99MW]);
-        retval[6].push([row.timestamp.getTime(), (row.prob25thQuantForecastMW - rand_1MW < 0 ? 0 : row.prob25thQuantForecastMW - rand_1MW)]);
-        retval[7].push([row.timestamp.getTime(), row.prob75thQuantForecastMW + rand_99MW]);
-      });
-    }
+    forecast.data.forEach((row)=>{
+      retval[0].push([row.timestamp.getTime(), row.bestForecastMW]);
+      retval[1].push([row.timestamp.getTime(), row.prob25thQuantForecastMW, row.prob75thQuantForecastMW]);
+      retval[2].push([row.timestamp.getTime(), row.prob25thQuantForecastMW]);
+      retval[3].push([row.timestamp.getTime(), row.prob75thQuantForecastMW]);
+      retval[4].push([row.timestamp.getTime(), row.actual]);
+      retval[5].push([row.timestamp.getTime(), row.prob1stQuantForecastMW, row.prob99thQuantForecastMW]);
+      retval[6].push([row.timestamp.getTime(), row.prob1stQuantForecastMW]);
+      retval[7].push([row.timestamp.getTime(), row.prob99thQuantForecastMW]);
+    });
     return retval;
   }
 
