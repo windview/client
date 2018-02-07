@@ -4,7 +4,6 @@ import '../../../node_modules/mapbox-gl/dist/mapbox-gl.css';
 import Legend from '../legend/Legend';
 import mapboxgl from '../../../node_modules/mapbox-gl/dist/mapbox-gl.js';
 import MapboxDraw from '../../../node_modules/@mapbox/mapbox-gl-draw';
-import turf from '../../../node_modules/@turf/turf/turf.min.js';
 import windFarmIcon from '../../images/windfarm.png';
 import windFarmDisabledIcon from '../../images/windfarm-disabled.png';
 import windFarmSelectedIcon from '../../images/windfarm-selected.png';
@@ -126,6 +125,24 @@ export class Map extends React.Component {
     return uniqueFeatures;
   }
 
+  onChangeAggregationDrawing(e) {
+    let userPolygon = e.features[0],
+        draw = this.draw,
+        selectedFarmIds,
+        previousFeatureIds = draw.getAll().features
+          .filter(f=>f.id!==userPolygon.id)
+          .map(f=>f.id);
+
+    // Remove all other features, so that current one is the only one on map.
+    draw.delete(previousFeatureIds);
+
+    // Ascertain the ids for all farms within the drawing
+    selectedFarmIds = WindFarm.getFarmsByPolygon(userPolygon).map(f=>f.id);
+
+    // Send the action to notify state
+    this.props.onSelectFeaturesByPolygon(selectedFarmIds);
+  }
+
   onChangeVisibleExtent(e) {
     let features = this.map.queryRenderedFeatures({layers:['windfarms-symbol', 'windfarms-selected-symbol', 'windfarms-disabled-symbol']});
     if (features) {
@@ -179,7 +196,7 @@ export class Map extends React.Component {
     map.boxZoom.disable();
 
     // Add tool for drawing polygon on map
-    var draw = new MapboxDraw({
+    let draw = new MapboxDraw({
         displayControlsDefault: false,
         controls: {
             polygon: true,
@@ -187,6 +204,7 @@ export class Map extends React.Component {
         }
     });
     map.addControl(draw);
+    this.draw = draw;
 
     // Add zoom and rotation controls to the map.
     map.addControl(new mapboxgl.NavigationControl());
@@ -351,72 +369,10 @@ export class Map extends React.Component {
         }
       });
 
-
-
-      map.on('draw.create', function(e){
-
-        // Remove all other features, so that current one is the only one on map.
-        var currentId = e.features[0].id
-        var otherFeatures = draw.getAll().features.filter(function(feature) {
-          return feature.id !== currentId;
-        });
-        draw.delete(otherFeatures.map(function(feature) { return feature.id }));
-        var userPolygon = e.features[0];
-        // generate bounding box from polygon the user drew
-        var polygonBoundingBox = turf.bbox(userPolygon);
-
-        var southWest = [polygonBoundingBox[0], polygonBoundingBox[1]];
-        var northEast = [polygonBoundingBox[2], polygonBoundingBox[3]];
-        var northEastPointPixel = map.project(northEast);
-        var southWestPointPixel = map.project(southWest);
-        var select = []
-        var features = map.queryRenderedFeatures([southWestPointPixel, northEastPointPixel], { layers: ['windfarms-symbol', 'windfarms-selected-symbol', 'windfarms-disabled-symbol', 'windfarms-suspect-data-symbol'] });
-        var selectedFeatures = features.map(function(feature) {
-          var polygon = turf.polygon(userPolygon.geometry.coordinates)
-          var point = turf.point(feature.geometry.coordinates)
-          if (turf.inside(point, polygon)) {
-              select.push(feature)
-            // only add the property, if the feature intersects with the polygon drawn by the user
-          }
-          return select
-        });
-        let selectedFeatureIds = selectedFeatures[0].map(f=>f.properties.fid);
-        this.props.onSelectFeaturesByPolygon(selectedFeatureIds)
-      }.bind(this));
-
-      map.on('draw.update', function(e){
-
-        // Remove all other features, so that current one is the only one on map.
-        var currentId = e.features[0].id
-        var otherFeatures = draw.getAll().features.filter(function(feature) {
-          return feature.id !== currentId;
-        });
-        draw.delete(otherFeatures.map(function(feature) { return feature.id }));
-        var userPolygon = e.features[0];
-        // generate bounding box from polygon the user drew
-        var polygonBoundingBox = turf.bbox(userPolygon);
-
-        var southWest = [polygonBoundingBox[0], polygonBoundingBox[1]];
-        var northEast = [polygonBoundingBox[2], polygonBoundingBox[3]];
-        var northEastPointPixel = map.project(northEast);
-        var southWestPointPixel = map.project(southWest);
-        var select = []
-        var features = map.queryRenderedFeatures([southWestPointPixel, northEastPointPixel], { layers: ['windfarms-symbol', 'windfarms-selected-symbol', 'windfarms-disabled-symbol', 'windfarms-suspect-data-symbol'] });
-        var selectedFeatures = features.map(function(feature) {
-          var polygon = turf.polygon(userPolygon.geometry.coordinates)
-          var point = turf.point(feature.geometry.coordinates)
-          if (turf.inside(point, polygon)) {
-              select.push(feature)
-            // only add the property, if the feature intersects with the polygon drawn by the user
-          }
-          return select
-        });
-        this.props.onSelectFeaturesByPolygon(selectedFeatures[0])
-      }.bind(this));
-      //pull this out into it's own function that can be called with draw.create and draw.update so that code is not repeated
-
+      map.on('draw.create', this.onChangeAggregationDrawing.bind(this));
+      map.on('draw.update', this.onChangeAggregationDrawing.bind(this));
       map.on('draw.delete', function(e) {
-        this.props.onSelectFeaturesByPolygon([])
+        this.props.onSelectFeaturesByPolygon([]);
       }.bind(this))
 
 
