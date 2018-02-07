@@ -4,6 +4,7 @@ import { mapStateToProps, mapDispatchToProps} from './selectors';
 import { connect } from 'react-redux';
 import { NAV_BAR_BUTTONS } from './constants';
 import { APP_TITLE } from './constants';
+import CONFIG from '../../data/config';
 
 
 export class NavBar extends React.Component {
@@ -35,13 +36,9 @@ export class NavBar extends React.Component {
   }
 
   groupedFarmsOptionsElements() {
-    const groupedFarmsOptions = [
-      { value: 'one', label: 'Group 1'},
-      { value: 'two', label: 'Group 2'},
-    ];
-
+    const groupedFarmsOptions = CONFIG.get('groupedFarmOpts')
     return groupedFarmsOptions.map((option) => {
-      return <option key={option.value} value={option.value}>{option.label}</option>
+      return <option key={option.id} value={option.id}>{option.label}</option>
     });
   }
 
@@ -66,29 +63,17 @@ export class NavBar extends React.Component {
   }
 
   setGroupedFarms() {
-
     // FIXME these will be replaced with the groups set by the user in config
-    var groupedFarms = [
-      {groupTitle: 'one', value: ['kit_carson_windpower', 'wray_school_district']},
-      {groupTitle: 'two', value: ['boulder_nrel_wind', 'aurora_wal_mart']},
-    ]
-
+    const groupedFarmOptions = CONFIG.get('groupedFarmOpts')
 
     let e = document.getElementById("groupedFarmsSelect")
     let source = e.options[e.selectedIndex]
-    groupedFarms.map(function(group) {
-      if (group.groupTitle === source.value) {
-        this.matchSelectedWF(group)
+    groupedFarmOptions.map(function(group) {
+      if (group.id === source.value) {
+        this.props.onSelectFeaturesByGroup(group.value);
       }
       return group;
     }, this)
-  }
-
-  matchSelectedWF(group) {
-      // for (var i = 0; i < group.value.length; i++) {
-      //   group.value[i] = WindFarm.getWindFarmById(group.value[i]);
-      // }
-      this.props.onSelectFeaturesByGroup(group.value);
   }
 
   render() {

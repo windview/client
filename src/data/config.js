@@ -1,7 +1,11 @@
 
-let maxFarms = 250,
+let maxFarms = 50,
     forecastInterval = 60,
-    fakeNow = new Date("2018-02-28T07:00:00Z").getTime();
+    fakeNow = new Date("2018-02-28T07:00:00Z").getTime(),
+    groupedFarmOpts = [
+      {id: 'one', label: 'San Antonio', value: [37, 38, 39, 40, 41, 42, 43, 32, 33, 34, 35, 36]},
+      {id: 'two', label: 'Houston', value: [16,17]},
+    ];
 
 
 function get(prop) {
@@ -34,5 +38,6 @@ module.exports = {
   forecastInterval: forecastInterval,
   fakeNow: fakeNow,
   getQueryParam: getQueryParam,
+  groupedFarmOpts: groupedFarmOpts,
   setGlobalFakeNow: setGlobalFakeNow
 }
