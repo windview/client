@@ -17,7 +17,7 @@ export const BaseElement = (props) => {
 const EmptyChartElement = () => {
   return (
     <BaseElement>
-      <div className="multi-chart-info">There is no forecast data to display at the moment</div>
+      <div className="multi-chart-info">Please use the + button to add a site to this detail view.</div>
     </BaseElement>
   )
 }
@@ -30,7 +30,7 @@ export class MultiChart extends React.Component {
         keys = this.props.multiChartMap;
 
     for(var i = 0; i < keys.length; i++){
-      divs.push(<ForecastChart multiChart={true} index={keys[i]} container={'multiChartDiv'+keys[i]} key={keys[i]} />);
+      divs.push(<ForecastChart multiChart={true} farmId={keys[i]} container={'multiChartDiv'+keys[i]} key={keys[i]} />);
     }
 
     if(divs.length <= 0){

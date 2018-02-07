@@ -134,11 +134,11 @@ export const selectBotChart = (chartType) => ({
   type: t.SELECT_BOT_CHART,
   chartType: chartType
 });
-export const addMultiChart = (selectedFeature) => ({
+export const addMultiChart = (selectedFeatureId) => ({
   type: t.ADD_MULTI_CHART,
-  selectedFeature: selectedFeature
+  selectedFeatureId: selectedFeatureId
 });
-export const removeMultiChart = (fid) => ({
+export const removeMultiChart = (selectedFeatureId) => ({
   type: t.REMOVE_MULTI_CHART,
-  fid: fid
+  selectedFeatureId: selectedFeatureId
 });

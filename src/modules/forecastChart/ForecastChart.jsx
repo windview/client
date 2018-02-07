@@ -24,8 +24,7 @@ const EmptyChartElement = () => {
 
 // This is the main export, simple as it is
 export const ForecastChart = (props) => {
-
-  const el = props.selectedFarmId || props.multiChart ? <ChartElement multiChart={props.multiChart} index={props.index} container={props.container} /> : <EmptyChartElement />;
+  const el = props.selectedFarmId || props.multiChart ? <ChartElement multiChart={props.multiChart} farmId={props.farmId} container={props.container} /> : <EmptyChartElement />;
   return (
     el
   );
