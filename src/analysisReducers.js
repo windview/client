@@ -31,6 +31,8 @@ const defaultValue = {
   selectedFarmIdsByGroup: []
 }
 
+let newMap;
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // The reducers
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -78,19 +80,25 @@ export default (state=defaultValue, action) => {
         timezoom: action.timezoom
       };
     case t.ADD_MULTI_CHART:
-      if(state.multiChartMap.indexOf(action.selectedFeature.id) === -1) {
-        state.multiChartMap.push(action.selectedFeature.id);
+      newMap = [];
+      newMap.push(...state.multiChartMap);
+      if(newMap.indexOf(action.selectedFeatureId) === -1) {
+        newMap.push(action.selectedFeatureId);
       }
       return {
-        ...state
+        ...state,
+        multiChartMap: newMap
       };
     case t.REMOVE_MULTI_CHART:
-      const i = state.multiChartMap.indexOf(action.fid);
+      newMap = [];
+      newMap.push(...state.multiChartMap);
+      const i = newMap.indexOf(action.selectedFeatureId);
       if(i !== -1) {
-        state.multiChartMap.splice(i, 1)
+        newMap.splice(i, 1);
       }
       return {
-        ...state
+        ...state,
+        multiChartMap: newMap
       };
     default:
       return state;
