@@ -25,7 +25,6 @@ const defaultValue = {
   selectedStyle: 'ramp',
   timezoom: 24,
   dataSource: 'visibleFarms',
-  chartTitle: 'Currently Visible Wind Farms',
   multiChartMap: [],
   visibleFarmIds: [],
   selectedFarmIdsByPolygon: [],
@@ -46,8 +45,7 @@ export default (state=defaultValue, action) => {
     case t.SELECT_AGGREGATION:
       return {
         ...state,
-        dataSource: action.dataSource,
-        chartTitle: action.title
+        dataSource: action.dataSource
       };
     case t.SELECT_FEATURE:
       return {

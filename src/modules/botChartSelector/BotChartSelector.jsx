@@ -19,7 +19,7 @@ export class BotChartSelector extends React.Component {
 			text = 'Select desired wind farms using the polygon selection tool in the upper right corner of the map.';
 		}
 		if (this.props.aggregatedSource === 'visibleFarms') {
-			text= 'Move the map or zoom out so wind farms are visible.';
+			text= 'Currently displaying aggregation of all visible wind farms.';
 		}
 		if (this.props.aggregatedSource === 'groupedFarms') {
 			text = 'Select the desired group of wind farms from the dropdown menu in the navigation bar.';
