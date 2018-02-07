@@ -41,7 +41,7 @@ export default (state=defaultValue, action) => {
     case t.MAP_MOVE:
       return {
         ...state,
-        visibleWindFarms: action.features.map(f=>{return f.id;})
+        visibleFarmIds: action.visibleFarmIds
       };
     case t.SELECT_AGGREGATION:
       return {

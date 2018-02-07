@@ -129,8 +129,9 @@ export class Map extends React.Component {
   onChangeVisibleExtent(e) {
     let features = this.map.queryRenderedFeatures({layers:['windfarms-symbol', 'windfarms-selected-symbol', 'windfarms-disabled-symbol']});
     if (features) {
-      let uniqueFeatures = this.getUniqueFeatures(features, "fid");
-      this.props.onMapMove(uniqueFeatures)
+      let uniqueFeatures = this.getUniqueFeatures(features, "fid"),
+          uniqFeatureIds = uniqueFeatures.map(f=>f.properties.fid);
+      this.props.onMapMove(uniqFeatureIds);
     }
   }
 

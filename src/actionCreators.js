@@ -50,9 +50,9 @@ export const fetchWindFarmsSuccess = () => ({
   type: t.FETCH_WIND_FARMS_SUCCESS
 });
 
-export const mapMove = (features) => ({
+export const mapMove = (visibleFarmIds) => ({
   type: t.MAP_MOVE,
-  features: features
+  visibleFarmIds: visibleFarmIds
 });
 
 export const selectAggregation = (dataSource) => ({
