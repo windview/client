@@ -27,7 +27,7 @@ export class ChartElement extends React.Component {
         container;
 
     if(this.props.multiChart) {
-      selectedFeatureId = this.props.multiChartMap[this.props.index];
+      selectedFeatureId = this.props.farmId;
       container = this.props.container;
     } else {
       selectedFeatureId = this.props.selectedFarmId;
@@ -255,8 +255,7 @@ export class ChartElement extends React.Component {
    * ninetynine = data[7],
    */
   getChartData(forecast) {
-    // FIXME where are the real probabilistic forecast values?
-    let retval = [[], [], [], [], [], [], [], []];  //3 coulmns are added at the last: range, forecast1MW, forcast99MW
+    let retval = [[], [], [], [], [], [], [], []];
     forecast.data.forEach((row)=>{
       retval[0].push([row.timestamp.getTime(), row.bestForecastMW]);
       retval[1].push([row.timestamp.getTime(), row.prob25thQuantForecastMW, row.prob75thQuantForecastMW]);
@@ -276,30 +275,31 @@ export class ChartElement extends React.Component {
         container = "forecast-chart",
         button = <button type="button" onClick={this.addMultiChart}>+</button>;
 
+    //debugger;
+
     if(this.props.multiChart){
-      selectedFeatureId = this.props.multiChartMap[this.props.index];
+      selectedFeatureId = this.props.farmId;
       selectedFeature = selectedFeatureId ? WindFarm.getWindFarmById(selectedFeatureId) : null;
       container = this.props.container;
-      button = <button type="button" id={'btn'+selectedFeature.properties.fid} value={selectedFeature.properties.fid} onClick={() => this.removeMultiChart(selectedFeature.properties.fid)}>-</button>;
+      button = <button type="button" onClick={this.removeMultiChart}>-</button>;
     }
 
-    const feature = selectedFeature;
-    const id = container;
-    const btn = button;
-    return feature.loading ? <LoadingElement label={feature.name} /> : (
-      <BaseElement multiChart={this.props.multiChart}>
-        <div className='chart-title'>{feature.name} {btn}
-        </div>
-        <div id={id} className={this.props.multiChart ? 'multi-forecast-chart':''}></div>
-      </BaseElement>
-    )
+    return selectedFeature.loading ? <LoadingElement label={selectedFeature.name} /> :
+      (
+        <BaseElement multiChart={this.props.multiChart}>
+          <div className='chart-title'>{selectedFeature.name} {button}
+          </div>
+          <div id={container} className={this.props.multiChart ? 'multi-forecast-chart':''}></div>
+        </BaseElement>
+      )
   }
 
   addMultiChart() {
     this.props.onAddMultiChart(this.props.selectedFarmId);
   }
-  removeMultiChart(fid){
-    this.props.onRemoveMultiChart(fid);
+
+  removeMultiChart(){
+    this.props.onRemoveMultiChart(this.props.farmId);
   }
 }
 
