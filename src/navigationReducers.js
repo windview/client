@@ -9,7 +9,8 @@ import * as t from './actionTypes';
 // TODO load from config?
 // navigation defaults
 const defaultValue = {
-  activePane: "map-view"
+  activePane: "map-view",
+  botChartType: "aggregation"
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -22,6 +23,11 @@ export default (state=defaultValue, action) => {
       return {
         ...state,
         activePane: action.viewName
+      };
+    case t.SELECT_BOT_CHART:
+      return{
+        ...state,
+        botChartType: action.chartType
       };
     default:
       return state;

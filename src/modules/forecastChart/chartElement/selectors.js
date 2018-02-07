@@ -1,23 +1,23 @@
 // forecastChart/chartElement/selectors
 
-import * as actions from '../../../actionCreators';
+import {addMultiChart, removeMultiChart} from '../../../actionCreators';
 
 export const mapStateToProps = (state, ownProps) => {
   return {
-    feature: state.analysis.selectedFeature,
-    forecast: state.data.forecast,
+    selectedFarmId: state.analysis.selectedFeature,
     selectedTimestamp: state.analysis.selectedTimestamp,
-    analysis: state.analysis
+    multiChartMap: state.analysis.multiChartMap,
+    chartType: state.nav.botChartType
   }
 }
 
 export const mapDispatchToProps = (dispatch) => {
   return {
-    onAddMultiChart: (selectedFeature) => {
-      dispatch(actions.addMultiChart(selectedFeature));
+    onAddMultiChart: (selectedFeatureId) => {
+      dispatch(addMultiChart(selectedFeatureId));
     },
-    onRemoveMultiChart: (label) => {
-      dispatch(actions.removeMultiChart(label));
+    onRemoveMultiChart: (selectedFeatureId) => {
+      dispatch(removeMultiChart(selectedFeatureId));
     }
   }
 }

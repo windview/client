@@ -24,9 +24,14 @@ const defaultValue = {
   selectedTimestamp: getStartTime(),
   selectedStyle: 'ramp',
   timezoom: 24,
-  botChartType: 'aggregation',
-  multiChartMap: {}
+  dataSource: 'visibleFarms',
+  multiChartMap: [],
+  visibleFarmIds: [],
+  selectedFarmIdsByPolygon: [],
+  selectedFarmIdsByGroup: []
 }
+
+let newMap;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // The reducers
@@ -37,12 +42,27 @@ export default (state=defaultValue, action) => {
     case t.MAP_MOVE:
       return {
         ...state,
-        visibleWindFarms: action.features
+        visibleFarmIds: action.farmIds
       };
-     case t.SELECT_FEATURE:
+    case t.SELECT_AGGREGATION:
       return {
         ...state,
-        selectedFeature: action.feature
+        dataSource: action.dataSource
+      };
+    case t.SELECT_FEATURE:
+      return {
+        ...state,
+        selectedFeature: action.feature.id
+      };
+    case t.SELECT_FEATURES_BY_GROUP:
+      return {
+        ...state,
+        selectedFarmIdsByGroup: action.farmIds
+      };
+    case t.SELECT_FEATURES_BY_POLYGON:
+      return {
+        ...state,
+        selectedFarmIdsByPolygon: action.farmIds
       };
     case t.SELECT_STYLE:
       return {
@@ -59,21 +79,27 @@ export default (state=defaultValue, action) => {
         ...state,
         timezoom: action.timezoom
       };
-    case t.SELECT_BOT_CHART:
-      return{
-        ...state,
-        botChartType: action.chartType
-      };
     case t.ADD_MULTI_CHART:
-      state.multiChartMap[action.selectedFeature.properties.fid] = action.selectedFeature;
+      newMap = [];
+      newMap.push(...state.multiChartMap);
+      if(newMap.indexOf(action.selectedFeatureId) === -1) {
+        newMap.push(action.selectedFeatureId);
+      }
       return {
-        ...state
+        ...state,
+        multiChartMap: newMap
       };
     case t.REMOVE_MULTI_CHART:
-      delete state.multiChartMap[action.fid];
+      newMap = [];
+      newMap.push(...state.multiChartMap);
+      const i = newMap.indexOf(action.selectedFeatureId);
+      if(i !== -1) {
+        newMap.splice(i, 1);
+      }
       return {
-        ...state
-      }; 
+        ...state,
+        multiChartMap: newMap
+      };
     default:
       return state;
   }

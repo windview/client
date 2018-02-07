@@ -1,8 +1,8 @@
 const layerIds = [];
 
 export const initializeStyle = (map, layerSource) => {
-  
-  const initialRadius = 14;
+
+  const initialRadius = 26;
 
   // Big farms
   map.addLayer({
@@ -10,11 +10,11 @@ export const initializeStyle = (map, layerSource) => {
     type: 'circle',
     source: layerSource,
     paint: {
-      'circle-radius': initialRadius+10,
-      'circle-stroke-width': 2,
-      'circle-stroke-color': 'hsla(219, 100%, 88%, 1)',
+      'circle-radius': initialRadius,
+      'circle-stroke-width': 6,
+      'circle-stroke-color': 'hsla(240, 100%, 60%, .7)',
     },
-    filter: [">=", "total_capacity", 30000],
+    filter: [">=", "capacity_mw", 30],
     layout: {
       visibility: 'none'
     }
@@ -27,11 +27,11 @@ export const initializeStyle = (map, layerSource) => {
     type: 'circle',
     source: layerSource,
     paint: {
-      'circle-radius': initialRadius+5,
-      'circle-stroke-width': 2,
-      'circle-stroke-color': 'hsla(219, 100%, 79%, 1)',
+      'circle-radius': initialRadius,
+      'circle-stroke-width': 4,
+      'circle-stroke-color': 'hsla(240, 100%, 40%, .7)',
     },
-    filter: [">=", "total_capacity", 10000],
+    filter: ["all", [">=", "capacity_mw", 10], ["<", "capacity_mw", 30]],
     layout: {
       visibility: 'none'
     }
@@ -46,14 +46,15 @@ export const initializeStyle = (map, layerSource) => {
     paint: {
       'circle-radius': initialRadius,
       'circle-stroke-width': 2,
-      'circle-stroke-color': 'hsla(219, 100%, 70%, 1)',
+      'circle-stroke-color': 'hsla(240, 100%, 25%, 1)',
     },
+    filter: ["all", [">", "capacity_mw", 0], ["<", "capacity_mw", 10]],
     layout: {
       visibility: 'none'
     }
   });
-  layerIds.push('windfarms-small');  
-}
+  layerIds.push('windfarms-small');
+};
 
 export const toggleVisibility = (map) => {
   if(layerIds.length === 0) { return; }
@@ -61,4 +62,4 @@ export const toggleVisibility = (map) => {
   layerIds.forEach(function(id){
     map.setLayoutProperty(id, 'visibility', visible);
   });
-}
+};

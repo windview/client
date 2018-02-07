@@ -55,6 +55,8 @@
     "whatwg-fetch": "1.0.0"
   },
   "dependencies": {
+    "@mapbox/mapbox-gl-draw": "^1.0.4",
+    "@turf/turf": "^4.7.3",
     "babel-polyfill": "^6.23.0",
     "bootstrap": "3.2",
     "classnames": "^2.2.5",

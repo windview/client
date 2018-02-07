@@ -1,16 +1,14 @@
 @import '../../styles/color-gradient.scss';
 
 .multi-chart-container {
-  top: 0px;
-  right: 0px;
-  left: 0px;
-  height: 800px;
   padding: 0px;
-  border: 1px solid #e2e2e2;
-  border-radius: 3px;
-  background-color: #fff;
-  overflow-y: auto;
-  max-height: 800px;
+  border: 0px;
+  overflow: hidden;
+
+  .multi-chart-info {
+    padding-left: 10px;
+    font-size: 13px;
+  }
 }
 
 #multi-chart {

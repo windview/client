@@ -1,5 +1,59 @@
+.settings-container {
+  margin: 50px;
+}
+
+section {
+  border-bottom: 2px solid white;
+}
+
 #app-settings {
   padding: 10px;
-  color: #fff;
-  background-color: #428bca;
+}
+
+#alert-settings {
+  margin: 20px 0 20px 0;
+
+  input {
+    width: 50px;
+  }
+
+  form {
+    margin-bottom: 10px;
+  }
+
+  &:not(:last-of-type) {
+  border-bottom: 1px solid white;
+}
+
+}
+
+span.select {
+  width: 25px;
+  height: 25px;
+  display: inline-block;
+  border: 1px solid gray;
+  vertical-align: middle;
+  border-radius: 3px;
+}
+
+#forecast-time-settings {
+  margin: 20px 0 20px 0;
+}
+
+.settings-description {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.select-windfarms {
+  font-weight: normal;
+}
+
+
+label {
+  margin-bottom: 8px;
+}
+
+span {
+  margin: 0 5px 0 3px;
 }

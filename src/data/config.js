@@ -1,39 +1,43 @@
 
+let maxFarms = 50,
+    forecastInterval = 60,
+    fakeNow = new Date("2018-02-28T07:00:00Z").getTime(),
+    groupedFarmOpts = [
+      {id: 'one', label: 'San Antonio', value: [37, 38, 39, 40, 41, 42, 43, 32, 33, 34, 35, 36]},
+      {id: 'two', label: 'Houston', value: [16,17]},
+    ];
 
-let Config = new function() {
 
-  this.getQueryParam = (paramName) => {
-    let parts = window.location.href.split("?"),
-        retval = null;
-    if(parts.length > 1) {
-      parts = parts[1].split("&");
-      if(parts.length > 0) {
-        retval = parts.find(p=>{return p.split("=")[0] === paramName})
-        retval = retval ? retval.split("=")[1] : null;
-      }
+function get(prop) {
+  return this[prop];
+}
+
+let getQueryParam = (paramName) => {
+  let parts = window.location.href.split("?"),
+      retval = null;
+  if(parts.length > 1) {
+    parts = parts[1].split("&");
+    if(parts.length > 0) {
+      retval = parts.find(p=>{return p.split("=")[0] === paramName})
+      retval = retval ? retval.split("=")[1] : null;
     }
-    return retval;
   }
+  return retval;
+}
 
-  // Super hacky just for the demo on May 5, 2017
-  this.setGlobalFakeNow = () => {
-    let n = this.getQueryParam("n"),
-        now = 0;
-    switch(n) {
-      case '1':
-        now = 1492192800000;
-        break;
-      case '2':
-        now = 1492209000000;
-        break;
-      case '3':
-        now = 1492219800000;
-        break;
-      default:
-        now = 1492168500000;
-    }
-    window.fakeNow = now;
-  }
-}();
+// Super hacky just for demoing
+function setGlobalFakeNow() {
+  let n = getQueryParam("n");
+  n = (n !== null) ? parseInt(n, 10) : 0;
+  this.fakeNow += 1000*60*60*n;
+}
 
-export default Config;
+module.exports = {
+  get: get,
+  maxFarms: maxFarms,
+  forecastInterval: forecastInterval,
+  fakeNow: fakeNow,
+  getQueryParam: getQueryParam,
+  groupedFarmOpts: groupedFarmOpts,
+  setGlobalFakeNow: setGlobalFakeNow
+}

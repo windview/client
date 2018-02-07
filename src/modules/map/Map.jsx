@@ -2,10 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import '../../../node_modules/mapbox-gl/dist/mapbox-gl.css';
 import Legend from '../legend/Legend';
-import mapboxgl from '../../../node_modules/mapbox-gl/dist/mapbox-gl.js'
+import mapboxgl from '../../../node_modules/mapbox-gl/dist/mapbox-gl.js';
+import MapboxDraw from '../../../node_modules/@mapbox/mapbox-gl-draw';
 import windFarmIcon from '../../images/windfarm.png';
 import windFarmDisabledIcon from '../../images/windfarm-disabled.png';
 import windFarmSelectedIcon from '../../images/windfarm-selected.png';
+import windFarmSuspectDataIcon from '../../images/windfarm-suspect-data.png'
+import windFarmSelectedSuspsectDataIcon from '../../images/windfarm-selected-suspect-data.png'
 import './Map.scss';
 import mapboxStyle from '../../styles/dark-matter-style';
 import { mapStateToProps, mapDispatchToProps } from './selectors';
@@ -17,24 +20,26 @@ import * as wfActualStyle from './mapStyles/windFarmActual';
 import * as wfForecastStyle from './mapStyles/windFarmForecast';
 import * as wfRampStyle from './mapStyles/windFarmRamp';
 import * as wfSizeStyle from './mapStyles/windFarmSize';
-import * as openeiFarmStyle from './mapStyles/openeiFarms';
+
 
 export class Map extends React.Component {
 
   afterMapRender() {
     this.onChangeVisibleExtent({type:'manual'});
-    this.whenFeatureClicked(null, this.props.windFarms.features.find(f=>f.properties.fid === 'boulder_nrel_wind'));
+    // select first farm
+    this.whenFeatureClicked(null, WindFarm.getFarms()[0]);
   }
 
   applySelectedFeature(feature, forcePopup) {
-    Forecast.setSelectedFeature(feature, this.props.windFarms.features);
+    WindFarm.setSelectedFarm(feature);
     this.bumpMapFarms();
   }
 
   // Triggers the MapBox map to redraw the WindFarm features
   bumpMapFarms() {
-    if(this.map && this.map.getSource('windfarms') && this.props.windFarms) {
-      this.map.getSource('windfarms').setData(this.props.windFarms);
+    if(this.map && this.map.getSource('windfarms') && this.props.windFarmsLoaded) {
+      let features = WindFarm.getGeoJsonForFarms(this.props.selectedTimestamp);
+      this.map.getSource('windfarms').setData(features);
     }
   }
 
@@ -65,12 +70,11 @@ export class Map extends React.Component {
       this.toggleStyle(this.props.selectedStyle);
     }
     if(prevProps.selectedTimestamp !== this.props.selectedTimestamp) {
-      if(this.props.windFarms) {
-        Forecast.setCurrentForecastByTimestamp(this.props.selectedTimestamp, this.props.windFarms.features);
+      if(this.props.windFarmsLoaded) {
         this.bumpMapFarms();
       }
     }
-    if(prevProps.windFarms === null && this.props.windFarms !== null && !this.map) {
+    if(!prevProps.windFarmsLoaded && this.props.windFarmsLoaded && !this.map) {
       if(this.props.windFarmsLoadingError) {
         alert("Wind farm data could not be loaded");
       }
@@ -121,11 +125,30 @@ export class Map extends React.Component {
     return uniqueFeatures;
   }
 
+  onChangeAggregationDrawing(e) {
+    let userPolygon = e.features[0],
+        draw = this.draw,
+        selectedFarmIds,
+        previousFeatureIds = draw.getAll().features
+          .filter(f=>f.id!==userPolygon.id)
+          .map(f=>f.id);
+
+    // Remove all other features, so that current one is the only one on map.
+    draw.delete(previousFeatureIds);
+
+    // Ascertain the ids for all farms within the drawing
+    selectedFarmIds = WindFarm.getFarmsByPolygon(userPolygon).map(f=>f.id);
+
+    // Send the action to notify state
+    this.props.onSelectFeaturesByPolygon(selectedFarmIds);
+  }
+
   onChangeVisibleExtent(e) {
     let features = this.map.queryRenderedFeatures({layers:['windfarms-symbol', 'windfarms-selected-symbol', 'windfarms-disabled-symbol']});
     if (features) {
-      let uniqueFeatures = this.getUniqueFeatures(features, "fid");
-      this.props.onMapMove(uniqueFeatures)
+      let uniqueFeatures = this.getUniqueFeatures(features, "fid"),
+          uniqFeatureIds = uniqueFeatures.map(f=>f.properties.fid);
+      this.props.onMapMove(uniqFeatureIds);
     }
   }
 
@@ -163,11 +186,25 @@ export class Map extends React.Component {
     let map = new mapboxgl.Map({
       container: 'wind-map', // container id
       style: mapboxStyle,
-      center: [-104.247, 39.344], // starting position
-      zoom: 6.5, // starting zoom
+      center: [-99.902, 31.969], // starting position
+      zoom: 4.5, // starting zoom
       hash: false
     });
     this.map = map;
+
+    // Disable default box zooming.
+    map.boxZoom.disable();
+
+    // Add tool for drawing polygon on map
+    let draw = new MapboxDraw({
+        displayControlsDefault: false,
+        controls: {
+            polygon: true,
+            trash: true
+        }
+    });
+    map.addControl(draw);
+    this.draw = draw;
 
     // Add zoom and rotation controls to the map.
     map.addControl(new mapboxgl.NavigationControl());
@@ -190,20 +227,25 @@ export class Map extends React.Component {
         if(err) return;
         map.addImage('windfarm-disabled', image);
       });
+      // Add the custom image icon for wind farms to use later
+      map.loadImage(windFarmSuspectDataIcon, (err, image) => {
+        if(err) return;
+        map.addImage('windfarm-suspect-data', image);
+      });
+      // Add the custom image icon for wind farms to use later
+      map.loadImage(windFarmSelectedSuspsectDataIcon, (err, image) => {
+        if(err) return;
+        map.addImage('windfarm-selected-suspect-data', image);
+      });
       // Add translines
       map.addSource('translines', {
           type: "vector",
           url: process.env.TILE_SERVER_URL + "/osm-translines/metadata.json"
       });
-      // Add OpenEI wind farm points
-      map.addSource('openei-farms', {
-        type: "vector",
-        url: process.env.TILE_SERVER_URL + "/openei-farms/metadata.json"
-      });
 
-
+      let farmData = WindFarm.getGeoJsonForFarms();
       // TODO move app alerting to own module
-      if(!this.props.windFarms) {
+      if(farmData.features.length === 0) {
         alert("Wind farm data could not be loaded.");
         return;
       }
@@ -211,30 +253,29 @@ export class Map extends React.Component {
       // Add windfarms
       map.addSource('windfarms', {
         type: "geojson",
-        data: this.props.windFarms
+        data: farmData
       });
 
       // Initialize all of the layers
       tlinesStyle.initializeStyle(map, 'translines');
       wfSizeStyle.initializeStyle(map, 'windfarms');
       wfForecastStyle.initializeStyle(map, 'windfarms');
-      wfRampStyle.initializeStyle(map, 'windfarms');
-      openeiFarmStyle.initializeStyle(map, 'openei-farms');
+      wfRampStyle.initializeStyle(map, 'windfarms', this.props.forecast);
 
       // Show these layers
       this.toggleStyle('tlines');
       this.toggleStyle(this.props.selectedStyle);
-      this.toggleStyle('openei-farms');
 
       // The icon layer is always present, and needs to be for all the
       // event handlers so add it outside of the specific styles above
+
       map.addLayer({
         id: 'windfarms-symbol',
         type: 'symbol',
         source: 'windfarms',
         layout: {
           'icon-image': 'windfarm',
-          'icon-size': .18,
+          'icon-size': .3,
           'icon-allow-overlap': true,
           'icon-keep-upright': true
         },
@@ -242,6 +283,7 @@ export class Map extends React.Component {
           'all',
           ['!=', 'selected', true],
           ['!=', 'disabled', true],
+          ['!=', 'suspectData', true]
         ],
         paint: {
           'icon-opacity': 1
@@ -255,7 +297,7 @@ export class Map extends React.Component {
         source: 'windfarms',
         layout: {
           'icon-image': 'windfarm-selected',
-          'icon-size': .24,
+          'icon-size': .40,
           'icon-allow-overlap': true,
           'icon-keep-upright': true
         },
@@ -269,14 +311,13 @@ export class Map extends React.Component {
         }
       });
 
-      // This icon layer shows a different icon for the selected farm
       map.addLayer({
         id: 'windfarms-disabled-symbol',
         type: 'symbol',
         source: 'windfarms',
         layout: {
           'icon-image': 'windfarm-disabled',
-          'icon-size': .18,
+          'icon-size': .3,
           'icon-allow-overlap': true,
           'icon-keep-upright': true
         },
@@ -286,17 +327,69 @@ export class Map extends React.Component {
         }
       });
 
+      map.addLayer({
+        id: 'windfarms-suspect-data-symbol',
+        type: 'symbol',
+        source: 'windfarms',
+        layout: {
+          'icon-image': 'windfarm-suspect-data',
+          'icon-size': .3,
+          'icon-allow-overlap': true,
+          'icon-keep-upright': true
+        },
+        filter: [
+          'all',
+          ['!=', 'selected', true],
+          ['!=', 'disabled', true],
+          ['==', 'suspectData', true]
+        ],
+        paint: {
+          'icon-opacity': 1
+        }
+      });
+
+      map.addLayer({
+        id: 'windfarms-selected-suspect-data-symbol',
+        type: 'symbol',
+        source: 'windfarms',
+        layout: {
+          'icon-image': 'windfarm-selected-suspect-data',
+          'icon-size': .4,
+          'icon-allow-overlap': true,
+          'icon-keep-upright': true
+        },
+        filter: [
+          'all',
+          ['==', 'selected', true],
+          ['!=', 'disabled', true],
+          ['==', 'suspectData', true]
+        ],
+        paint: {
+          'icon-opacity': 1
+        }
+      });
+
+      map.on('draw.create', this.onChangeAggregationDrawing.bind(this));
+      map.on('draw.update', this.onChangeAggregationDrawing.bind(this));
+      map.on('draw.delete', function(e) {
+        this.props.onSelectFeaturesByPolygon([]);
+      }.bind(this))
+
+
       // Handle the relevant events on the windfarms layer
       map.on('click', 'windfarms-symbol', this.whenFeatureClicked);
       map.on('click', 'windfarms-selected-symbol', this.whenFeatureClicked);
+      map.on('click', 'windfarms-suspect-data-symbol', this.whenFeatureClicked);
 
       // Change the cursor to a pointer when the mouse is over the places layer.
       map.on('mouseenter', 'windfarms-symbol', this.whenFeatureMouseOver);
       map.on('mouseenter', 'windfarms-selected-symbol', this.whenFeatureMouseOver);
+      map.on('mouseenter', 'windfarms-suspect-data-symbol', this.whenFeatureMouseOver);
 
       // Change it back to a pointer when it leaves.
       map.on('mouseleave', 'windfarms-symbol', this.whenFeatureMouseOut);
       map.on('mouseleave', 'windfarms-selected-symbol', this.whenFeatureMouseOut);
+      map.on('mouseleave', 'windfarms-suspect-data-symbol', this.whenFeatureMouseOut);
 
       // All the events that might change the visible extent are encapsulated in
       // the moveend event
@@ -309,13 +402,14 @@ export class Map extends React.Component {
         if(!map.loaded()) {
           setTimeout(()=>{checkMap(map)}, 50)
         } else {
-          this.afterMapRender();
+          this.afterMapRender(WindFarm.getFarms()[0]);
         }
       }
       checkMap(map);
 
     }.bind(this));
   }
+
 
   toggleStyle(styleName) {
     switch(styleName) {
@@ -334,9 +428,6 @@ export class Map extends React.Component {
       case "tlines":
         tlinesStyle.toggleVisibility(this.map);
         break;
-      case "openei-farms":
-        openeiFarmStyle.toggleVisibility(this.map);
-        break;
       default:
         break;
     }
@@ -346,7 +437,7 @@ export class Map extends React.Component {
     // The click event has a feature wherein the properties have been turned into strings.
     // Need to supply the proper object form so we find it in our local copy of the data
     if(!feature) {
-      feature = WindFarm.getWindFarmById(e.features[0].properties.fid, this.props.windFarms.features);
+      feature = WindFarm.getWindFarmById(e.features[0].properties.fid);
     }
     this.applySelectedFeature(feature, true);
     this.props.onSelectFeature(feature);
@@ -376,5 +467,8 @@ export class Map extends React.Component {
     this.props.onSelectTimezoom(e.target.value);
   }
 }
+
+
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(Map);

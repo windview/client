@@ -8,10 +8,10 @@ import * as t from './actionTypes';
 
 // data defaults
 const defaultValue = {
-  windFarms: null,
+  windFarmsLoaded: null,
   windFarmsLoading: false,
   windFarmsLoadingError: null,
-  forecast: null,
+  forecastLoaded: null,
   forecastLoading: false,
   forecastLoadingError: null
 }
@@ -20,8 +20,21 @@ const defaultValue = {
 // The reducers
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
 export default (state=defaultValue, action) => {
   switch(action.type) {
+    case t.TOGGLE_ALERT:
+        var newState = {...state}
+        newState.forecast.map((element) => {
+          element.alerts.rampBins.map((alert) => {
+            if (alert === action.id) {
+              alert.display = !alert.display
+            }
+            return alert;
+          });
+          return element;
+        });
+        return newState
     case t.FETCH_FORECAST_FAIL:
       return {
         ...state,
@@ -37,8 +50,7 @@ export default (state=defaultValue, action) => {
       return {
         ...state,
         forecastLoading: false,
-        forecast: action.data,
-        forecastMeta: action.meta
+        forecastLoaded: true
       };
     case t.FETCH_WIND_FARMS_FAIL:
       return {
@@ -55,7 +67,7 @@ export default (state=defaultValue, action) => {
       return {
         ...state,
         windFarmsLoading: false,
-        windFarms: action.data
+        windFarmsLoaded: true
       };
     default:
       return state;

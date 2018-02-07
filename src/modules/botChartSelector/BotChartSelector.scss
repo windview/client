@@ -1,47 +1,56 @@
 @import '../../styles/color-gradient.scss';
+@import '../app/layout.scss';
 
 .bot-chart-area {
   position: absolute;
   bottom: 0px;
   right: 0px;
   left: 0px;
-  height: 130px;
+  top: 72px;
   padding: 0px;
-  border: 1px solid #e2e2e2;
+  border: 0px;
+  background-color: $component-background;
+  color: #333;
+  font-size: 12px;
   border-radius: 3px;
-  background-color: #fff;
+}
+
+.bot-chart-header {
+  height: 35px;
+}
+
+.bot-chart-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #222;
+  padding: 5px 0px 5px 5px;
+  display: inline-block;
 }
 
 .bot-chart-option{
-	text-align: right;
   display: inline-block;
-	height: 30px;
-  width: 100%;
+  position: absolute;
+  right: 10px;
+  padding-top: 5px;
+  height: 10px;
+
+  label {
+    margin-right: 10px;
+  }
+
+  input {
+    margin: 4px 4px 0px 4px;
+  }
 }
 
 .bot-chart-container {
-  position: absolute;
-  top: 30px;
-  bottom: 0px;
-  right: 0px;
-  left: 0px;
-  height: 130px;
+  height: 110px;
   padding: 0px;
-  border: 1px solid #e2e2e2;
-  border-radius: 3px;
-  background-color: #fff;
+  border: 0px;
+  border-top: 1px solid #e2e2e2;
 }
 
 .bot-multichart-container{
-  display: inline-block;
-  bottom: 0px;
-  right: 0px;
-  left: 0px;
-  height: 800px;
-  max-height: 800px;
-  width: 100%;
   padding: 0px;
-  border: 1px solid #e2e2e2;
-  border-radius: 3px;
-  background-color: #fff;
+  border: 0px;
 }

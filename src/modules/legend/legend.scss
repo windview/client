@@ -52,3 +52,14 @@
     border: 3px solid blue;
   }
 }
+
+.hide-legend {
+  display: none;
+}
+
+.toggleLegend {
+  width: 100%;
+  text-align: center;
+  font-size: 18px;
+  background-color: hsla(0, 0%, 70%, 0.4)
+}

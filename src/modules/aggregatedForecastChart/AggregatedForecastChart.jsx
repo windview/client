@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import './AggregatedForecastChart.scss';
 import { mapStateToProps } from './selectors';
 import Forecast from '../../data/forecast';
+import CONFIG from '../../data/config';
 import Highcharts from 'highcharts/highcharts';
 import HighchartsMore from 'highcharts/highcharts-more';
 // Stand up highcharts properly without the global var
@@ -38,28 +39,25 @@ export class AggregatedForecastChart extends React.Component {
 
   chartIt() {
     let aggData = Forecast.getAggregatedForecast(this.getForecasts())
-    if(!aggData) return;
+    if(!aggData) {
+      if(this.chart) {
+        this.clearChart();
+      }
+      return;
+    }
 
     const data = this.getChartData(aggData),
           forecast = data[0],
           actuals = data[1],
-          now = window.fakeNow;
+          now = CONFIG.fakeNow;
 
-    if(this.chart) {
-      this.chart.destroy();
-    }
 
     let chart = Highcharts.chart('aggregated-chart', {
       chart: {
         spacingBottom: 10
       },
       title: {
-        text: 'Aggregated Forecast for Currently Visible Wind Farms',
-        style: {
-          fontSize: "13px"
-        },
-        align: 'left',
-        margin: 0
+        text: ''
       },
       xAxis: {
         type: 'datetime',
@@ -150,8 +148,17 @@ export class AggregatedForecastChart extends React.Component {
     this.chart = chart;
   }
 
+  clearChart() {
+    if(this.chart) {
+      this.chart.destroy();
+      this.chart = null;
+      $("#aggregated-chart").text("Please select an aggregation set.");
+    }
+  }
+
   componentDidMount() {
-    if(this.props.visibleWindFarms && this.props.forecast) {
+    let aggDataSource = this.getAggregatedDataIds(this.props);
+    if(aggDataSource && this.props.forecastLoaded) {
       this.chartIt();
       if(this.props.selectedTimestamp) {
         this.drawPlotLine(this.props.selectedTimestamp);
@@ -160,15 +167,25 @@ export class AggregatedForecastChart extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if(this.props.forecast) {
-      if(this.props.visibleWindFarms) {
-        if(prevProps.visibleWindFarms) {
-          if(this.farmsHaveChanged(prevProps.visibleWindFarms, this.props.visibleWindFarms)) {
+    let aggDataSource = this.getAggregatedDataIds(this.props);
+    let prevDataSource = this.getAggregatedDataIds(prevProps);
+    if(this.props.forecastLoaded) {
+      if(aggDataSource && aggDataSource.length > 0) {
+        if(prevDataSource) {
+          if(!prevProps.forecastLoaded || this.farmsHaveChanged(prevDataSource, aggDataSource)) {
             this.chartIt();
           }
         } else {
           this.chartIt();
         }
+      } else {
+        this.clearChart();
+      }
+      if(this.props.aggregatedSource !== prevProps.aggregatedSource) {
+        this.chartIt();
+      }
+      if(aggDataSource === null) {
+        this.chartIt();
       }
       if(this.props.selectedTimestamp && this.chart) {
         this.drawPlotLine(this.props.selectedTimestamp);
@@ -177,7 +194,7 @@ export class AggregatedForecastChart extends React.Component {
   }
 
   drawPlotLine(timestamp) {
-    if(this.chart) {
+    if(this.chart.xAxis) {
       this.chart.xAxis[0].removePlotLine('selectedTimestamp');
       this.chart.xAxis[0].addPlotLine({
         id: 'selectedTimestamp',
@@ -191,19 +208,30 @@ export class AggregatedForecastChart extends React.Component {
   }
 
   farmsHaveChanged(prev, current) {
-    let prevFids = prev.map(i=>i.properties.fid),
-        currentFids = current.map(i=>i.properties.fid);
-
     // Super simple check may bypass the need for doing any introspection
-    if(prevFids.length !== currentFids.length) {
+    if(prev.length !== current.length) {
       return true;
     } else {
       // here we know the sets are the same length, and we don't care about
       // the details of the diff only that there is a diff, so a simple one-way
       // id check is sufficient
-      const leftovers = currentFids.filter( fid=>!prevFids.includes(fid) )
+      const leftovers = current.filter( fid=>!prev.includes(fid) )
       return leftovers.length > 0
     }
+  }
+
+  getAggregatedDataIds(props) {
+    let retVal = [];
+    if (this.props.aggregatedSource === 'visibleFarms') {
+      retVal = props.visibleFarmIds;
+    }
+    if (this.props.aggregatedSource === 'polygonFarms') {
+      retVal = props.selectedFarmIdsByPolygon;
+    }
+    if (this.props.aggregatedSource === 'groupedFarms') {
+      retVal = props.selectedFarmIdsByGroup;
+    }
+    return retVal;
   }
 
   /*
@@ -221,16 +249,17 @@ export class AggregatedForecastChart extends React.Component {
 
   getForecasts() {
     let retval = [];
-    if(this.props.visibleWindFarms) {
-      this.props.visibleWindFarms.forEach(farm=>{
-        retval.push(Forecast.getForecastForFarm(farm.properties.fid, this.props.forecast));
+    let aggDataSource = this.getAggregatedDataIds(this.props);
+    if(aggDataSource.length > 0) {
+      aggDataSource.forEach(farmId=>{
+        retval.push(Forecast.getForecastForFarm(farmId));
       })
     }
     return retval.filter(r=>r); // filter out falsy values
   }
 
   render() {
-    const el = this.props.forecast ? <ChartElement /> : <EmptyChartElement />;
+    const el = this.props.forecastLoaded ? <ChartElement /> : <EmptyChartElement />;
     return (
       el
     );

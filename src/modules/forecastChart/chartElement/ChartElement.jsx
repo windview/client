@@ -5,6 +5,10 @@ import { mapStateToProps, mapDispatchToProps } from './selectors';
 import '../ForecastChart.scss';
 import Highcharts from 'highcharts/highcharts';
 import HighchartsMore from 'highcharts/highcharts-more';
+import Forecast from '../../../data/forecast';
+import WindFarm from '../../../data/windFarm';
+import CONFIG from '../../../data/config';
+
 // Stand up highcharts properly without the global var
 HighchartsMore(Highcharts);
 
@@ -17,13 +21,23 @@ export class ChartElement extends React.Component {
   }
 
   chartIt() {
-    var selectedFeature = this.props.feature;
-    var container = "forecast-chart";
-    if(this.props.multiChart){
-      selectedFeature = this.props.analysis.multiChartMap[this.props.index];
+    let selectedFeatureId,
+        feature,
+        forecastData,
+        container;
+
+    if(this.props.multiChart) {
+      selectedFeatureId = this.props.farmId;
       container = this.props.container;
+    } else {
+      selectedFeatureId = this.props.selectedFarmId;
+      container = "forecast-chart";
     }
-    const data = this.getChartData(selectedFeature.properties.forecastData),
+
+    feature = selectedFeatureId ? WindFarm.getWindFarmById(selectedFeatureId) : null;
+    forecastData = feature ? Forecast.getForecastForFarm(feature.id) : null;
+
+    const data = this.getChartData(forecastData),
           forecast = data[0],
           range = data[1],
           twentyFive = data[2],
@@ -32,7 +46,7 @@ export class ChartElement extends React.Component {
           range1_99 = data[5],
           one = data[6],
           ninetynine = data[7],
-          now = window.fakeNow;
+          now = CONFIG.fakeNow;
 
     if(this.chart) {
       this.chart.destroy();
@@ -170,7 +184,7 @@ export class ChartElement extends React.Component {
       }]
     });
 
-    const rampBins = selectedFeature.properties.forecastData.alerts.rampBins;
+    const rampBins = forecastData.alerts.rampBins;
     rampBins.forEach((bin)=>{
       const color = bin.increments[bin.increments.length-1] > 0 ? "rgba(205, 186, 45, 0.63)" : "rgba(117, 140, 225, 0.53)",
             borderColor = bin.severity > 1 ? "rgba(255, 0, 0, 0.7" : color;
@@ -188,7 +202,7 @@ export class ChartElement extends React.Component {
   }
 
   componentDidMount() {
-    if(this.props.feature || this.props.multiChart) {
+    if(this.props.selectedFarmId || this.props.multiChart) {
       this.chartIt();
       if(this.props.selectedTimestamp) {
         this.drawPlotLine(this.props.selectedTimestamp);
@@ -197,10 +211,10 @@ export class ChartElement extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if(this.props.feature || this.props.multiChart) {
-      if(prevProps.feature) {
+    if(this.props.selectedFarmId || this.props.multiChart) {
+      if(prevProps.selectedFarmId) {
         // if the currently selected feature is not the same as the previously selected
-        if(this.props.feature.properties.fid !== prevProps.feature.properties.fid
+        if(this.props.selectedFarmId !== prevProps.selectedFarmId
           || this.props.index !== prevProps.index) {
           this.chartIt();
         }
@@ -231,55 +245,61 @@ export class ChartElement extends React.Component {
   /*
    * Formats the data for Highcharts. Creates 5 arrays, one each
    * for forecast, arearange, 25th, 75th, and the actuals
+   * forecast = data[0],
+   * range = data[1],
+   * twentyFive = data[2],
+   * seventyFive = data[3],
+   * actuals = data[4],
+   * range1_99 = data[5],
+   * one = data[6],
+   * ninetynine = data[7],
    */
-  getChartData(featureData) {
-    /*
-    * Add temporary random forecast1MW, forecast99MW Data
-    */
-    let rand_1MW, rand_99MW;
-    let retval = [[], [], [], [], [], [], [], []];  //3 coulmns are added at the last: range, forecast1MW, forcast99MW
-    featureData.data.forEach((row)=>{
-      rand_1MW = 1.0 + (Math.random() * 3);
-      rand_99MW = 1.0 + (Math.random() * 3);
-      retval[0].push([row.timestamp.getTime(), row.forecastMW]);
-      retval[1].push([row.timestamp.getTime(), row.forecast25MW, row.forecast75MW]);
-      retval[2].push([row.timestamp.getTime(), row.forecast25MW]);
-      retval[3].push([row.timestamp.getTime(), row.forecast75MW]);
+  getChartData(forecast) {
+    let retval = [[], [], [], [], [], [], [], []];
+    forecast.data.forEach((row)=>{
+      retval[0].push([row.timestamp.getTime(), row.bestForecastMW]);
+      retval[1].push([row.timestamp.getTime(), row.prob25thQuantForecastMW, row.prob75thQuantForecastMW]);
+      retval[2].push([row.timestamp.getTime(), row.prob25thQuantForecastMW]);
+      retval[3].push([row.timestamp.getTime(), row.prob75thQuantForecastMW]);
       retval[4].push([row.timestamp.getTime(), row.actual]);
-      retval[5].push([row.timestamp.getTime(), (row.forecast25MW - rand_1MW < 0 ? 0 : row.forecast25MW - rand_1MW), row.forecast75MW + rand_99MW]);
-      retval[6].push([row.timestamp.getTime(), (row.forecast25MW - rand_1MW < 0 ? 0 : row.forecast25MW - rand_1MW)]);
-      retval[7].push([row.timestamp.getTime(), row.forecast75MW + rand_99MW]);
+      retval[5].push([row.timestamp.getTime(), row.prob1stQuantForecastMW, row.prob99thQuantForecastMW]);
+      retval[6].push([row.timestamp.getTime(), row.prob1stQuantForecastMW]);
+      retval[7].push([row.timestamp.getTime(), row.prob99thQuantForecastMW]);
     });
     return retval;
   }
 
   render() {
-    var selectedFeature = this.props.feature;
-    var container = "forecast-chart";
-    var button = <button type="button" onClick={this.addMultiChart}>+</button>;
+    let selectedFeatureId = this.props.selectedFarmId,
+        selectedFeature = selectedFeatureId ? WindFarm.getWindFarmById(selectedFeatureId) : null,
+        container = "forecast-chart",
+        button = <button type="button" onClick={this.addMultiChart}>+</button>;
+
+    //debugger;
+
     if(this.props.multiChart){
-      selectedFeature = this.props.analysis.multiChartMap[this.props.index];
+      selectedFeatureId = this.props.farmId;
+      selectedFeature = selectedFeatureId ? WindFarm.getWindFarmById(selectedFeatureId) : null;
       container = this.props.container;
-      button = <button type="button" id={'btn'+selectedFeature.properties.fid} value={selectedFeature.properties.fid} onClick={() => this.removeMultiChart(selectedFeature.properties.fid)}>-</button>;
+      button = <button type="button" onClick={this.removeMultiChart}>-</button>;
     }
 
-    const feature = selectedFeature;
-    const id = container;
-    const btn = button;
-    return feature.loading ? <LoadingElement feature={feature} /> : (
-      <BaseElement multiChart={this.props.multiChart}>
-        <div className='chart-title'>Details and Forecast for {feature.properties.label} {btn}
-        </div>
-        <div id={id} className={this.props.multiChart ? 'multi-forecast-chart':''}></div>
-      </BaseElement>
-    )
+    return selectedFeature.loading ? <LoadingElement label={selectedFeature.name} /> :
+      (
+        <BaseElement multiChart={this.props.multiChart}>
+          <div className='chart-title'>{selectedFeature.name} {button}
+          </div>
+          <div id={container} className={this.props.multiChart ? 'multi-forecast-chart':''}></div>
+        </BaseElement>
+      )
   }
 
   addMultiChart() {
-    this.props.onAddMultiChart(this.props.feature);
+    this.props.onAddMultiChart(this.props.selectedFarmId);
   }
-  removeMultiChart(fid){
-    this.props.onRemoveMultiChart(fid);
+
+  removeMultiChart(){
+    this.props.onRemoveMultiChart(this.props.farmId);
   }
 }
 

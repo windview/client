@@ -5,13 +5,20 @@ import './Slider.scss';
 import { mapStateToProps, mapDispatchToProps } from './selectors.js';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import CONFIG from '../../data/config';
+import Forecast from '../../data/forecast';
+
+// FIXME this will break the slider if the year of any timestamp is not
+// the current year, e.g. any forecast time period that wraps around New
+// Years day, or any data from a year in the past
+const DATE_FORMAT = 'H:mm M/D';
 
 const getSliderDisplayFromValue = (rawValue) => {
-  return moment.utc(rawValue).format('H:mm M/D');
+  return moment.utc(rawValue).format(DATE_FORMAT);
 }
 
 const getSliderValueFromDisplay = (displayValue) => {
-  return moment.utc(displayValue, 'H:mm M/D').valueOf();
+  return moment.utc(displayValue, DATE_FORMAT).valueOf();
 }
 
 export class Slider extends React.Component {
@@ -30,10 +37,10 @@ export class Slider extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if(prevProps.forecast == null && this.props.forecast !== null) {
-      this.renderSlider(this.props.forecast);
+    if(!prevProps.forecastLoaded && this.props.forecastLoaded) {
+      this.renderSlider();
       // Hacky for demo May 5 2017
-      this.sliderEl.noUiSlider.set(getSliderDisplayFromValue(window.fakeNow));
+      this.sliderEl.noUiSlider.set(getSliderDisplayFromValue(CONFIG.fakeNow));
       // End hack
     }
   }
@@ -49,7 +56,7 @@ export class Slider extends React.Component {
     const sliderObj = this.sliderEl.noUiSlider,
           currentVal = sliderObj.get(),
           timestamp = getSliderValueFromDisplay(currentVal),
-          interval = 1000*60*this.props.forecastMeta.interval,
+          interval = 1000*60*CONFIG.forecastInterval,
           startTs = sliderObj.options.range.min,
           endTs = sliderObj.options.range.max;
     let   newVal = '';
@@ -88,9 +95,9 @@ export class Slider extends React.Component {
 
   renderSlider(forecast) {
     const sliderEl = document.getElementById('slider'),
-          interval = this.props.forecastMeta.interval,
-          startTime = this.props.forecastMeta.dataStart,
-          endTime = this.props.forecastMeta.dataEnd,
+          interval = CONFIG.forecastInterval,
+          startTime = Forecast.getDataStart(),
+          endTime = Forecast.getDataEnd(),
           stepInterval = (1000*60*interval);
 
     this.sliderEl = sliderEl;
@@ -118,8 +125,13 @@ export class Slider extends React.Component {
         }
       },
       pips: {
-        mode: 'positions',
-        values: [4, 12, 22, 32, 42, 52, 62, 72, 82, 92],
+        // TODO to make this look good and fit the window is relative to the
+        // number of timesteps as well as the width of the screen. Should
+        // consider writing a dynamic property generator
+        mode: 'count',
+        values: '13',
+        density: '5',
+        stepped: true,
         format: {
           to: function(value) {
             return getSliderDisplayFromValue(value);

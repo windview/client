@@ -4,13 +4,18 @@
 // http://redux.js.org/docs/basics/Actions.html
 
 import * as t from './actionTypes';
-import API from './data/api';
 import Forecast from './data/forecast';
+import WindFarm from './data/windFarm';
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // POJO action creators
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+export const toggleAlert = (forecast, id) => ({
+  type: t.TOGGLE_ALERT,
+  forecast: forecast,
+  id: id
+});
 
 export const activateView = (viewName) => {
   return {
@@ -28,10 +33,8 @@ export const fetchForecastRequest = () => ({
   type: t.FETCH_FORECAST_REQUEST
 });
 
-export const fetchForecastSuccess = (data, meta) => ({
-  type: t.FETCH_FORECAST_SUCCESS,
-  data: data,
-  meta: meta
+export const fetchForecastSuccess = () => ({
+  type: t.FETCH_FORECAST_SUCCESS
 });
 
 export const fetchWindFarmsFail = (error) => ({
@@ -43,19 +46,34 @@ export const fetchWindFarmsRequest = () => ({
   type: t.FETCH_WIND_FARMS_REQUEST
 });
 
-export const fetchWindFarmsSuccess = (data) => ({
-  type: t.FETCH_WIND_FARMS_SUCCESS,
-  data: data
+export const fetchWindFarmsSuccess = () => ({
+  type: t.FETCH_WIND_FARMS_SUCCESS
 });
 
-export const mapMove = (features) => ({
+export const mapMove = (visibleFarmIds) => ({
   type: t.MAP_MOVE,
-  features: features
+  farmIds: visibleFarmIds
+});
+
+export const selectAggregation = (dataSource) => ({
+  type: t.SELECT_AGGREGATION,
+  dataSource: dataSource.value,
+  title: dataSource.label
 });
 
 export const selectFeature = (feature) => ({
   type: t.SELECT_FEATURE,
   feature: feature
+});
+
+export const selectFeaturesByGroup = (groupFarmIds) => ({
+  type: t.SELECT_FEATURES_BY_GROUP,
+  farmIds: groupFarmIds
+});
+
+export const selectFeaturesByPolygon = (selectedFarmIds) => ({
+  type: t.SELECT_FEATURES_BY_POLYGON,
+  farmIds: selectedFarmIds
 });
 
 export const selectStyle = (style) => ({
@@ -83,9 +101,10 @@ export const fetchForecast = (windFarms) => {
   return function(dispatch) {
     // notify the app that data is loading
     dispatch(fetchForecastRequest());
-    Forecast.fetchBatchForecast(windFarms.features, 24)
+
+    Forecast.fetchBatchForecast(windFarms, 24)
       .then((forecast) => {
-        dispatch(fetchForecastSuccess(forecast.data, forecast.meta));
+        dispatch(fetchForecastSuccess());
       })
       .catch((error) => {
         dispatch(fetchForecastFail(error))
@@ -99,20 +118,11 @@ export const fetchWindFarms = () => {
     dispatch(fetchWindFarmsRequest());
 
     // return a promise
-    return API.goFetch(`usgs_wind_farms.geo.json`)
-      .then(
-        response => response.json(),
-        error => {
-          // in case anyone is interested
-          dispatch(fetchWindFarmsFail(error));
-        }
-      )
-      .then(
-        json => {
-          dispatch(fetchWindFarmsSuccess(json));
-          dispatch(fetchForecast(json));
-        }
-      )
+    return WindFarm.fetchAllFarms()
+      .then((response) => {
+        dispatch(fetchWindFarmsSuccess());
+        dispatch(fetchForecast(response.data));
+      })
   }
 }
 
@@ -124,11 +134,11 @@ export const selectBotChart = (chartType) => ({
   type: t.SELECT_BOT_CHART,
   chartType: chartType
 });
-export const addMultiChart = (selectedFeature) => ({
+export const addMultiChart = (selectedFeatureId) => ({
   type: t.ADD_MULTI_CHART,
-  selectedFeature: selectedFeature
+  selectedFeatureId: selectedFeatureId
 });
-export const removeMultiChart = (fid) => ({
+export const removeMultiChart = (selectedFeatureId) => ({
   type: t.REMOVE_MULTI_CHART,
-  fid: fid
+  selectedFeatureId: selectedFeatureId
 });
