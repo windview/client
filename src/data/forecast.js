@@ -143,41 +143,45 @@ let _convertTimestampToDate  = function(ts) {
   *  - Converting timestamp string to Date object
   */
 let _formatProbabilisticForecastDataPoint = (dataPoint) => {
-  let prob50thQuantForecastMW = dataPoint[3] ? Math.round(dataPoint[3]*1000)/1000 : null,
-      ts     = _convertTimestampToDate(dataPoint[0]);
+  let best = Math.round(dataPoint[3]*1000)/1000;
 
   return {
     type: 'probabilistic',
-    timestamp: ts,
+    timestamp: _convertTimestampToDate(dataPoint[0]),
     prob1stQuantForecastMW: Math.round(dataPoint[1]*1000)/1000,
     prob25thQuantForecastMW: Math.round(dataPoint[2]*1000)/1000,
-    prob50thQuantForecastMW: prob50thQuantForecastMW,
+    prob50thQuantForecastMW: best,
     prob75thQuantForecastMW: Math.round(dataPoint[4]*1000)/1000,
     prob99thQuantForecastMW: Math.round(dataPoint[5]*1000)/1000,
-    bestForecastMW: prob50thQuantForecastMW,
+    bestForecastMW: best,
     actual: null,
-
     // ramping
-    rampForecastMW: prob50thQuantForecastMW,
+    rampForecastMW: best,
     ramp: false,
     rampSeverity: null,
   };
 }
 
 let _formatPointForecastDataPoint = (dataPoint) => {
-  let forecastValue = dataPoint[1] ? Math.round(dataPoint[1]*1000)/1000 : null,
-      ts     = _convertTimestampToDate(dataPoint[0]);
+  let best = Math.round(dataPoint[1]*1000)/1000;
 
   return {
     type: 'point',
-    timestamp: ts,
-    bestForecastMW: forecastValue,
+    timestamp: _convertTimestampToDate(dataPoint[0]),
+    bestForecastMW: best,
     actual: null,
 
     // ramping
-    rampForecastMW: forecastValue,
+    rampForecastMW: best,
     ramp: false,
     rampSeverity: null,
+
+    // null these out for consistency
+    prob1stQuantForecastMW: null,
+    prob25thQuantForecastMW: null,
+    prob50thQuantForecastMW: null,
+    prob75thQuantForecastMW: null,
+    prob99thQuantForecastMW: null,
   };
 }
 
