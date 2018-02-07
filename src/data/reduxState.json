@@ -19,8 +19,8 @@
     "dataSource": "visibleFarms",
     "chartTitle": "Currently Visible Wind Farms",
     "multiChartMap": [],
-    "visibleWindFarms": [],
-    "selectedWindFarmsByPolygon": [],
-    "selectedWindFarmsByGroup": []
+    "visibleFarmIds": [],
+    "selectedFarmIdsByPolygon": [],
+    "selectedFarmIdsByGroup": []
   }
 }

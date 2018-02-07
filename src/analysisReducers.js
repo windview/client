@@ -27,9 +27,9 @@ const defaultValue = {
   dataSource: 'visibleFarms',
   chartTitle: 'Currently Visible Wind Farms',
   multiChartMap: [],
-  visibleWindFarms: [],
-  selectedWindFarmsByPolygon: [],
-  selectedWindFarmsByGroup: []
+  visibleFarmIds: [],
+  selectedFarmIdsByPolygon: [],
+  selectedFarmIdsByGroup: []
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -41,7 +41,7 @@ export default (state=defaultValue, action) => {
     case t.MAP_MOVE:
       return {
         ...state,
-        visibleFarmIds: action.visibleFarmIds
+        visibleFarmIds: action.farmIds
       };
     case t.SELECT_AGGREGATION:
       return {
@@ -57,12 +57,12 @@ export default (state=defaultValue, action) => {
     case t.SELECT_FEATURES_BY_GROUP:
       return {
         ...state,
-        selectedWindFarmsByGroup: action.feature
+        selectedFarmIdsByGroup: action.farmIds
       };
     case t.SELECT_FEATURES_BY_POLYGON:
       return {
         ...state,
-        selectedWindFarmsByPolygon: action.feature
+        selectedFarmIdsByPolygon: action.farmIds
       };
     case t.SELECT_STYLE:
       return {

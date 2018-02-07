@@ -52,7 +52,7 @@ export const fetchWindFarmsSuccess = () => ({
 
 export const mapMove = (visibleFarmIds) => ({
   type: t.MAP_MOVE,
-  visibleFarmIds: visibleFarmIds
+  farmIds: visibleFarmIds
 });
 
 export const selectAggregation = (dataSource) => ({
@@ -66,14 +66,14 @@ export const selectFeature = (feature) => ({
   feature: feature
 });
 
-export const selectFeaturesByGroup = (feature) => ({
+export const selectFeaturesByGroup = (groupFarmIds) => ({
   type: t.SELECT_FEATURES_BY_GROUP,
-  feature: feature
+  farmIds: groupFarmIds
 });
 
-export const selectFeaturesByPolygon = (feature) => ({
+export const selectFeaturesByPolygon = (selectedFarmIds) => ({
   type: t.SELECT_FEATURES_BY_POLYGON,
-  feature: feature
+  farmIds: selectedFarmIds
 });
 
 export const selectStyle = (style) => ({
