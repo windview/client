@@ -1,37 +1,53 @@
 // analysisReducers.js
 
 import * as t from './actionTypes';
+import {now} from './data/config';
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Defaults
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// The current time rounded down to the closest 5 minute
-// interval in the past
-const getStartTime = () => {
-  let startTime = new Date();
-  let minute = startTime.getMinutes();
-  let remainder = minute%5;
-  minute -= remainder;
-  startTime.setMinutes(minute);
-  return startTime.getTime();
-}
-
 // TODO load some of this from configuration
 // analysis defaults
 const defaultValue = {
   selectedFeature: null,
-  selectedTimestamp: getStartTime(),
+  selectedTimestamp: now,
   selectedStyle: 'ramp',
   timezoom: 24,
   dataSource: 'visibleFarms',
   multiChartMap: [],
   visibleFarmIds: [],
   selectedFarmIdsByPolygon: [],
-  selectedFarmIdsByGroup: []
+  selectedFarmIdsByGroup: [],
+  aggregationGroups: [],
+  rampThresholds: [],
+  forecastHorizon: 24
 }
 
-let newMap;
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Helpers
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+/**
+  * Add or remove a single primitive value from an
+  * array of primitives maintaining function purity
+  */
+const addToArray = (arr, item) => {
+  let nu = [].push(...arr);
+  if(nu.indexOf(item) === -1) {
+    nu.push(item);
+  }
+  return nu;
+}
+const removeFromArray = (arr, item) => {
+  let nu = [].push(...arr);
+  const i = nu.indexOf(item);
+  if(i !== -1) {
+    nu.splice(i, 1);
+  }
+  return nu;
+}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // The reducers
@@ -39,10 +55,30 @@ let newMap;
 
 export default (state=defaultValue, action) => {
   switch(action.type) {
+    case t.ADD_AGGREGATION_GROUP:
+      return {
+        ...state,
+        aggregationGroups: addToArray(state.aggregationGroups, action.groupId)
+      };
+    case t.ADD_RAMP_THRESHOLD:
+      return {
+        ...state,
+        rampThresholds: addToArray(state.rampThresholds, action.rampId)
+      };
     case t.MAP_MOVE:
       return {
         ...state,
         visibleFarmIds: action.farmIds
+      };
+    case t.REMOVE_AGGREGATION_GROUP:
+      return {
+        ...state,
+        aggregationGroups: removeFromArray(state.aggregationGroups, action.groupId)
+      };
+    case t.REMOVE_RAMP_THRESHOLD:
+      return {
+        ...state,
+        rampThresholds: removeFromArray(state.rampThresholds, action.rampId)
       };
     case t.SELECT_AGGREGATION:
       return {
@@ -64,6 +100,11 @@ export default (state=defaultValue, action) => {
         ...state,
         selectedFarmIdsByPolygon: action.farmIds
       };
+    case t.SELECT_FORECAST_HORIZON:
+      return {
+        ...state,
+        forecastHorizon: action.forecastHorizon
+      };
     case t.SELECT_STYLE:
       return {
         ...state,
@@ -80,25 +121,14 @@ export default (state=defaultValue, action) => {
         timezoom: action.timezoom
       };
     case t.ADD_MULTI_CHART:
-      newMap = [];
-      newMap.push(...state.multiChartMap);
-      if(newMap.indexOf(action.selectedFeatureId) === -1) {
-        newMap.push(action.selectedFeatureId);
-      }
       return {
         ...state,
-        multiChartMap: newMap
+        multiChartMap: addToArray(state.multiChartMap, action.selectedFeatureId)
       };
     case t.REMOVE_MULTI_CHART:
-      newMap = [];
-      newMap.push(...state.multiChartMap);
-      const i = newMap.indexOf(action.selectedFeatureId);
-      if(i !== -1) {
-        newMap.splice(i, 1);
-      }
       return {
         ...state,
-        multiChartMap: newMap
+        multiChartMap: removeFromArray(state.multiChartMap, action.selectedFeatureId)
       };
     default:
       return state;

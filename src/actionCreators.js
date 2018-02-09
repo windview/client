@@ -24,6 +24,16 @@ export const activateView = (viewName) => {
   }
 }
 
+export const addAggregationGroup = (groupId) => ({
+  type: t.ADD_AGGREGATION_GROUP,
+  groupId
+})
+
+export const addRampThreshold = (rampId) => ({
+  type: t.ADD_RAMP_THRESHOLD,
+  rampId
+})
+
 export const fetchForecastFail = (error) => ({
   type: t.FETCH_FORECAST_FAIL,
   error: error
@@ -55,6 +65,16 @@ export const mapMove = (visibleFarmIds) => ({
   farmIds: visibleFarmIds
 });
 
+export const removeAggregationGroup = (groupId) => ({
+  type: t.REMOVE_AGGREGATION_GROUP,
+  groupId
+})
+
+export const removeRampThreshold = (rampId) => ({
+  type: t.REMOVE_RAMP_THRESHOLD,
+  rampId
+})
+
 export const selectAggregation = (dataSource) => ({
   type: t.SELECT_AGGREGATION,
   dataSource: dataSource.value,
@@ -75,6 +95,11 @@ export const selectFeaturesByPolygon = (selectedFarmIds) => ({
   type: t.SELECT_FEATURES_BY_POLYGON,
   farmIds: selectedFarmIds
 });
+
+export const selectForecastHorizon = (forecastHorizon) => ({
+  type: t.SELECT_FORECAST_HORIZON,
+  forecastHorizon
+})
 
 export const selectStyle = (style) => ({
   type: t.SELECT_STYLE,
