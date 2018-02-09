@@ -1,8 +1,10 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import './AppSettings.scss';
+import {mapStateToProps, mapDispatchToProps} from './selectors';
 
 
-export class AppSettings extends React.Component {
+class AppSettings extends React.Component {
 
   componentDidMount() {
     this.setTimeDropdown()
@@ -118,4 +120,4 @@ export class AppSettings extends React.Component {
   )}
 }
 
-export default AppSettings;
+export default connect(mapStateToProps, mapDispatchToProps)(AppSettings);
