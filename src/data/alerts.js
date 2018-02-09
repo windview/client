@@ -50,7 +50,7 @@ let calculateRampBins = forecastData => {
 
 let detectRampsInForecast = timeslices => {
   let previous = timeslices[0],
-      r = 5; // ramping threshold
+      r = 1; // ramping threshold
   timeslices.forEach((timeslice, i) => {
     const diff = timeslice.rampForecastMW - previous.rampForecastMW;
     // if the change in power is greater than r going up or down
