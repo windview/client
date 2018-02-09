@@ -13,7 +13,6 @@ import './Map.scss';
 import mapboxStyle from '../../styles/dark-matter-style';
 import { mapStateToProps, mapDispatchToProps } from './selectors';
 import WindFarm from '../../data/windFarm';
-import Config from '../../data/config';
 import Forecast from '../../data/forecast';
 import * as tlinesStyle from './mapStyles/transmissionLines';
 import * as wfActualStyle from './mapStyles/windFarmActual';
@@ -51,7 +50,6 @@ export class Map extends React.Component {
   }
 
   componentDidMount() {
-    Config.setGlobalFakeNow();
     // dispatch any actions configured in selectors
     this.props.onComponentDidMount();
   }

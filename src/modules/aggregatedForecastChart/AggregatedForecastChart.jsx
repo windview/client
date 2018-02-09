@@ -49,7 +49,7 @@ export class AggregatedForecastChart extends React.Component {
     const data = this.getChartData(aggData),
           forecast = data[0],
           actuals = data[1],
-          now = CONFIG.fakeNow;
+          now = CONFIG.now;
 
 
     let chart = Highcharts.chart('aggregated-chart', {

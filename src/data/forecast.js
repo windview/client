@@ -333,13 +333,6 @@ let getAggregatedForecast = (forecasts) => {
         }
       }
 
-      // actuals may or may not be present
-      // Hack for demo purposes
-      const fakeNow = CONFIG.fakeNow;
-      if(fakeNow && ts >= fakeNow) {
-        actual = undefined
-      }
-      // End hack
       return {
         actual: actual,
         forecastMW: forecastMW
