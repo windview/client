@@ -35,18 +35,21 @@ const defaultValue = {
   * array of primitives maintaining function purity
   */
 const addToArray = (arr, item) => {
-  let nu = [].push(...arr);
+
+  let nu = arr
   if(nu.indexOf(item) === -1) {
     nu.push(item);
   }
   return nu;
 }
 const removeFromArray = (arr, item) => {
-  let nu = [].push(...arr);
+
+  let nu = arr
   const i = nu.indexOf(item);
   if(i !== -1) {
     nu.splice(i, 1);
   }
+  console.log(nu)
   return nu;
 }
 
