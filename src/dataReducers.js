@@ -23,18 +23,6 @@ const defaultValue = {
 
 export default (state=defaultValue, action) => {
   switch(action.type) {
-    case t.TOGGLE_ALERT:
-        var newState = {...state}
-        newState.forecast.map((element) => {
-          element.alerts.rampBins.map((alert) => {
-            if (alert === action.id) {
-              alert.display = !alert.display
-            }
-            return alert;
-          });
-          return element;
-        });
-        return newState
     case t.FETCH_FORECAST_FAIL:
       return {
         ...state,

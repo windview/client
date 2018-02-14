@@ -10,6 +10,7 @@ import {now} from './data/config';
 // TODO load some of this from configuration
 // analysis defaults
 const defaultValue = {
+  selectedFarmDisplayAlerts: true,
   selectedFeature: null,
   selectedTimestamp: now,
   selectedStyle: 'ramp',
@@ -55,6 +56,11 @@ const removeFromArray = (arr, item) => {
 
 export default (state=defaultValue, action) => {
   switch(action.type) {
+    case t.SET_ALERT_DISPLAY:
+      return {
+        ...state,
+        selectedFarmDisplayAlerts: action.displayAlerts
+      };
     case t.ADD_AGGREGATION_GROUP:
       return {
         ...state,

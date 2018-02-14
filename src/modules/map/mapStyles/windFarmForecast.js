@@ -92,7 +92,7 @@ export const initializeStyle = (map, layerSource) => {
       'circle-color': 'hsla(53, 100%, 54%, 0.8)',
       'circle-opacity': 0.8
     },
-    filter: ["==", "rampSeverity", 1],
+    filter: ["all",["==", "rampSeverity", 1],["==", 'displayAlerts', true]],
     layout: {
       visibility: 'none'
     }
@@ -109,7 +109,7 @@ export const initializeStyle = (map, layerSource) => {
       'circle-color': '#B00',
       'circle-opacity': 0.8,
     },
-    filter: [">=", "rampSeverity", 2],
+    filter: ["all",[">=", "rampSeverity", 2],["==", 'displayAlerts', true]],
     layout: {
       visibility: 'none'
     }

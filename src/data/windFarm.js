@@ -137,11 +137,13 @@ let getGeoJsonForFarms = (selectedTimestamp) => {
             capacity_mw: farm.capacity_mw,
             disabled: false,
             suspectData: false,
-            selected: farm.selected
+            selected: farm.selected,
           }
 
       if(forecast) {
         forecastProps.maxRampSeverity = forecast.alerts.maxRampSeverity;
+        forecastProps.displayAlerts = forecast.alerts.displayAlerts;
+
         forecastForTime = Forecast.getForecastForTime(selectedTimestamp, forecast);
         if(forecastForTime) {
           Object.assign(forecastProps, {

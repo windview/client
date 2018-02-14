@@ -11,10 +11,9 @@ import WindFarm from './data/windFarm';
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // POJO action creators
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-export const toggleAlert = (forecast, id) => ({
-  type: t.TOGGLE_ALERT,
-  forecast: forecast,
-  id: id
+export const setAlertDisplay = (displayAlerts) => ({
+  type: t.SET_ALERT_DISPLAY,
+  displayAlerts: displayAlerts
 });
 
 export const activateView = (viewName) => {

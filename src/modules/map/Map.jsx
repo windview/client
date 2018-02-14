@@ -72,6 +72,11 @@ export class Map extends React.Component {
         this.bumpMapFarms();
       }
     }
+    if(prevProps.selectedFarmDisplayAlerts !== this.props.selectedFarmDisplayAlerts) {
+      if(this.props.windFarmsLoaded) {
+        this.bumpMapFarms();
+      }
+    }
     if(!prevProps.windFarmsLoaded && this.props.windFarmsLoaded && !this.map) {
       if(this.props.windFarmsLoadingError) {
         alert("Wind farm data could not be loaded");

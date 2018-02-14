@@ -11,33 +11,35 @@ import Forecast from '../../data/forecast';
 export class FarmDetail extends React.Component {
 
   // FIXME
-  handleAcknowledgeAlert(id) {
-    debugger;
-    let forecast = this.props.forecast;
-    this.props.onToggleAlert(forecast, id)
+  handleAcknowledgeAlert() {
+    let forecast = Forecast.getForecastForFarm(this.props.selectedFarmId)
+    forecast.alerts.displayAlerts = !forecast.alerts.displayAlerts
+    this.props.onToggleAlert(forecast.alerts.displayAlerts)
   }
 
   getDetailMarkup() {
-
     let prependRows = [],
+        alertButton = null,
         appendRows = [],
         farm = WindFarm.getWindFarmById(this.props.selectedFarmId),
         forecastData = Forecast.getForecastForFarm(farm.id);
 
     // FIXME make sure this is the right property accessor
     if(forecastData.alerts.hasRamp) {
-      prependRows = forecastData.alerts.rampBins.map((rampBin) => {
+      if (this.props.displayAlerts) {
+      forecastData.alerts.rampBins.map((rampBin) => {
+
         const startTime = moment.utc(rampBin.startTime).format('HH:mm UTC'),
               endTime = moment.utc(rampBin.endTime).format('HH:mm UTC'),
               severity = rampBin.severity > 1 ? "severe ramp" : "moderate ramp",
               className = rampBin.severity > 1 ? "severe" : "moderate";
 
-        if (farm.displayAlerts !== false) {
-          return <tr key={rampBin.startTime.getTime()} className={className}><td>RAMP ALERT</td><td className="right">A {severity} event is forecast starting at {startTime} and ending at {endTime}</td><td><button onClick={()=>this.handleAcknowledgeAlert(rampBin)} type="button">Toggle Alert</button></td></tr>;
-        }
-
-        return null;
+          prependRows.push(<tr key={rampBin.startTime.getTime()} className={className}><td>RAMP ALERT</td><td className="right">A {severity} event is forecast starting at {startTime} and ending at {endTime}</td></tr>)
       });
+    }
+
+      const buttonText = this.props.displayAlerts ? "Hide alerts for selected farm" : "Show alerts for selected farm"
+      alertButton = <button className={buttonText} onClick={()=>this.handleAcknowledgeAlert()} type="button">{buttonText}</button>
     }
 
     if(this.props.selectedTimestamp) {
@@ -63,6 +65,7 @@ export class FarmDetail extends React.Component {
     }
     const el = (
       <div>
+      {alertButton}
         <table className="map-popup">
           <tbody>
           {prependRows}
