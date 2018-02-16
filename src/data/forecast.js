@@ -374,6 +374,18 @@ let getForecastForTime = (timestampMS, forecast) => {
   return (forecast && timestampMS) ? forecast.dataByTime[timestampMS] : null;
 }
 
+let getAllAlerts = () => {
+  let forecasts = getForecasts();
+  let alertDisplayArray = [];
+
+    forecasts.map((forecast) => {
+      if (forecast.alerts.hasRamp) {
+        alertDisplayArray.push(forecast.farm_id)
+      }
+    })
+  return alertDisplayArray
+}
+
 module.exports = {
   fetchBatchForecast: fetchBatchForecast,
   fetchForecast: fetchForecast,
@@ -385,4 +397,5 @@ module.exports = {
   getForecastForFarm: getForecastForFarm,
   getForecastForTime: getForecastForTime,
   getMasterTimeline: getMasterTimeline,
+  getAllAlerts: getAllAlerts,
 }

@@ -11,9 +11,9 @@ import WindFarm from './data/windFarm';
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // POJO action creators
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-export const setAlertDisplay = (displayAlerts) => ({
+export const setAlertDisplay = (alertArray) => ({
   type: t.SET_ALERT_DISPLAY,
-  displayAlerts: displayAlerts
+  alertArray: alertArray
 });
 
 export const activateView = (viewName) => {
@@ -26,6 +26,11 @@ export const activateView = (viewName) => {
 export const addAggregationGroup = (groupId) => ({
   type: t.ADD_AGGREGATION_GROUP,
   groupId
+})
+
+export const addAlert = (farmId) => ({
+  type: t.ADD_ALERT,
+  farmId
 })
 
 export const addRampThreshold = (rampId) => ({
@@ -67,6 +72,11 @@ export const mapMove = (visibleFarmIds) => ({
 export const removeAggregationGroup = (groupId) => ({
   type: t.REMOVE_AGGREGATION_GROUP,
   groupId
+})
+
+export const removeAlert = (farmId) => ({
+  type: t.REMOVE_ALERT,
+  farmId
 })
 
 export const removeRampThreshold = (rampId) => ({

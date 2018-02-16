@@ -141,9 +141,9 @@ let getGeoJsonForFarms = (selectedTimestamp) => {
           }
 
       if(forecast) {
+        console.log('farm display',farm.displayAlert)
         forecastProps.maxRampSeverity = forecast.alerts.maxRampSeverity;
-        forecastProps.displayAlerts = forecast.alerts.displayAlerts;
-
+        forecastProps.displayAlert = farm.displayAlert
         forecastForTime = Forecast.getForecastForTime(selectedTimestamp, forecast);
         if(forecastForTime) {
           Object.assign(forecastProps, {
@@ -175,6 +175,22 @@ let setSelectedFarm = (farm) => {
   farm.selected = true;
 }
 
+let setAlertsDisplay = (array, id) => {
+
+  let alerts;
+  let farm = getWindFarmById(id)
+  if (array === undefined) {
+    alerts =  Forecast.getAllAlerts()
+  }
+  else {
+    alerts =  array
+  }
+  if (alerts.indexOf(id) === -1) {
+    farm.displayAlert = false
+  } else {
+    farm.displayAlert = true
+  }
+}
 
 module.exports = {
   getFarms: getFarms,
@@ -184,5 +200,6 @@ module.exports = {
   fetchBatchFarms: fetchBatchFarms,
   fetchAllFarms: fetchAllFarms,
   getGeoJsonForFarms: getGeoJsonForFarms,
-  setSelectedFarm: setSelectedFarm
+  setSelectedFarm: setSelectedFarm,
+  setAlertsDisplay: setAlertsDisplay
 }

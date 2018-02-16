@@ -16,6 +16,8 @@ export const FETCH_WIND_FARMS_SUCCESS = 'FETCH_WIND_FARMS_SUCCESS';
 
 // analysis actions
 export const SET_ALERT_DISPLAY = 'SET_ALERT_DISPLAY';
+export const ADD_ALERT = 'ADD_ALERT';
+export const REMOVE_ALERT = 'REMOVE_ALERT';
 export const MAP_MOVE = 'MAP_MOVE';
 export const SELECT_AGGREGATION = 'SELECT_AGGREGATION';
 export const ADD_AGGREGATION_GROUP = 'ADD_AGG_GROUP';

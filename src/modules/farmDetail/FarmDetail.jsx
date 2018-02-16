@@ -10,12 +10,41 @@ import Forecast from '../../data/forecast';
 
 export class FarmDetail extends React.Component {
 
-  // FIXME
-  handleAcknowledgeAlert() {
-    let forecast = Forecast.getForecastForFarm(this.props.selectedFarmId)
-    forecast.alerts.displayAlerts = !forecast.alerts.displayAlerts
-    this.props.onToggleAlert(forecast.alerts.displayAlerts)
+  componentDidUpdate(prevProps) {
+    if ((!prevProps.forecastLoaded) && (this.props.forecastLoaded)) {
+      this.setInitialAlertDisplay()
+    }
   }
+
+  setInitialAlertDisplay() {
+    let allAlerts = Forecast.getAllAlerts()
+    this.props.onAlertDisplay(allAlerts)
+
+    WindFarm.getFarms().forEach(f=>{f.displayAlert = true;});
+  }
+
+
+  // FIXME
+  handleAcknowledgeAlert(e) {
+    e.preventDefault();
+    const allAlerts = Forecast.getAllAlerts()
+    if (e.target.className === "hideAlert") {
+      this.props.onRemoveAlert(this.props.selectedFarmId)
+    }
+    if (e.target.className === "showAlert") {
+      this.props.onAddAlert(this.props.selectedFarmId)
+    }
+
+    WindFarm.setAlertsDisplay(this.props.alertArray, this.props.selectedFarmId)
+    //update the alerts array in "data/windFarm.js"
+
+    WindFarm.getGeoJsonForFarms(this.props.selectedTimestamp);
+    //trying to rerender what is seen on the map, but not working
+
+    this.getDetailMarkup();
+    //rerender the farm details with alerts/no alerts and correct button
+  }
+
 
   getDetailMarkup() {
     let prependRows = [],
@@ -23,10 +52,9 @@ export class FarmDetail extends React.Component {
         appendRows = [],
         farm = WindFarm.getWindFarmById(this.props.selectedFarmId),
         forecastData = Forecast.getForecastForFarm(farm.id);
-
     // FIXME make sure this is the right property accessor
     if(forecastData.alerts.hasRamp) {
-      if (this.props.displayAlerts) {
+      if (this.props.alertArray.indexOf(this.props.selectedFarmId) !== -1) {
       forecastData.alerts.rampBins.map((rampBin) => {
 
         const startTime = moment.utc(rampBin.startTime).format('HH:mm UTC'),
@@ -38,8 +66,9 @@ export class FarmDetail extends React.Component {
       });
     }
 
-      const buttonText = this.props.displayAlerts ? "Hide alerts for selected farm" : "Show alerts for selected farm"
-      alertButton = <button className={buttonText} onClick={()=>this.handleAcknowledgeAlert()} type="button">{buttonText}</button>
+      const buttonText = this.props.alertArray.indexOf(this.props.selectedFarmId) !== -1 ? "Hide alerts for selected farm" : "Show alerts for selected farm";
+      const buttonClass = this.props.alertArray.indexOf(this.props.selectedFarmId) !== -1 ? "hideAlert" : "showAlert";
+      alertButton = <button className={buttonClass} onClick={(e)=>this.handleAcknowledgeAlert(e)} type="button">{buttonText}</button>
     }
 
     if(this.props.selectedTimestamp) {
@@ -63,6 +92,9 @@ export class FarmDetail extends React.Component {
 
       }
     }
+
+    //FIXME when "el" is updated with new prepend and alertButton, "render()" does not update
+
     const el = (
       <div>
       {alertButton}
