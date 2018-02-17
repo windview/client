@@ -37,7 +37,8 @@ export class Map extends React.Component {
   // Triggers the MapBox map to redraw the WindFarm features
   bumpMapFarms() {
     if(this.map && this.map.getSource('windfarms') && this.props.windFarmsLoaded) {
-      let features = WindFarm.getGeoJsonForFarms(this.props.selectedTimestamp);
+      let features = WindFarm.getGeoJsonForFarms(this.props.selectedTimestamp, this.props.alertArray);
+
       this.map.getSource('windfarms').setData(features);
     }
   }
@@ -72,7 +73,7 @@ export class Map extends React.Component {
         this.bumpMapFarms();
       }
     }
-    if(prevProps.selectedFarmDisplayAlerts !== this.props.selectedFarmDisplayAlerts) {
+    if(prevProps.alertArray !== this.props.alertArray) {
       if(this.props.windFarmsLoaded) {
         this.bumpMapFarms();
       }
@@ -246,7 +247,7 @@ export class Map extends React.Component {
           url: process.env.TILE_SERVER_URL + "/osm-translines/metadata.json"
       });
 
-      let farmData = WindFarm.getGeoJsonForFarms();
+      let farmData = WindFarm.getGeoJsonForFarms(this.props.selectedTimestamp, this.props.alertArray);
       // TODO move app alerting to own module
       if(farmData.features.length === 0) {
         alert("Wind farm data could not be loaded.");

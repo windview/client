@@ -4,7 +4,7 @@ import * as actions from '../../actionCreators';
 
 export const mapStateToProps = (state, ownProps) => {
   return {
-    selectedFarmDisplayAlerts: state.analysis.selectedFarmDisplayAlerts,
+    alertArray: state.analysis.alertArray,
     selectedFarmId: state.analysis.selectedFeature,
     selectedStyle: state.analysis.selectedStyle,
     selectedTimestamp: state.analysis.selectedTimestamp,

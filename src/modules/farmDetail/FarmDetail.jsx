@@ -27,24 +27,13 @@ export class FarmDetail extends React.Component {
   // FIXME
   handleAcknowledgeAlert(e) {
     e.preventDefault();
-    const allAlerts = Forecast.getAllAlerts()
     if (e.target.className === "hideAlert") {
       this.props.onRemoveAlert(this.props.selectedFarmId)
     }
     if (e.target.className === "showAlert") {
       this.props.onAddAlert(this.props.selectedFarmId)
     }
-
-    WindFarm.setAlertsDisplay(this.props.alertArray, this.props.selectedFarmId)
-    //update the alerts array in "data/windFarm.js"
-
-    WindFarm.getGeoJsonForFarms(this.props.selectedTimestamp);
-    //trying to rerender what is seen on the map, but not working
-
-    this.getDetailMarkup();
-    //rerender the farm details with alerts/no alerts and correct button
   }
-
 
   getDetailMarkup() {
     let prependRows = [],
@@ -92,8 +81,6 @@ export class FarmDetail extends React.Component {
 
       }
     }
-
-    //FIXME when "el" is updated with new prepend and alertButton, "render()" does not update
 
     const el = (
       <div>

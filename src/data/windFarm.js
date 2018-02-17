@@ -123,9 +123,9 @@ let fetchAllFarms = () => {
   * - disabled
   * - suspectData
   */
-let getGeoJsonForFarms = (selectedTimestamp) => {
-
+let getGeoJsonForFarms = (selectedTimestamp, alertArray) => {
   let windFarms = getFarms();
+  setAlertsDisplay(windFarms, alertArray)
   let json = {
     "type": "FeatureCollection",
     "features": windFarms.map((farm) => {
@@ -141,9 +141,8 @@ let getGeoJsonForFarms = (selectedTimestamp) => {
           }
 
       if(forecast) {
-        console.log('farm display',farm.displayAlert)
         forecastProps.maxRampSeverity = forecast.alerts.maxRampSeverity;
-        forecastProps.displayAlert = farm.displayAlert
+        forecastProps.displayAlerts = farm.displayAlerts
         forecastForTime = Forecast.getForecastForTime(selectedTimestamp, forecast);
         if(forecastForTime) {
           Object.assign(forecastProps, {
@@ -175,21 +174,14 @@ let setSelectedFarm = (farm) => {
   farm.selected = true;
 }
 
-let setAlertsDisplay = (array, id) => {
+let setAlertsDisplay = (windFarms, array) => {
+  windFarms.forEach((farm) => {
+    farm.displayAlerts =  getAlerts(array).includes(farm.id) ? true : false;
+  })
+}
 
-  let alerts;
-  let farm = getWindFarmById(id)
-  if (array === undefined) {
-    alerts =  Forecast.getAllAlerts()
-  }
-  else {
-    alerts =  array
-  }
-  if (alerts.indexOf(id) === -1) {
-    farm.displayAlert = false
-  } else {
-    farm.displayAlert = true
-  }
+let getAlerts = (array) => {
+  return array ? array : Forecast.getAllAlerts()
 }
 
 module.exports = {
