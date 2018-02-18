@@ -346,13 +346,15 @@ let getAggregatedForecast = (forecasts) => {
     }
 
     aggregatedForecast.data.push({
+      type: "aggregate",
       timestamp: new Date(ts),
       forecastMW: Math.round(reducedVals.forecastMW*1000)/1000,
+      rampForecastMW: Math.round(reducedVals.forecastMW*1000)/1000,
       actual: Math.round(reducedVals.actual*1000)/1000,
       ramp: false,
       rampSeverity: null
-    })
-  })
+    });
+  });
 
   aggregatedForecast.data = Alerts.detectRampsInForecast(aggregatedForecast.data);
   aggregatedForecast.alerts = Alerts.getAlertsForForecast(aggregatedForecast);
