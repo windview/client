@@ -7,7 +7,20 @@ let maxFarms = 50,
     groupedFarmOpts = [
       {id: 'one', label: 'San Antonio', value: [37, 38, 39, 40, 41, 42, 43, 32, 33, 34, 35, 36]},
       {id: 'two', label: 'Houston', value: [16,17]},
-    ];
+    ],
+    rampThresholds = [{
+      id: 1,
+      level: 'low',
+      powerChange: 1,
+      timeSpan: 60,
+      displayColor: "yellow"
+    },{
+      id: 2,
+      level: 'critical',
+      powerChange: 2,
+      timeSpan: 120,
+      displayColor: "red"
+    }];
 
 
 function get(prop) {
@@ -72,5 +85,6 @@ module.exports = {
   now: now,
   getQueryParam: getQueryParam,
   groupedFarmOpts: groupedFarmOpts,
-  fakeActuals: fakeActuals
+  fakeActuals: fakeActuals,
+  rampThresholds: rampThresholds
 }
