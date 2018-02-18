@@ -143,18 +143,26 @@ let _convertTimestampToDate  = function(ts) {
   *  - Converting timestamp string to Date object
   */
 let _formatProbabilisticForecastDataPoint = (dataPoint) => {
-  let best = Math.round(dataPoint[3]*1000)/1000;
+  let best = Math.round(dataPoint[3]*1000)/1000,
+      timestamp = _convertTimestampToDate(dataPoint[0]),
+      actual = null;
+
+  if(CONFIG.fakeActuals) {
+    if(CONFIG.now > timestamp.getTime()) {
+      actual = best+.2;
+    }
+  }
 
   return {
     type: 'probabilistic',
-    timestamp: _convertTimestampToDate(dataPoint[0]),
+    timestamp: timestamp,
     prob1stQuantForecastMW: Math.round(dataPoint[1]*1000)/1000,
     prob25thQuantForecastMW: Math.round(dataPoint[2]*1000)/1000,
     prob50thQuantForecastMW: best,
     prob75thQuantForecastMW: Math.round(dataPoint[4]*1000)/1000,
     prob99thQuantForecastMW: Math.round(dataPoint[5]*1000)/1000,
     bestForecastMW: best,
-    actual: null,
+    actual: actual,
     // ramping
     rampForecastMW: best,
     ramp: false,
@@ -163,13 +171,18 @@ let _formatProbabilisticForecastDataPoint = (dataPoint) => {
 }
 
 let _formatPointForecastDataPoint = (dataPoint) => {
-  let best = Math.round(dataPoint[1]*1000)/1000;
+  let best = Math.round(dataPoint[1]*1000)/1000,
+      actual = null;
+
+  if(CONFIG.fakeActuals) {
+    actual = best;
+  }
 
   return {
     type: 'point',
     timestamp: _convertTimestampToDate(dataPoint[0]),
     bestForecastMW: best,
-    actual: null,
+    actual: actual,
 
     // ramping
     rampForecastMW: best,

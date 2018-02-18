@@ -2,6 +2,7 @@
 let maxFarms = 50,
     forecastInterval = 60,
     fakeNow = getFakeNow(),
+    fakeActuals = true,
     now = getGlobalNow(),
     groupedFarmOpts = [
       {id: 'one', label: 'San Antonio', value: [37, 38, 39, 40, 41, 42, 43, 32, 33, 34, 35, 36]},
@@ -71,4 +72,5 @@ module.exports = {
   now: now,
   getQueryParam: getQueryParam,
   groupedFarmOpts: groupedFarmOpts,
+  fakeActuals: fakeActuals
 }
