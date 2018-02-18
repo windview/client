@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import CONFIG from '../../data/config';
 import './AppSettings.scss';
 import {mapStateToProps, mapDispatchToProps} from './selectors';
 
@@ -30,13 +31,19 @@ class AppSettings extends React.Component {
       }
   }
 
-  render() {
-    const alertSettings =
-      <div id="alert-settings">
+  getAlertSettings() {
+    let rampConfigs = CONFIG.get('rampThresholds'),
+        conf,
+        settings = [];
+
+    // We hav a hard-coded ramp alert max of 3 thresholds
+    for(var i=0; i<3; i++) {
+      conf = rampConfigs[i];
+      settings.push(<div id="alert-settings" key={`ramp${i}`}>
         <form>
           <label>
             <span>Alert Level</span>
-            <select className="alert-severity" name="select" onChange={(e)=>this.handleChange(e)}>
+            <select className="alert-severity" name="select" value={conf ? conf.level : ''} onChange={(e)=>this.handleChange(e)}>
               <option value=""></option>
               <option value="low">Low</option>
               <option value="moderate">Moderate</option>
@@ -45,18 +52,18 @@ class AppSettings extends React.Component {
           </label><br/>
           <label>
             <span>Change in forecast power by</span>
-            <input type="text" name="power"/>
+            <input type="text" name="power" value={conf ? conf.powerChange : ''} onChange={(e)=>this.handleChange(e)}/>
             <span>MW</span>
           </label>
           <label>
             <span>over</span>
-            <input type="text" name="time"/>
+            <input type="text" name="time" value={conf ? conf.timeSpan : ''} onChange={(e)=>this.handleChange(e)}/>
             <span>minutes</span>
           </label><br/>
           <label>
             <span>Alert Color</span>
             <div>
-              <select className="alert-color" name="select" onChange={(e)=>this.handleChange(e)}>
+              <select className="alert-color" name="select" value={conf ? conf.displayColor : ''} onChange={(e)=>this.handleChange(e)}>
                 <option value=""></option>
                 <option value="yellow">Yellow</option>
                 <option value="orange">Orange</option>
@@ -65,7 +72,13 @@ class AppSettings extends React.Component {
             </div>
           </label>
         </form>
-      </div>
+      </div>);
+    }
+    return settings;
+  }
+
+  render() {
+    const alertSettings = this.getAlertSettings()
 
     const forecastTimeSettings =
       <div id="forecast-time-settings">
@@ -95,19 +108,8 @@ class AppSettings extends React.Component {
 
     return (
       <div className="settings-container">
-      <section id="app-settings">
-        Application Settings would be configurable here including things like
-        <ul>
-          <li>Default map area</li>
-          <li>Ramp event thresholds</li>
-          <li>Forecast preferences</li>
-          <li>... and so on</li>
-        </ul>
-      </section>
       <section>
-      <h3>Alerts</h3>
-        {alertSettings}
-        {alertSettings}
+      <h3>Ramp Alerts</h3>
         {alertSettings}
       </section>
       <section>
