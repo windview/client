@@ -7,8 +7,7 @@ export const mapStateToProps = (state, ownProps) => {
     selectedFarmId: state.analysis.selectedFeature,
     selectedTimestamp: state.analysis.selectedTimestamp,
     alertArray: state.analysis.alertArray,
-    forecastLoaded: state.data.forecastLoaded,
-    selectedTimestamp: state.analysis.selectedTimestamp,
+    forecastLoaded: state.data.forecastLoaded
   };
 };
 

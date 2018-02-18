@@ -108,6 +108,16 @@ let fetchAllFarms = () => {
     });
 }
 
+let getAlerts = (array) => {
+  return array ? array : Forecast.getAllAlerts()
+}
+
+let setAlertsDisplay = (windFarms, array) => {
+  windFarms.forEach((farm) => {
+    farm.displayAlerts =  getAlerts(array).includes(farm.id) ? true : false;
+  })
+}
+
 /**
   * Properties used by the map for styling include
   * - id
@@ -174,15 +184,6 @@ let setSelectedFarm = (farm) => {
   farm.selected = true;
 }
 
-let setAlertsDisplay = (windFarms, array) => {
-  windFarms.forEach((farm) => {
-    farm.displayAlerts =  getAlerts(array).includes(farm.id) ? true : false;
-  })
-}
-
-let getAlerts = (array) => {
-  return array ? array : Forecast.getAllAlerts()
-}
 
 module.exports = {
   getFarms: getFarms,

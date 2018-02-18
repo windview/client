@@ -44,14 +44,14 @@ export class FarmDetail extends React.Component {
     // FIXME make sure this is the right property accessor
     if(forecastData.alerts.hasRamp) {
       if (this.props.alertArray.indexOf(this.props.selectedFarmId) !== -1) {
-      forecastData.alerts.rampBins.map((rampBin) => {
-
-        const startTime = moment.utc(rampBin.startTime).format('HH:mm UTC'),
+        forecastData.alerts.rampBins.forEach((rampBin) => {
+          const startTime = moment.utc(rampBin.startTime).format('HH:mm UTC'),
               endTime = moment.utc(rampBin.endTime).format('HH:mm UTC'),
               severity = rampBin.severity > 1 ? "severe ramp" : "moderate ramp",
               className = rampBin.severity > 1 ? "severe" : "moderate";
 
-          prependRows.push(<tr key={rampBin.startTime.getTime()} className={className}><td>RAMP ALERT</td><td className="right">A {severity} event is forecast starting at {startTime} and ending at {endTime}</td></tr>)
+          prependRows.push(<tr key={rampBin.startTime.getTime()} className={className}><td>RAMP ALERT</td><td className="right">A {severity} event is forecast starting at {startTime} and ending at {endTime}</td></tr>);
+
       });
     }
 

@@ -380,11 +380,11 @@ let getAllAlerts = () => {
   let forecasts = getForecasts();
   let alertDisplayArray = [];
 
-    forecasts.map((forecast) => {
-      if (forecast.alerts.hasRamp) {
-        alertDisplayArray.push(forecast.farm_id)
-      }
-    })
+  forecasts.forEach((forecast) => {
+    if (forecast.alerts.hasRamp) {
+      alertDisplayArray.push(forecast.farm_id)
+    }
+  });
   return alertDisplayArray
 }
 
