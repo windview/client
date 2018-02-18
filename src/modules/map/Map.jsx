@@ -10,7 +10,7 @@ import windFarmSelectedIcon from '../../images/windfarm-selected.png';
 import windFarmSuspectDataIcon from '../../images/windfarm-suspect-data.png'
 import windFarmSelectedSuspsectDataIcon from '../../images/windfarm-selected-suspect-data.png'
 import './Map.scss';
-import mapboxStyle from '../../styles/dark-matter-style';
+//import mapboxStyle from '../../styles/dark-matter-style';
 import { mapStateToProps, mapDispatchToProps } from './selectors';
 import WindFarm from '../../data/windFarm';
 import Forecast from '../../data/forecast';
@@ -189,7 +189,7 @@ export class Map extends React.Component {
     //Create map
     let map = new mapboxgl.Map({
       container: 'wind-map', // container id
-      style: mapboxStyle,
+      style: 'https://free.tilehosting.com/styles/darkmatter/style.json?key=o6iGgsKYC7Ry7Y0VhZwY', //mapboxStyle,
       center: [-99.902, 31.969], // starting position
       zoom: 4.5, // starting zoom
       hash: false
