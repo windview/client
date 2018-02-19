@@ -10,7 +10,6 @@ import {now} from './data/config';
 // TODO load some of this from configuration
 // analysis defaults
 const defaultValue = {
-  // selectedFarmDisplayAlerts: true,
   alertArray: [],
   selectedFeature: null,
   selectedTimestamp: now,
