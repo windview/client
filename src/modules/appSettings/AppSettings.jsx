@@ -12,16 +12,10 @@ class AppSettings extends React.Component {
   }
 
   handleChange(e) {
-    var type = `select.${e.target.className}`
-    var typeOption = `select.${e.target.className} option`
-    $(typeOption).attr('disabled', false);
-    $(type).each(function() {
-      var val = $(this).find('option:selected').val();
-      if (!val) return;
-      $(typeOption).filter(function() {
-        return $(this).val() === val;
-      }).attr('disabled', 'disabled');
-    });
+    let id = e.target.id,
+        val = e.target.value;
+
+    console.log(`${id} was changed to ${val}`);
   }
 
   setTimeDropdown() {
@@ -39,11 +33,11 @@ class AppSettings extends React.Component {
     // We hav a hard-coded ramp alert max of 3 thresholds
     for(var i=0; i<3; i++) {
       conf = rampConfigs[i];
-      settings.push(<div id="alert-settings" key={`ramp${i}`}>
+      settings.push(<div id="alert-settings" key={`ramp-${i}`}>
         <form>
           <label>
             <span>Alert Level</span>
-            <select className="alert-severity" name="select" value={conf ? conf.level : ''} onChange={(e)=>this.handleChange(e)}>
+            <select id={`ramp-${i}-severity`} className="alert-severity" name="select" value={conf ? conf.level : ''} onChange={(e)=>this.handleChange(e)}>
               <option value=""></option>
               <option value="low">Low</option>
               <option value="moderate">Moderate</option>
@@ -52,18 +46,18 @@ class AppSettings extends React.Component {
           </label><br/>
           <label>
             <span>Change in forecast power by</span>
-            <input type="text" name="power" value={conf ? conf.powerChange : ''} onChange={(e)=>this.handleChange(e)}/>
+            <input id={`ramp-${i}-power`} type="text" name="power" value={conf ? conf.powerChange : ''} onChange={(e)=>this.handleChange(e)}/>
             <span>MW</span>
           </label>
           <label>
             <span>over</span>
-            <input type="text" name="time" value={conf ? conf.timeSpan : ''} onChange={(e)=>this.handleChange(e)}/>
+            <input id={`ramp-${i}-time`} type="text" name="time" value={conf ? conf.timeSpan : ''} onChange={(e)=>this.handleChange(e)}/>
             <span>minutes</span>
           </label><br/>
           <label>
             <span>Alert Color</span>
             <div>
-              <select className="alert-color" name="select" value={conf ? conf.displayColor : ''} onChange={(e)=>this.handleChange(e)}>
+              <select id={`ramp-${i}-color`} className="alert-color" name="select" value={conf ? conf.displayColor : ''} onChange={(e)=>this.handleChange(e)}>
                 <option value=""></option>
                 <option value="yellow">Yellow</option>
                 <option value="orange">Orange</option>
