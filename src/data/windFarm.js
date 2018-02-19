@@ -43,8 +43,8 @@ let fetchFarm = (farmId) => {
       }
     )
     .then(json => {
-      windFarms.push(json);
-      return json;
+      windFarms.push(json.farm);
+      return json.farm;
     })
 }
 
@@ -108,16 +108,6 @@ let fetchAllFarms = () => {
     });
 }
 
-let getAlerts = (array) => {
-  return array ? array : Forecast.getAllAlerts()
-}
-
-let setAlertsDisplay = (windFarms, array) => {
-  windFarms.forEach((farm) => {
-    farm.displayAlerts =  getAlerts(array).includes(farm.id) ? true : false;
-  })
-}
-
 /**
   * Properties used by the map for styling include
   * - id
@@ -135,7 +125,6 @@ let setAlertsDisplay = (windFarms, array) => {
   */
 let getGeoJsonForFarms = (selectedTimestamp, alertArray) => {
   let windFarms = getFarms();
-  setAlertsDisplay(windFarms, alertArray)
   let json = {
     "type": "FeatureCollection",
     "features": windFarms.map((farm) => {
@@ -152,7 +141,7 @@ let getGeoJsonForFarms = (selectedTimestamp, alertArray) => {
 
       if(forecast) {
         forecastProps.maxRampSeverity = forecast.alerts.maxRampSeverity;
-        forecastProps.displayAlerts = farm.displayAlerts
+        forecastProps.displayAlerts = alertArray.includes(farm.id);
         forecastForTime = Forecast.getForecastForTime(selectedTimestamp, forecast);
         if(forecastForTime) {
           Object.assign(forecastProps, {
@@ -193,6 +182,5 @@ module.exports = {
   fetchBatchFarms: fetchBatchFarms,
   fetchAllFarms: fetchAllFarms,
   getGeoJsonForFarms: getGeoJsonForFarms,
-  setSelectedFarm: setSelectedFarm,
-  setAlertsDisplay: setAlertsDisplay
+  setSelectedFarm: setSelectedFarm
 }

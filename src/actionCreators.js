@@ -6,6 +6,7 @@
 import * as t from './actionTypes';
 import Forecast from './data/forecast';
 import WindFarm from './data/windFarm';
+import CONFIG from './data/config';
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -151,12 +152,23 @@ export const fetchWindFarms = () => {
     // notify app that data is loading
     dispatch(fetchWindFarmsRequest());
 
-    // return a promise
-    return WindFarm.fetchAllFarms()
-      .then((response) => {
-        dispatch(fetchWindFarmsSuccess());
-        dispatch(fetchForecast(response.data));
-      })
+    let farmIds = CONFIG.get("farmIds");
+    if(typeof farmIds.forEach === 'function') {
+      return WindFarm.fetchBatchFarms(farmIds)
+        .then((response) => {
+          console.log(response);
+          dispatch(fetchWindFarmsSuccess());
+          dispatch(fetchForecast(response.data));
+        })
+    } else {
+      // return a promise
+      return WindFarm.fetchAllFarms()
+        .then((response) => {
+          console.log(response);
+          dispatch(fetchWindFarmsSuccess());
+          dispatch(fetchForecast(response.data));
+        })
+    }
   }
 }
 
