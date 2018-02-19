@@ -12,7 +12,8 @@ export const mapStateToProps = (state, ownProps) => {
   return {
     rampThresholds: state.analysis.rampThresholds,
     forecastHorizon: state.analysis.forecastHorizon,
-    aggregationGroups: state.analysis.aggregationGroups
+    aggregationGroups: state.analysis.aggregationGroups,
+    activePane: state.nav.activePane
   }
 }
 

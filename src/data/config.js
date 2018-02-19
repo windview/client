@@ -1,6 +1,7 @@
 
 let maxFarms = 50,
     forecastInterval = 60,
+    forecastHorizon = 1,
     fakeNow = getFakeNow(),
     fakeActuals = true,
     now = getGlobalNow(),
@@ -9,17 +10,15 @@ let maxFarms = 50,
       {id: 'two', label: 'Houston', value: [16,17]},
     ],
     rampThresholds = [{
-      id: 1,
       level: 'low',
       powerChange: 1,
       timeSpan: 60,
-      displayColor: "yellow"
+      color: "yellow"
     },{
-      id: 2,
       level: 'critical',
       powerChange: 2,
       timeSpan: 120,
-      displayColor: "red"
+      color: "red"
     }];
 
 
@@ -82,6 +81,7 @@ module.exports = {
   set: set,
   maxFarms: maxFarms,
   forecastInterval: forecastInterval,
+  forecastHorizon: forecastHorizon,
   now: now,
   getQueryParam: getQueryParam,
   groupedFarmOpts: groupedFarmOpts,
