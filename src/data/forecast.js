@@ -72,6 +72,15 @@ let getMasterTimeline = forecasts => {
   return masterTimeline;
 }
 
+let resetAlerts = () => {
+  let forecasts = getForecasts();
+  forecasts.forEach(f=>{
+    f = Alerts.clearAlerts(f);
+    f.data = Alerts.detectRampsInForecast(f.data);
+    f.alerts = Alerts.getAlertsForForecast(f);
+  });
+}
+
 /**
   * Calculates a single timeline for all of the provided forecasts then
   * applies that timeline to the data. The end result is that all of the
@@ -391,4 +400,5 @@ module.exports = {
   getForecastForTime: getForecastForTime,
   getMasterTimeline: getMasterTimeline,
   getAllAlerts: getAllAlerts,
+  resetAlerts: resetAlerts
 }

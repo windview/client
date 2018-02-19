@@ -1,6 +1,15 @@
 import CONFIG from './config';
 
 
+let clearAlerts = forecast => {
+  delete forecast.alerts;
+  forecast.data.forEach(d=>{
+    d.ramp = false;
+    d.rampSeverity = null;
+  });
+  return forecast;
+}
+
 /* Calculate the start and end of each ramp event as
  * well as any interesting details related to each. This
  * method is quite leaky as it assumes a good bit of knowledge
@@ -151,6 +160,7 @@ let getAlertsForForecast = forecastData => {
 
 module.exports = {
   calculateRampBins: calculateRampBins,
+  clearAlerts: clearAlerts,
   detectRampsInForecast: detectRampsInForecast,
   getAlertsForForecast: getAlertsForForecast,
   getFirstRamp: getFirstRamp,
