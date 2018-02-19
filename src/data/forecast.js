@@ -72,23 +72,6 @@ let getMasterTimeline = forecasts => {
   return masterTimeline;
 }
 
-let _applyTimezoom = (timezoom, data) => {
-  //Calculate data start and data end times
-  let dataStart = data[0].timestamp.getTime(),
-      dataEnd;
-  switch(timezoom) {
-    case '8':
-      dataEnd = dataStart + 1000*60*60*8;
-      break;
-    case '16':
-      dataEnd = dataStart + 1000*60*60*16;
-      break;
-    default:
-      dataEnd = data[data.length-1].timestamp.getTime();
-  }
-  return data.filter(d=>{ return d.timestamp.getTime() <= dataEnd; });
-}
-
 /**
   * Calculates a single timeline for all of the provided forecasts then
   * applies that timeline to the data. The end result is that all of the
@@ -223,24 +206,19 @@ let _getBatchForecastMeta = (forecasts) => {
   }
 }
 
-let _postProcessForecastData = (forecast, timezoom) => {
+let _postProcessForecastData = (forecast) => {
   let formattedData = _formatForecastData(forecast);
-  formattedData = _applyTimezoom(timezoom, formattedData);
   forecast.data = Alerts.detectRampsInForecast(formattedData);
   forecast.alerts = Alerts.getAlertsForForecast(forecast);
-  // FIXME just trying this out quick and dirty
-  let timeslicesByTimstamp = {};
-  forecast.data.forEach(dataSlice=>{timeslicesByTimstamp[dataSlice.timestamp.getTime()] = dataSlice});
-  forecast.dataByTime = timeslicesByTimstamp;
   return forecast;
 }
 
-/** Loads the forecast for a given farm out to a given range (timezoom) and
-  * post processes that data to detect alerts and other items of note.
+/** Loads the forecast for a given farm and post processes that data to
+  * detect alerts and other items of note.
   *
   * @return a fetch promise
   */
-let fetchForecast = (farm, timezoom) => {
+let fetchForecast = (farm) => {
   let forecasts = getForecasts();
   return API.goFetch(`/forecasts/latest?type=probabilistic&farm_id=${farm.id}`)
     .then(
@@ -255,7 +233,7 @@ let fetchForecast = (farm, timezoom) => {
     )
     .then(
       data => {
-        let forecastData = _postProcessForecastData(data.forecast, timezoom);
+        let forecastData = _postProcessForecastData(data.forecast);
         farm.forecastId = forecastData.id;
         forecasts.push(forecastData);
 
@@ -274,13 +252,13 @@ let fetchForecast = (farm, timezoom) => {
   * @return a JS Promise that will fulfill when all forecasts for all farms
   * are fetch-resolved
   */
-let fetchBatchForecast = function(windFarms, timezoom) {
+let fetchBatchForecast = function(windFarms) {
   let queueCount = windFarms.length,
       _self = this;
 
   return new Promise((resolve, reject) => {
     windFarms.forEach((farm) => {
-      fetchForecast(farm, timezoom)
+      fetchForecast(farm)
         .catch(error => {
           console.log(error);
           farm.disabled = true;
@@ -386,7 +364,7 @@ let getForecastForFarm = (fid) => {
 }
 
 let getForecastForTime = (timestampMS, forecast) => {
-  return (forecast && timestampMS) ? forecast.dataByTime[timestampMS] : null;
+  return (forecast && timestampMS) ? forecast.data.find(f=>f.timestamp.getTime()===timestampMS) : null;
 }
 
 let getAllAlerts = () => {
