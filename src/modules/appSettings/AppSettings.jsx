@@ -12,7 +12,7 @@ class AppSettings extends React.Component {
   // of this component for driving the UI. We have a pre-determined max of
   // 3 so we just create 3 blank backfilling properties from CONFIG where
   // present
-  getRampConfigs() {
+  getRampStateFromConfig() {
     let preConfigured = CONFIG.get('rampThresholds'),
         empty = {
           level: '',
@@ -29,9 +29,17 @@ class AppSettings extends React.Component {
     });
   }
 
+  getRampConfigFromState() {
+    let userConf = this.state.rampConfigs;
+
+    return userConf.filter(c=>{
+      return c.level !== '' && c.powerChange !== '' && c.timeSpan !== '' && c.color !== '';
+    });
+  }
+
   getStateFromConfig() {
 
-    let rampConfigs = this.getRampConfigs();
+    let rampConfigs = this.getRampStateFromConfig();
 
     this.setState({
       rampConfigs: rampConfigs,
@@ -41,7 +49,7 @@ class AppSettings extends React.Component {
   }
 
   getConfigFromState() {
-    CONFIG.set('rampThresholds', this.state.rampConfigs);
+    CONFIG.set('rampThresholds', this.getRampConfigFromState());
     CONFIG.set('forecastHorizon', this.state.forecastHorizon)
   }
 
@@ -58,7 +66,7 @@ class AppSettings extends React.Component {
     } else if(this.props.activePane === "settings" && nextProps.activePane !== "settings") {
       // settings pane is being navigated away from... apply changes to config
       this.getConfigFromState();
-
+      Forecast.resetAlerts();
     }
   }
 
