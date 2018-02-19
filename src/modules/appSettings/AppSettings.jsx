@@ -86,7 +86,13 @@ class AppSettings extends React.Component {
   getAlertSettings() {
 
     let rampConfigs = this.state.rampConfigs,
+        forecastInterval = CONFIG.get('forecastInterval'),
+        intervalOpts,
         settings;
+
+    intervalOpts = [1,2,3,4].map(i=>{
+      return <option key={`interval-opt-${i*forecastInterval}`} value={i*forecastInterval}>{i*forecastInterval}</option>
+    });
 
     settings = rampConfigs.map(conf=>{
       return <div id="alert-settings" key={`ramp-${conf.id}`}>
@@ -107,19 +113,20 @@ class AppSettings extends React.Component {
           </label>
           <label>
             <span>over</span>
-            <input id={`ramp-${conf.id}-timeSpan`} type="text" name="time" value={conf.timeSpan} onChange={(e)=>this.handleChange(e)}/>
+            <select id={`ramp-${conf.id}-timeSpan`} name="time" value={conf.timeSpan} onChange={(e)=>this.handleChange(e)}>
+              <option value=""></option>
+              {intervalOpts}
+            </select>
             <span>minutes</span>
           </label><br/>
           <label>
             <span>Alert Color</span>
-            <div>
-              <select id={`ramp-${conf.id}-color`} className="alert-color" name="select" value={conf.color} onChange={(e)=>this.handleChange(e)}>
-                <option value=""></option>
-                <option value="yellow">Yellow</option>
-                <option value="orange">Orange</option>
-                <option value="red">Red</option>
-              </select>
-            </div>
+            <select id={`ramp-${conf.id}-color`} className="alert-color" name="select" value={conf.color} onChange={(e)=>this.handleChange(e)}>
+              <option value=""></option>
+              <option value="yellow">Yellow</option>
+              <option value="orange">Orange</option>
+              <option value="red">Red</option>
+            </select>
           </label>
         </form>
       </div>
