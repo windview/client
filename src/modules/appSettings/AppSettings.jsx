@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import CONFIG from '../../data/config';
+import Forecast from '../../data/forecast';
 import './AppSettings.scss';
 import {mapStateToProps, mapDispatchToProps} from './selectors';
 
@@ -57,6 +58,7 @@ class AppSettings extends React.Component {
     } else if(this.props.activePane === "settings" && nextProps.activePane !== "settings") {
       // settings pane is being navigated away from... apply changes to config
       this.getConfigFromState();
+
     }
   }
 
@@ -101,9 +103,9 @@ class AppSettings extends React.Component {
             <span>Alert Level</span>
             <select id={`ramp-${conf.id}-level`} className="alert-severity" name="select" value={conf.level} onChange={(e)=>this.handleChange(e)}>
               <option value=""></option>
-              <option value="low">Low</option>
-              <option value="moderate">Moderate</option>
-              <option value="critical">Critical</option>
+              <option value="1">Low</option>
+              <option value="2">Moderate</option>
+              <option value="3">Critical</option>
             </select>
           </label><br/>
           <label>

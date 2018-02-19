@@ -10,12 +10,12 @@ let maxFarms = 50,
       {id: 'two', label: 'Houston', value: [16,17]},
     ],
     rampThresholds = [{
-      level: 'low',
+      level: 1,
       powerChange: 1,
       timeSpan: 60,
       color: "yellow"
     },{
-      level: 'critical',
+      level: 3,
       powerChange: 2,
       timeSpan: 120,
       color: "red"

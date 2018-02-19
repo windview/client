@@ -1,3 +1,4 @@
+import CONFIG from './config';
 
 
 /* Calculate the start and end of each ramp event as
@@ -47,35 +48,77 @@ let calculateRampBins = forecastData => {
   return rampBins;
 }
 
+/** Calculates if each timeslice represents a ramp of some severity
+  * using configured ramp thresholds:
+  rampThresholds = [{
+    level: 'low',
+    powerChange: 1,
+    timeSpan: 60,
+    color: "yellow"
+  },{
+    level: 'critical',
+    powerChange: 2,
+    timeSpan: 120,
+    color: "red"
+  }];
+  */
 let detectRampsInForecast = timeslices => {
-  let previous = timeslices[0],
-      r = 1; // ramping threshold
-  timeslices.forEach((timeslice, i) => {
-    const diff = timeslice.rampForecastMW - previous.rampForecastMW;
-    // if the change in power is greater than r going up or down
-    if(Math.abs(diff) >= r) {
-      timeslice.ramp = true;
-      // two ramps in a row constitute a severe ramping event
-      timeslice.rampSeverity = previous.ramp ? 2 : 1;
-      // the previous timeslice represents the beginning of the ramp event
-      // Make sure and set this after the above to avoid false severity
-      previous.ramp = true;
-    }
-    previous = timeslice;
+
+  let rampConfigs = CONFIG.get('rampThresholds'),
+      previous, // a placeholder for the comparison timeslice
+      level, // the severity of the ramp in question
+      time, // time between time slices used to determine a ramp
+      distance, // difference in index # of time slices used to determine a ramp
+      threshold, // ramping threshold
+      diff; // calculated difference in forecast power
+
+  // Assuming that ramp configs go from less severe to more severe. This
+  // means we allow ourselves to overwrite ramps from previous iterations
+  // in subsequent iterations since it is logical that a severe alert will
+  // also trigger a mild alert, but the severe alert is the one we keep
+  rampConfigs.forEach(conf=>{
+    level = conf.level;
+    time = conf.timeSpan;
+    // valid config time will always be evenly divisible by forecastInterval
+    distance = Math.floor(time/CONFIG.get('forecastInterval'));
+    threshold = conf.powerChange;
+
+    timeslices.forEach((timeslice, i) => {
+      // Basically ignore the first n records where a valid comparison is not
+      // possible yet depending on the distance between relevant slices
+      if(i-distance > -1) {
+        previous = timeslices[i-distance];
+        diff = timeslice.rampForecastMW - previous.rampForecastMW;
+        // if the change in power is greater than r going up or down
+        if(Math.abs(diff) >= threshold) {
+          timeslice.ramp = true;
+          timeslice.rampSeverity = level;
+          // the previous timeslice represents the beginning of the ramp event
+          previous.ramp = true;
+        }
+      }
+    });
   });
+
   return timeslices;
 }
 
+// Does no calculations, simply returns the first forecast
+// data slice with ramp=true
 let getFirstRamp = forecastData => {
   forecastData = forecastData.data;
   return forecastData.find((timeslice)=>{ return timeslice.ramp === true; });
 }
 
+// Does no calculations, simply returns the timestamp of the first
+// forecast data slice with ramp=true
 let getFirstRampStart = forecastData => {
   const firstRamp = getFirstRamp(forecastData);
   return firstRamp ? firstRamp.timestamp : null;
 }
 
+// Does no calculations, simply returns the max severity of all previously
+// calculated ramps in this forecast
 let getMaxRampSeverity = forecastData => {
   forecastData = forecastData.data;
   let maxSeverity = 0,
@@ -86,11 +129,15 @@ let getMaxRampSeverity = forecastData => {
   return maxSeverity;
 };
 
+// Does no calculations, simply looks if any time slices have ramp=true
 let hasRamp = forecastData => {
   forecastData = forecastData.data;
   return forecastData.find((timeslice)=>{ return timeslice.ramp; }) !== undefined;
 }
 
+// Collects alert data into object structure that can be used for display
+// at various points in the app. Does some calculations via invoking
+// calculateRampBins
 let getAlertsForForecast = forecastData => {
   let alerts = {
     rampStart: getFirstRampStart(forecastData),
