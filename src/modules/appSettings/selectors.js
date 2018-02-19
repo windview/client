@@ -5,7 +5,8 @@ import {
   removeAggregationGroup,
   addRampThreshold,
   removeRampThreshold,
-  selectForecastHorizon
+  selectForecastHorizon,
+  setAlertDisplay
 } from '../../actionCreators';
 
 export const mapStateToProps = (state, ownProps) => {
@@ -24,6 +25,9 @@ export const mapDispatchToProps = (dispatch) => {
     },
     onAddRampThreshold: (rampId) => {
       dispatch(addRampThreshold(rampId));
+    },
+    onAlertDisplay: (alertArray) => {
+      dispatch(setAlertDisplay(alertArray));
     },
     onRemoveAggregationGroup: (groupId) => {
       dispatch(removeAggregationGroup(groupId));

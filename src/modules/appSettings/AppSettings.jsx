@@ -31,16 +31,13 @@ class AppSettings extends React.Component {
 
   getRampConfigFromState() {
     let userConf = this.state.rampConfigs;
-
     return userConf.filter(c=>{
       return c.level !== '' && c.powerChange !== '' && c.timeSpan !== '' && c.color !== '';
     });
   }
 
   getStateFromConfig() {
-
     let rampConfigs = this.getRampStateFromConfig();
-
     this.setState({
       rampConfigs: rampConfigs,
       forecastHorizon: CONFIG.get('forecastHorizon'),
@@ -62,11 +59,11 @@ class AppSettings extends React.Component {
     if(this.props.activePane !== "settings" && nextProps.activePane === "settings") {
       // settings pane is being displayed, init stuff
       this.getStateFromConfig();
-
     } else if(this.props.activePane === "settings" && nextProps.activePane !== "settings") {
       // settings pane is being navigated away from... apply changes to config
       this.getConfigFromState();
       Forecast.resetAlerts();
+      this.props.onAlertDisplay(Forecast.getAllAlerts());
     }
   }
 
