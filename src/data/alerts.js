@@ -28,7 +28,10 @@ let calculateRampBins = forecastData => {
   // Old school for loop so we can adjust i from within the loop
   for( let i=0; i<forecastData.length; i++ ) {
     let rampBin = null,
-        timeslice = forecastData[i];
+        timeslice = forecastData[i],
+        direction,
+        increment;
+
     if(timeslice.ramp) {
       // define the base rampBin object. We know that
       // the first ramp timeslice is the beginning of
@@ -37,20 +40,31 @@ let calculateRampBins = forecastData => {
         startTime: timeslice.timestamp,
         endTime: null,
         severity: 0,
+        direction: null,
         increments: [0],
       }
       // now the sneaky part... hijack the value for i and loop through subsequent
       // timeslices to find each increment and eventualy the end of the ramp event
       let nextTimeslice = forecastData[++i];
       while(nextTimeslice && nextTimeslice.ramp) {
-        // TODO If the ramp changes direction between consecutive slices, treat
-        // that as a new rampBin
-        rampBin.increments.push(nextTimeslice.rampForecastMW - timeslice.rampForecastMW);
-        rampBin.severity = rampBin.severity < nextTimeslice.rampSeverity ? nextTimeslice.rampSeverity : rampBin.severity;
-        timeslice = nextTimeslice;
-        nextTimeslice = forecastData[++i];
+        increment = nextTimeslice.rampForecastMW - timeslice.rampForecastMW;
+        direction = increment > 0 ? 'up' : 'down';
+        // Assign direction if it wasn't previously established
+        if(!rampBin.direction) rampBin.direction = direction;
+        // Ramp continues in the same direction
+        if(rampBin.direction === direction) {
+          rampBin.severity = rampBin.severity < nextTimeslice.rampSeverity ? nextTimeslice.rampSeverity : rampBin.severity;
+          rampBin.endTime = nextTimeslice.timestamp;
+          rampBin.increments.push(increment);
+          timeslice = nextTimeslice;
+          nextTimeslice = forecastData[++i];
+        } else {
+          // Ramp has switched direction, treat it like a new ramp winding back
+          // i just enough to make sure the next ramp starts at the beginning
+          i-=2;
+          break;
+        }
       }
-      rampBin.endTime = timeslice.timestamp;
       rampBins.push(rampBin);
     }
   }
@@ -102,8 +116,11 @@ let detectRampsInForecast = timeslices => {
         if(Math.abs(diff) >= threshold) {
           timeslice.ramp = true;
           timeslice.rampSeverity = level;
-          // the previous timeslice represents the beginning of the ramp event
-          previous.ramp = true;
+          // the previous timeslice(s) represents the beginning of the ramp event. Since we
+          // don't know how many steps are between we loop it
+          for(let x=i-distance; x<i; x++) {
+            timeslices[x].ramp = true;
+          }
         }
       }
     });
