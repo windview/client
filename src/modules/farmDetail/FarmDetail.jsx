@@ -17,10 +17,7 @@ export class FarmDetail extends React.Component {
   }
 
   setInitialAlertDisplay() {
-    let allAlerts = Forecast.getAllAlerts()
-    this.props.onAlertDisplay(allAlerts)
-
-    WindFarm.getFarms().forEach(f=>{f.displayAlert = true;});
+    this.props.onAlertDisplay(WindFarm.getFarms().map(f=>f.id))
   }
 
 
@@ -43,7 +40,7 @@ export class FarmDetail extends React.Component {
         forecastData = Forecast.getForecastForFarm(farm.id);
     // FIXME make sure this is the right property accessor
     if(forecastData.alerts.hasRamp) {
-      if (this.props.alertArray.indexOf(this.props.selectedFarmId) !== -1) {
+      if (this.props.alertArray.includes(this.props.selectedFarmId)) {
         forecastData.alerts.rampBins.forEach((rampBin) => {
           const startTime = moment.utc(rampBin.startTime).format('HH:mm UTC'),
               endTime = moment.utc(rampBin.endTime).format('HH:mm UTC'),

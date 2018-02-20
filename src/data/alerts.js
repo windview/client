@@ -152,8 +152,7 @@ let getAlertsForForecast = forecastData => {
     rampStart: getFirstRampStart(forecastData),
     hasRamp: hasRamp(forecastData),
     maxRampSeverity: getMaxRampSeverity(forecastData),
-    rampBins: calculateRampBins(forecastData),
-    displayAlerts: true,
+    rampBins: calculateRampBins(forecastData)
   }
   return alerts;
 }

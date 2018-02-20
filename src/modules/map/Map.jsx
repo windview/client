@@ -38,7 +38,6 @@ export class Map extends React.Component {
   bumpMapFarms() {
     if(this.map && this.map.getSource('windfarms') && this.props.windFarmsLoaded) {
       let features = WindFarm.getGeoJsonForFarms(this.props.selectedTimestamp, this.props.alertArray);
-
       this.map.getSource('windfarms').setData(features);
     }
   }
