@@ -6,7 +6,8 @@ import {
   addRampThreshold,
   removeRampThreshold,
   selectForecastHorizon,
-  setAlertDisplay
+  setAlertDisplay,
+  updateSettingsTS
 } from '../../actionCreators';
 
 export const mapStateToProps = (state, ownProps) => {
@@ -37,6 +38,9 @@ export const mapDispatchToProps = (dispatch) => {
     },
     onSelectForecastHorizon: (forecastHorizon) => {
       dispatch(selectForecastHorizon(forecastHorizon));
+    },
+    onUpdateSettingsTS: (timestamp) => {
+      dispatch(updateSettingsTS(timestamp));
     }
   }
 }

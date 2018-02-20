@@ -76,8 +76,8 @@ class AppSettings extends React.Component {
       // settings pane is being navigated away from... apply changes to config
       this.getConfigFromState();
       Forecast.resetAlerts();
-      this.props.onAlertDisplay([]);
       this.props.onAlertDisplay(WindFarm.getFarms().map(f=>f.id));
+      this.props.onUpdateSettingsTS(new Date().getTime());
     }
   }
 
