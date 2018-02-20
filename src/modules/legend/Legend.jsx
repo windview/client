@@ -35,7 +35,7 @@ render() {
                 <circle cx="20" cy="8" r="7" fill="rgba(0,0,0,0)" strokeWidth="2" stroke='hsla(240, 100%, 25%, 1)' />
               </svg>
             </td>
-            <td className="legend-label">Forecast power 0-3 MW</td>
+            <td className="legend-label">Forecast power 0-2 MW</td>
           </tr>
           <tr>
             <td className="legend-item">
@@ -43,7 +43,7 @@ render() {
                 <circle cx="20" cy="16" r="9" fill="rgba(0,0,0,0)" strokeWidth="4" stroke='hsla(240, 100%, 40%, .7)' />
               </svg>
             </td>
-            <td className="legend-label">Forecast power 3-10 MW</td>
+            <td className="legend-label">Forecast power 2-4 MW</td>
           </tr>
           <tr>
             <td className="legend-item">
@@ -52,7 +52,7 @@ render() {
 
               </svg>
             </td>
-            <td className="legend-label">Forecast power 10-20 MW</td>
+            <td className="legend-label">Forecast power 4-6 MW</td>
           </tr>
           <tr>
             <td className="legend-item">
@@ -60,7 +60,7 @@ render() {
                 <circle cx="20" cy="20" r="14" fill="rgba(0,0,0,0)" strokeWidth="9" stroke='hsla(240, 100%, 80%, .9)' />
               </svg>
             </td>
-            <td className="legend-label">Forecast power > 20 MW</td>
+            <td className="legend-label">Forecast power > 6 MW</td>
           </tr>
           <tr>
             <td className="legend-item">
