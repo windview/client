@@ -15,7 +15,7 @@
   }
 
   td.legend-item {
-    padding: 0px;
+    padding: 1px 0px 0px 0px;
     vertical-align: middle;
 
     img {
@@ -30,13 +30,24 @@
   }
 
   .critical-alert {
-    background-color: red;
-    width: 28px;
-    height: 28px;
+    background-color: hsla(0,100%,36.7%, 0.8);
+    width: 25px;
+    height: 25px;
     border-radius: 50%;
+    margin-left: 7px;
+    margin-bottom: 2px;
   }
 
   .moderate-alert {
+    background-color: hsla(31, 100%, 54%, 0.8);
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    margin-left: 7px;
+    margin-bottom: 2px;
+  }
+
+  .low-alert {
     background-color: hsla(53, 100%, 54%, 0.8);
     width: 25px;
     height: 25px;
@@ -61,5 +72,8 @@
   width: 100%;
   text-align: center;
   font-size: 18px;
-  background-color: hsla(0, 0%, 70%, 0.4)
+
+  &:hover {
+   background-color: hsla(0, 0%, 70%, 0.4)
+ }
 }
