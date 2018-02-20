@@ -35,7 +35,7 @@ export const mapDispatchToProps = (dispatch) => {
     onRemoveRampThreshold: (rampId) => {
       dispatch(removeRampThreshold(rampId));
     },
-    onSelectForecastHorizone: (forecastHorizon) => {
+    onSelectForecastHorizon: (forecastHorizon) => {
       dispatch(selectForecastHorizon(forecastHorizon));
     }
   }
