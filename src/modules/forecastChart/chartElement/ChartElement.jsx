@@ -187,7 +187,7 @@ export class ChartElement extends React.Component {
     const rampBins = forecastData.alerts.rampBins;
     console.log(rampBins);
     rampBins.forEach((bin)=>{
-      let color, borderColor;
+      let color, borderColor, label;
       switch(bin.severity) {
         case 1:
           color = "hsla(53, 100%, 54%, 0.4)";
@@ -201,7 +201,16 @@ export class ChartElement extends React.Component {
           color = " hsla(0, 100%, 37%, 0.4)";
           borderColor = "hsla(0, 100%, 37%, 1)";
       }
+      label =  bin.direction === 'up' ? '<<<<<<<<<<<': '>>>>>>>>>>>';
+
       chart.xAxis[0].addPlotBand({
+        label: {
+          text: label,
+          rotation: 90,
+          verticalAlign: 'middle',
+          x: -3,
+          y: 2
+        },
         color: color,
         borderColor: borderColor,
         borderWidth: 2,
