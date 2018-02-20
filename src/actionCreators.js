@@ -6,15 +6,15 @@
 import * as t from './actionTypes';
 import Forecast from './data/forecast';
 import WindFarm from './data/windFarm';
+import CONFIG from './data/config';
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // POJO action creators
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-export const toggleAlert = (forecast, id) => ({
-  type: t.TOGGLE_ALERT,
-  forecast: forecast,
-  id: id
+export const setAlertDisplay = (alertArray) => ({
+  type: t.SET_ALERT_DISPLAY,
+  alertArray: alertArray
 });
 
 export const activateView = (viewName) => {
@@ -23,6 +23,21 @@ export const activateView = (viewName) => {
     viewName: viewName
   }
 }
+
+export const addAggregationGroup = (groupId) => ({
+  type: t.ADD_AGGREGATION_GROUP,
+  groupId
+})
+
+export const addAlert = (farmId) => ({
+  type: t.ADD_ALERT,
+  farmId
+})
+
+export const addRampThreshold = (rampId) => ({
+  type: t.ADD_RAMP_THRESHOLD,
+  rampId
+})
 
 export const fetchForecastFail = (error) => ({
   type: t.FETCH_FORECAST_FAIL,
@@ -55,6 +70,21 @@ export const mapMove = (visibleFarmIds) => ({
   farmIds: visibleFarmIds
 });
 
+export const removeAggregationGroup = (groupId) => ({
+  type: t.REMOVE_AGGREGATION_GROUP,
+  groupId
+})
+
+export const removeAlert = (farmId) => ({
+  type: t.REMOVE_ALERT,
+  farmId
+})
+
+export const removeRampThreshold = (rampId) => ({
+  type: t.REMOVE_RAMP_THRESHOLD,
+  rampId
+})
+
 export const selectAggregation = (dataSource) => ({
   type: t.SELECT_AGGREGATION,
   dataSource: dataSource.value,
@@ -75,6 +105,11 @@ export const selectFeaturesByPolygon = (selectedFarmIds) => ({
   type: t.SELECT_FEATURES_BY_POLYGON,
   farmIds: selectedFarmIds
 });
+
+export const selectForecastHorizon = (forecastHorizon) => ({
+  type: t.SELECT_FORECAST_HORIZON,
+  forecastHorizon
+})
 
 export const selectStyle = (style) => ({
   type: t.SELECT_STYLE,
@@ -117,12 +152,20 @@ export const fetchWindFarms = () => {
     // notify app that data is loading
     dispatch(fetchWindFarmsRequest());
 
-    // return a promise
-    return WindFarm.fetchAllFarms()
-      .then((response) => {
-        dispatch(fetchWindFarmsSuccess());
-        dispatch(fetchForecast(response.data));
-      })
+    let farmIds = CONFIG.get("farmIds");
+    if(typeof farmIds.forEach === 'function') {
+      return WindFarm.fetchBatchFarms(farmIds)
+        .then((response) => {
+          dispatch(fetchWindFarmsSuccess());
+          dispatch(fetchForecast(response.data));
+        })
+    } else {
+      return WindFarm.fetchAllFarms()
+        .then((response) => {
+          dispatch(fetchWindFarmsSuccess());
+          dispatch(fetchForecast(response.data));
+        })
+    }
   }
 }
 

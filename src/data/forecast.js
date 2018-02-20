@@ -72,21 +72,13 @@ let getMasterTimeline = forecasts => {
   return masterTimeline;
 }
 
-let _applyTimezoom = (timezoom, data) => {
-  //Calculate data start and data end times
-  let dataStart = data[0].timestamp.getTime(),
-      dataEnd;
-  switch(timezoom) {
-    case '8':
-      dataEnd = dataStart + 1000*60*60*8;
-      break;
-    case '16':
-      dataEnd = dataStart + 1000*60*60*16;
-      break;
-    default:
-      dataEnd = data[data.length-1].timestamp.getTime();
-  }
-  return data.filter(d=>{ return d.timestamp.getTime() <= dataEnd; });
+let resetAlerts = () => {
+  let forecasts = getForecasts();
+  forecasts.forEach(f=>{
+    f = Alerts.clearAlerts(f);
+    f.data = Alerts.detectRampsInForecast(f.data);
+    f.alerts = Alerts.getAlertsForForecast(f);
+  });
 }
 
 /**
@@ -143,18 +135,26 @@ let _convertTimestampToDate  = function(ts) {
   *  - Converting timestamp string to Date object
   */
 let _formatProbabilisticForecastDataPoint = (dataPoint) => {
-  let best = Math.round(dataPoint[3]*1000)/1000;
+  let best = Math.round(dataPoint[3]*1000)/1000,
+      timestamp = _convertTimestampToDate(dataPoint[0]),
+      actual = null;
+
+  if(CONFIG.fakeActuals) {
+    if(CONFIG.now > timestamp.getTime()) {
+      actual = best+.2;
+    }
+  }
 
   return {
     type: 'probabilistic',
-    timestamp: _convertTimestampToDate(dataPoint[0]),
+    timestamp: timestamp,
     prob1stQuantForecastMW: Math.round(dataPoint[1]*1000)/1000,
     prob25thQuantForecastMW: Math.round(dataPoint[2]*1000)/1000,
     prob50thQuantForecastMW: best,
     prob75thQuantForecastMW: Math.round(dataPoint[4]*1000)/1000,
     prob99thQuantForecastMW: Math.round(dataPoint[5]*1000)/1000,
     bestForecastMW: best,
-    actual: null,
+    actual: actual,
     // ramping
     rampForecastMW: best,
     ramp: false,
@@ -163,13 +163,18 @@ let _formatProbabilisticForecastDataPoint = (dataPoint) => {
 }
 
 let _formatPointForecastDataPoint = (dataPoint) => {
-  let best = Math.round(dataPoint[1]*1000)/1000;
+  let best = Math.round(dataPoint[1]*1000)/1000,
+      actual = null;
+
+  if(CONFIG.fakeActuals) {
+    actual = best;
+  }
 
   return {
     type: 'point',
     timestamp: _convertTimestampToDate(dataPoint[0]),
     bestForecastMW: best,
-    actual: null,
+    actual: actual,
 
     // ramping
     rampForecastMW: best,
@@ -210,24 +215,19 @@ let _getBatchForecastMeta = (forecasts) => {
   }
 }
 
-let _postProcessForecastData = (forecast, timezoom) => {
+let _postProcessForecastData = (forecast) => {
   let formattedData = _formatForecastData(forecast);
-  formattedData = _applyTimezoom(timezoom, formattedData);
   forecast.data = Alerts.detectRampsInForecast(formattedData);
   forecast.alerts = Alerts.getAlertsForForecast(forecast);
-  // FIXME just trying this out quick and dirty
-  let timeslicesByTimstamp = {};
-  forecast.data.forEach(dataSlice=>{timeslicesByTimstamp[dataSlice.timestamp.getTime()] = dataSlice});
-  forecast.dataByTime = timeslicesByTimstamp;
   return forecast;
 }
 
-/** Loads the forecast for a given farm out to a given range (timezoom) and
-  * post processes that data to detect alerts and other items of note.
+/** Loads the forecast for a given farm and post processes that data to
+  * detect alerts and other items of note.
   *
   * @return a fetch promise
   */
-let fetchForecast = (farm, timezoom) => {
+let fetchForecast = (farm) => {
   let forecasts = getForecasts();
   return API.goFetch(`/forecasts/latest?type=probabilistic&farm_id=${farm.id}`)
     .then(
@@ -242,7 +242,7 @@ let fetchForecast = (farm, timezoom) => {
     )
     .then(
       data => {
-        let forecastData = _postProcessForecastData(data.forecast, timezoom);
+        let forecastData = _postProcessForecastData(data.forecast);
         farm.forecastId = forecastData.id;
         forecasts.push(forecastData);
 
@@ -261,13 +261,13 @@ let fetchForecast = (farm, timezoom) => {
   * @return a JS Promise that will fulfill when all forecasts for all farms
   * are fetch-resolved
   */
-let fetchBatchForecast = function(windFarms, timezoom) {
+let fetchBatchForecast = function(windFarms) {
   let queueCount = windFarms.length,
       _self = this;
 
   return new Promise((resolve, reject) => {
     windFarms.forEach((farm) => {
-      fetchForecast(farm, timezoom)
+      fetchForecast(farm)
         .catch(error => {
           console.log(error);
           farm.disabled = true;
@@ -333,13 +333,6 @@ let getAggregatedForecast = (forecasts) => {
         }
       }
 
-      // actuals may or may not be present
-      // Hack for demo purposes
-      const fakeNow = CONFIG.fakeNow;
-      if(fakeNow && ts >= fakeNow) {
-        actual = undefined
-      }
-      // End hack
       return {
         actual: actual,
         forecastMW: forecastMW
@@ -353,13 +346,15 @@ let getAggregatedForecast = (forecasts) => {
     }
 
     aggregatedForecast.data.push({
+      type: "aggregate",
       timestamp: new Date(ts),
       forecastMW: Math.round(reducedVals.forecastMW*1000)/1000,
+      rampForecastMW: Math.round(reducedVals.forecastMW*1000)/1000,
       actual: Math.round(reducedVals.actual*1000)/1000,
       ramp: false,
       rampSeverity: null
-    })
-  })
+    });
+  });
 
   aggregatedForecast.data = Alerts.detectRampsInForecast(aggregatedForecast.data);
   aggregatedForecast.alerts = Alerts.getAlertsForForecast(aggregatedForecast);
@@ -378,7 +373,19 @@ let getForecastForFarm = (fid) => {
 }
 
 let getForecastForTime = (timestampMS, forecast) => {
-  return (forecast && timestampMS) ? forecast.dataByTime[timestampMS] : null;
+  return (forecast && timestampMS) ? forecast.data.find(f=>f.timestamp.getTime()===timestampMS) : null;
+}
+
+let getAllAlerts = () => {
+  let forecasts = getForecasts();
+  let alertDisplayArray = [];
+
+  forecasts.forEach((forecast) => {
+    if (forecast.alerts.hasRamp) {
+      alertDisplayArray.push(forecast.farm_id)
+    }
+  });
+  return alertDisplayArray
 }
 
 module.exports = {
@@ -392,4 +399,6 @@ module.exports = {
   getForecastForFarm: getForecastForFarm,
   getForecastForTime: getForecastForTime,
   getMasterTimeline: getMasterTimeline,
+  getAllAlerts: getAllAlerts,
+  resetAlerts: resetAlerts
 }

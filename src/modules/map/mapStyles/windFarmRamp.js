@@ -44,7 +44,7 @@ export const initializeStyle = (map, layerSource) => {
       'circle-color': 'hsla(53, 100%, 54%, 0.8)',
       'circle-opacity': 0.5
     },
-    filter: ["==", "maxRampSeverity", 1],
+    filter: ["all",["==", "maxRampSeverity", 1],["==", 'displayAlerts', true]],
     layout: {
       visibility: 'none'
     }
@@ -61,7 +61,7 @@ export const initializeStyle = (map, layerSource) => {
       'circle-color': '#B00',
       'circle-opacity': 0.8,
     },
-    filter: [">=", "maxRampSeverity", 2],
+    filter: ["all",[">=", "maxRampSeverity", 2],["==", 'displayAlerts', true]],
     layout: {
       visibility: 'none'
     }

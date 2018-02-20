@@ -1,77 +1,213 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import CONFIG from '../../data/config';
+import Forecast from '../../data/forecast';
+import WindFarm from '../../data/windFarm';
 import './AppSettings.scss';
+import {mapStateToProps, mapDispatchToProps} from './selectors';
 
 
-export class AppSettings extends React.Component {
+class AppSettings extends React.Component {
 
-  componentDidMount() {
-    this.setTimeDropdown()
-  }
-
-  handleChange(e) {
-    var type = `select.${e.target.className}`
-    var typeOption = `select.${e.target.className} option`
-    $(typeOption).attr('disabled', false);
-    $(type).each(function() {
-      var val = $(this).find('option:selected').val();
-      if (!val) return;
-      $(typeOption).filter(function() {
-        return $(this).val() === val;
-      }).attr('disabled', 'disabled');
+  // Generates a total of 3 ramp configuration objects for use in the state
+  // of this component for driving the UI. We have a pre-determined max of
+  // 3 so we just create 3 blank backfilling properties from CONFIG where
+  // present
+  getRampStateFromConfig() {
+    let preConfigured = CONFIG.get('rampThresholds'),
+        empty = {
+          level: '',
+          powerChange: '',
+          timeSpan: '',
+          color: ''
+        }
+    return [0,1,2].map(id=>{
+      if(preConfigured[id]) {
+        return Object.assign({}, empty, preConfigured[id], {id: id});
+      } else {
+        return Object.assign({}, empty, {id: id})
+      }
     });
   }
 
-  setTimeDropdown() {
-    var $select = $(".1-30");
-    for (var i=1;i<=30;i++){
-        $select.append($('<option></option>').val(i).html(i))
-      }
+  // Validates that all fields are non-blank, converts strings to numbers as
+  // needed, and sorts by level
+  getRampConfigFromState() {
+    let userConf = this.state.rampConfigs;
+    return userConf.filter(c=>{
+        return c.level !== '' && c.powerChange !== '' && c.timeSpan !== '' && c.color !== '';
+      })
+      .map(c=>{
+        return {
+          level: parseInt(c.level, 10),
+          powerChange: parseFloat(c.powerChange, 10),
+          timeSpan: parseFloat(c.timeSpan, 10),
+          color: c.color
+        }
+      })
+      .sort((a, b)=>{return (a.level-b.level);});
   }
 
-  render() {
-    const alertSettings =
-      <div id="alert-settings">
+  getStateFromConfig() {
+    let rampConfigs = this.getRampStateFromConfig();
+    this.setState({
+      rampConfigs: rampConfigs,
+      forecastHorizon: CONFIG.get('forecastHorizon'),
+      // FIXME this should come from the forecast model details from the API
+      forecastHorizonOptions: [1]
+    });
+  }
+
+  getConfigFromState() {
+    CONFIG.set('rampThresholds', this.getRampConfigFromState());
+    CONFIG.set('forecastHorizon', this.state.forecastHorizon)
+  }
+
+  componentWillMount() {
+    // Initial loading of state from config at app startup
+    this.getStateFromConfig();
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    if(this.props.activePane !== "settings" && nextProps.activePane === "settings") {
+      // settings pane is being displayed, init stuff
+      this.getStateFromConfig();
+    } else if(this.props.activePane === "settings" && nextProps.activePane !== "settings") {
+      // settings pane is being navigated away from... apply changes to config
+      this.getConfigFromState();
+      Forecast.resetAlerts();
+      this.props.onAlertDisplay([]);
+      this.props.onAlertDisplay(WindFarm.getFarms().map(f=>f.id));
+    }
+  }
+
+  handleRampChange(idx, property, val) {
+    let rampConfigs = this.state.rampConfigs;
+    rampConfigs[idx][property] = val;
+    if(property === 'level') {
+      if(val === '1') {
+        rampConfigs[idx]['color'] = "yellow";
+      } else if (val === '2') {
+        rampConfigs[idx]['color'] = 'orange';
+      } else if ( val === '3') {
+        rampConfigs[idx]['color'] = 'red';
+      } else {
+        rampConfigs[idx]['color'] = '';
+      }
+    } else if(property === 'color') {
+      if(val === 'yellow') {
+        rampConfigs[idx]['level'] = '1';
+      } else if(val === 'orange') {
+        rampConfigs[idx]['level'] = '2';
+      } else if(val === 'red') {
+        rampConfigs[idx]['level']  = '3';
+      } else {
+        rampConfigs[idx]['level'] = '';
+      }
+    }
+    this.setState({
+      "rampConfigs": rampConfigs
+    });
+  }
+
+  handleChange(e) {
+    let id = e.target.id,
+        [category, idx, property] = id.split("-"),
+        val = e.target.value;
+
+    switch(category) {
+      case 'ramp':
+        this.handleRampChange(idx, property, val);
+        break;
+      case 'horizon':
+        this.setState({
+          forecastHorizon: val
+        });
+        break;
+      default:
+        console.log(`${category} was changed but no settings handler exists`);
+    }
+  }
+
+  getAlertSettings() {
+
+    let rampConfigs = this.state.rampConfigs,
+        forecastInterval = CONFIG.get('forecastInterval'),
+        intervalOpts,
+        settings;
+
+    intervalOpts = [1,2,3,4].map(i=>{
+      return <option key={`interval-opt-${i*forecastInterval}`} value={i*forecastInterval}>{i*forecastInterval}</option>
+    });
+
+    settings = rampConfigs.map(conf=>{
+      return <div id="alert-settings" key={`ramp-${conf.id}`}>
         <form>
           <label>
             <span>Alert Level</span>
-            <select className="alert-severity" name="select" onChange={(e)=>this.handleChange(e)}>
+            <select id={`ramp-${conf.id}-level`} className="alert-severity" name="select" value={conf.level} onChange={(e)=>this.handleChange(e)}>
               <option value=""></option>
-              <option value="low">Low</option>
-              <option value="moderate">Moderate</option>
-              <option value="critical">Critical</option>
+              <option value="1">Low</option>
+              <option value="2">Moderate</option>
+              <option value="3">Critical</option>
             </select>
           </label><br/>
           <label>
             <span>Change in forecast power by</span>
-            <input type="text" name="power"/>
+            <input id={`ramp-${conf.id}-powerChange`} type="text" name="power" value={conf.powerChange} onChange={(e)=>this.handleChange(e)}/>
             <span>MW</span>
           </label>
           <label>
             <span>over</span>
-            <input type="text" name="time"/>
+            <select id={`ramp-${conf.id}-timeSpan`} name="time" value={conf.timeSpan} onChange={(e)=>this.handleChange(e)}>
+              <option value=""></option>
+              {intervalOpts}
+            </select>
             <span>minutes</span>
           </label><br/>
           <label>
             <span>Alert Color</span>
-            <div>
-              <select className="alert-color" name="select" onChange={(e)=>this.handleChange(e)}>
-                <option value=""></option>
-                <option value="yellow">Yellow</option>
-                <option value="orange">Orange</option>
-                <option value="red">Red</option>
-              </select>
-            </div>
+            <select
+                id={`ramp-${conf.id}-color`}
+                className="alert-color"
+                name="select"
+                value={conf.color}
+                onChange={(e)=>this.handleChange(e)}>
+              <option value=""></option>
+              <option value="yellow">Yellow</option>
+              <option value="orange">Orange</option>
+              <option value="red">Red</option>
+            </select>
           </label>
         </form>
       </div>
+    });
 
-    const forecastTimeSettings =
-      <div id="forecast-time-settings">
+    return settings;
+  }
+
+  getForecastTimeSettings() {
+    let availableHorizons = this.state.forecastHorizonOptions,
+        horizon = this.state.forecastHorizon,
+        options;
+
+      options = availableHorizons.map(h=>{
+        return <option key={`horizon-opt-${h}`} value={h}>{h}</option>
+      });
+
+      return <div id="forecast-time-settings">
         <h3>Forecast Time Horizon</h3>
         <div className="settings-description">Set the desired number of days to forecast ahead.</div>
-        <select className="1-30"></select>
+        <select id="horizon-0-time" className="1-30" value={horizon} onChange={(e)=>this.handleChange(e)}>
+          {options}
+        </select>
         <span> Days </span>
       </div>
+  }
+
+  render() {
+    const alertSettings = this.getAlertSettings()
+    const forecastTimeSettings = this.getForecastTimeSettings()
 
     const aggregationGroups =
       <div id="aggreagation-group-settings">
@@ -93,19 +229,8 @@ export class AppSettings extends React.Component {
 
     return (
       <div className="settings-container">
-      <section id="app-settings">
-        Application Settings would be configurable here including things like
-        <ul>
-          <li>Default map area</li>
-          <li>Ramp event thresholds</li>
-          <li>Forecast preferences</li>
-          <li>... and so on</li>
-        </ul>
-      </section>
       <section>
-      <h3>Alerts</h3>
-        {alertSettings}
-        {alertSettings}
+      <h3>Ramp Alerts</h3>
         {alertSettings}
       </section>
       <section>
@@ -118,4 +243,4 @@ export class AppSettings extends React.Component {
   )}
 }
 
-export default AppSettings;
+export default connect(mapStateToProps, mapDispatchToProps)(AppSettings);

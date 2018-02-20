@@ -10,34 +10,51 @@ import Forecast from '../../data/forecast';
 
 export class FarmDetail extends React.Component {
 
+  componentDidUpdate(prevProps) {
+    if ((!prevProps.forecastLoaded) && (this.props.forecastLoaded)) {
+      this.setInitialAlertDisplay()
+    }
+  }
+
+  setInitialAlertDisplay() {
+    this.props.onAlertDisplay(WindFarm.getFarms().map(f=>f.id))
+  }
+
+
   // FIXME
-  handleAcknowledgeAlert(id) {
-    debugger;
-    let forecast = this.props.forecast;
-    this.props.onToggleAlert(forecast, id)
+  handleAcknowledgeAlert(e) {
+    e.preventDefault();
+    if (e.target.className === "hideAlert") {
+      this.props.onRemoveAlert(this.props.selectedFarmId)
+    }
+    if (e.target.className === "showAlert") {
+      this.props.onAddAlert(this.props.selectedFarmId)
+    }
   }
 
   getDetailMarkup() {
-
     let prependRows = [],
+        alertButton = null,
         appendRows = [],
         farm = WindFarm.getWindFarmById(this.props.selectedFarmId),
         forecastData = Forecast.getForecastForFarm(farm.id);
-
     // FIXME make sure this is the right property accessor
     if(forecastData.alerts.hasRamp) {
-      prependRows = forecastData.alerts.rampBins.map((rampBin) => {
-        const startTime = moment.utc(rampBin.startTime).format('HH:mm UTC'),
+      if (this.props.alertArray.includes(this.props.selectedFarmId)) {
+        forecastData.alerts.rampBins.forEach((rampBin) => {
+          const startTime = moment.utc(rampBin.startTime).format('HH:mm UTC'),
               endTime = moment.utc(rampBin.endTime).format('HH:mm UTC'),
               severity = rampBin.severity > 1 ? "severe ramp" : "moderate ramp",
               className = rampBin.severity > 1 ? "severe" : "moderate";
 
-        if (farm.displayAlerts !== false) {
-          return <tr key={rampBin.startTime.getTime()} className={className}><td>RAMP ALERT</td><td className="right">A {severity} event is forecast starting at {startTime} and ending at {endTime}</td><td><button onClick={()=>this.handleAcknowledgeAlert(rampBin)} type="button">Toggle Alert</button></td></tr>;
-        }
+          prependRows.push(<tr key={rampBin.startTime.getTime()} className={className}><td>RAMP ALERT</td><td className="right">A {severity} event is forecast starting at {startTime} and ending at {endTime}</td></tr>);
 
-        return null;
       });
+    }
+
+      const buttonText = this.props.alertArray.indexOf(this.props.selectedFarmId) !== -1 ? "Hide alerts for selected farm" : "Show alerts for selected farm";
+      const buttonClass = this.props.alertArray.indexOf(this.props.selectedFarmId) !== -1 ? "hideAlert" : "showAlert";
+      alertButton = <button className={buttonClass} onClick={(e)=>this.handleAcknowledgeAlert(e)} type="button">{buttonText}</button>
     }
 
     if(this.props.selectedTimestamp) {
@@ -61,8 +78,10 @@ export class FarmDetail extends React.Component {
 
       }
     }
+
     const el = (
       <div>
+      {alertButton}
         <table className="map-popup">
           <tbody>
           {prependRows}

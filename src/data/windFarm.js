@@ -43,8 +43,8 @@ let fetchFarm = (farmId) => {
       }
     )
     .then(json => {
-      windFarms.push(json);
-      return json;
+      windFarms.push(json.farm);
+      return json.farm;
     })
 }
 
@@ -123,8 +123,7 @@ let fetchAllFarms = () => {
   * - disabled
   * - suspectData
   */
-let getGeoJsonForFarms = (selectedTimestamp) => {
-
+let getGeoJsonForFarms = (selectedTimestamp, alertArray) => {
   let windFarms = getFarms();
   let json = {
     "type": "FeatureCollection",
@@ -137,11 +136,12 @@ let getGeoJsonForFarms = (selectedTimestamp) => {
             capacity_mw: farm.capacity_mw,
             disabled: false,
             suspectData: false,
-            selected: farm.selected
+            selected: farm.selected,
           }
 
       if(forecast) {
         forecastProps.maxRampSeverity = forecast.alerts.maxRampSeverity;
+        forecastProps.displayAlerts = alertArray.includes(farm.id);
         forecastForTime = Forecast.getForecastForTime(selectedTimestamp, forecast);
         if(forecastForTime) {
           Object.assign(forecastProps, {

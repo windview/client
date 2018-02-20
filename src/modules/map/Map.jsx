@@ -10,10 +10,9 @@ import windFarmSelectedIcon from '../../images/windfarm-selected.png';
 import windFarmSuspectDataIcon from '../../images/windfarm-suspect-data.png'
 import windFarmSelectedSuspsectDataIcon from '../../images/windfarm-selected-suspect-data.png'
 import './Map.scss';
-import mapboxStyle from '../../styles/dark-matter-style';
+//import mapboxStyle from '../../styles/dark-matter-style';
 import { mapStateToProps, mapDispatchToProps } from './selectors';
 import WindFarm from '../../data/windFarm';
-import Config from '../../data/config';
 import Forecast from '../../data/forecast';
 import * as tlinesStyle from './mapStyles/transmissionLines';
 import * as wfActualStyle from './mapStyles/windFarmActual';
@@ -38,7 +37,7 @@ export class Map extends React.Component {
   // Triggers the MapBox map to redraw the WindFarm features
   bumpMapFarms() {
     if(this.map && this.map.getSource('windfarms') && this.props.windFarmsLoaded) {
-      let features = WindFarm.getGeoJsonForFarms(this.props.selectedTimestamp);
+      let features = WindFarm.getGeoJsonForFarms(this.props.selectedTimestamp, this.props.alertArray);
       this.map.getSource('windfarms').setData(features);
     }
   }
@@ -51,7 +50,6 @@ export class Map extends React.Component {
   }
 
   componentDidMount() {
-    Config.setGlobalFakeNow();
     // dispatch any actions configured in selectors
     this.props.onComponentDidMount();
   }
@@ -70,6 +68,11 @@ export class Map extends React.Component {
       this.toggleStyle(this.props.selectedStyle);
     }
     if(prevProps.selectedTimestamp !== this.props.selectedTimestamp) {
+      if(this.props.windFarmsLoaded) {
+        this.bumpMapFarms();
+      }
+    }
+    if(prevProps.alertArray !== this.props.alertArray) {
       if(this.props.windFarmsLoaded) {
         this.bumpMapFarms();
       }
@@ -185,7 +188,7 @@ export class Map extends React.Component {
     //Create map
     let map = new mapboxgl.Map({
       container: 'wind-map', // container id
-      style: mapboxStyle,
+      style: 'https://free.tilehosting.com/styles/darkmatter/style.json?key=o6iGgsKYC7Ry7Y0VhZwY', //mapboxStyle,
       center: [-99.902, 31.969], // starting position
       zoom: 4.5, // starting zoom
       hash: false
@@ -243,7 +246,7 @@ export class Map extends React.Component {
           url: process.env.TILE_SERVER_URL + "/osm-translines/metadata.json"
       });
 
-      let farmData = WindFarm.getGeoJsonForFarms();
+      let farmData = WindFarm.getGeoJsonForFarms(this.props.selectedTimestamp, this.props.alertArray);
       // TODO move app alerting to own module
       if(farmData.features.length === 0) {
         alert("Wind farm data could not be loaded.");

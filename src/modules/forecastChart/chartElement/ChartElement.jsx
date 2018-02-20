@@ -46,7 +46,7 @@ export class ChartElement extends React.Component {
           range1_99 = data[5],
           one = data[6],
           ninetynine = data[7],
-          now = CONFIG.fakeNow;
+          now = CONFIG.now;
 
     if(this.chart) {
       this.chart.destroy();

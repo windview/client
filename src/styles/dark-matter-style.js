@@ -31,11 +31,11 @@ export default {
   "sources": {
     "openmaptiles": {
       "type": "vector",
-      "url": "https://free.tilehosting.com/data/v3.json?key={key}"
+      "url": "http://maps-stage-api.nrel.gov/windview-tiles/united_states_of_america/metadata.json"
     }
   },
   "sprite": "https://openmaptiles.github.io/dark-matter-gl-style/sprite",
-  "glyphs": "https://free.tilehosting.com/fonts/{fontstack}/{range}.pbf?key={key}",
+  "glyphs": "https://free.tilehosting.com/fonts/{fontstack}/{range}.pbf?key=o6iGgsKYC7Ry7Y0VhZwY",
   "layers": [
     {
       "id": "background",
