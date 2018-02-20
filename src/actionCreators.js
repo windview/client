@@ -156,15 +156,12 @@ export const fetchWindFarms = () => {
     if(typeof farmIds.forEach === 'function') {
       return WindFarm.fetchBatchFarms(farmIds)
         .then((response) => {
-          console.log(response);
           dispatch(fetchWindFarmsSuccess());
           dispatch(fetchForecast(response.data));
         })
     } else {
-      // return a promise
       return WindFarm.fetchAllFarms()
         .then((response) => {
-          console.log(response);
           dispatch(fetchWindFarmsSuccess());
           dispatch(fetchForecast(response.data));
         })

@@ -1,5 +1,6 @@
 
 let maxFarms = 50,
+    farmIds = [28, 29, 30, 45, 46, 23, 24, 25, 26, 27],
     forecastInterval = 60,
     forecastHorizon = 1,
     fakeNow = getFakeNow(),
@@ -79,6 +80,7 @@ function getGlobalNow() {
 module.exports = {
   get: get,
   set: set,
+  farmIds: farmIds,
   maxFarms: maxFarms,
   forecastInterval: forecastInterval,
   forecastHorizon: forecastHorizon,
