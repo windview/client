@@ -20,8 +20,6 @@ export class FarmDetail extends React.Component {
     this.props.onAlertDisplay(WindFarm.getFarms().map(f=>f.id))
   }
 
-
-  // FIXME
   handleAcknowledgeAlert(e) {
     e.preventDefault();
     if (e.target.className === "hideAlert") {
