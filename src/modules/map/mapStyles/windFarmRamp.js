@@ -51,6 +51,22 @@ export const initializeStyle = (map, layerSource) => {
   });
   layerIds.push('windfarms-y-halo');
 
+  map.addLayer({
+    id: 'windfarms-o-halo',
+    type: 'circle',
+    source: 'windfarms',
+    paint: {
+      'circle-radius': initialRadius+8,
+      'circle-color': 'hsla(31, 100%, 54%, 0.8)',
+      'circle-opacity': 0.6
+    },
+    filter: ["all",["==", "maxRampSeverity", 2],["==", 'displayAlerts', true]],
+    layout: {
+      visibility: 'none'
+    }
+  });
+  layerIds.push('windfarms-o-halo');
+
   // Red halo when it's going down right now
   map.addLayer({
     id: 'windfarms-r-halo',
@@ -61,7 +77,7 @@ export const initializeStyle = (map, layerSource) => {
       'circle-color': '#B00',
       'circle-opacity': 0.8,
     },
-    filter: ["all",[">=", "maxRampSeverity", 2],["==", 'displayAlerts', true]],
+    filter: ["all",[">=", "maxRampSeverity", 3],["==", 'displayAlerts', true]],
     layout: {
       visibility: 'none'
     }

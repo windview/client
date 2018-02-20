@@ -99,6 +99,22 @@ export const initializeStyle = (map, layerSource) => {
   });
   layerIds.push('forecast-y-halo');
 
+  map.addLayer({
+    id: 'forecast-o-halo',
+    type: 'circle',
+    source: 'windfarms',
+    paint: {
+      'circle-radius': initialRadius+8,
+      'circle-color': 'hsla(31, 100%, 54%, 0.8)',
+      'circle-opacity': 0.8
+    },
+    filter: ["all",["==", "maxRampSeverity", 2],["==", 'displayAlerts', true]],
+    layout: {
+      visibility: 'none'
+    }
+  });
+  layerIds.push('forecast-o-halo');
+
   // Red halo when it's going down right now
   map.addLayer({
     id: 'forecast-r-halo',
@@ -109,7 +125,7 @@ export const initializeStyle = (map, layerSource) => {
       'circle-color': '#B00',
       'circle-opacity': 0.8,
     },
-    filter: ["all",[">=", "rampSeverity", 2],["==", 'displayAlerts', true]],
+    filter: ["all",[">=", "rampSeverity", 3],["==", 'displayAlerts', true]],
     layout: {
       visibility: 'none'
     }

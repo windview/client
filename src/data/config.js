@@ -17,8 +17,13 @@ let maxFarms = 50,
       timeSpan: 60,
       color: "yellow"
     },{
-      level: 3,
+      level: 2,
       powerChange: 2,
+      timeSpan: 120,
+      color: "orange"
+    },{
+      level: 3,
+      powerChange: 3,
       timeSpan: 120,
       color: "red"
     }];
