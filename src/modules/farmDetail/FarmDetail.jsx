@@ -14,6 +14,9 @@ export class FarmDetail extends React.Component {
     if ((!prevProps.forecastLoaded) && (this.props.forecastLoaded)) {
       this.setInitialAlertDisplay()
     }
+    if(prevProps.settingsTimestamp !== this.props.settingsTimestamp) {
+      this.render();
+    }
   }
 
   setInitialAlertDisplay() {
