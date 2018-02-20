@@ -104,7 +104,7 @@ export const initializeStyle = (map, layerSource) => {
     type: 'circle',
     source: 'windfarms',
     paint: {
-      'circle-radius': initialRadius+8,
+      'circle-radius': initialRadius,
       'circle-color': 'hsla(31, 100%, 54%, 0.8)',
       'circle-opacity': 0.8
     },
