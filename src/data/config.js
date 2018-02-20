@@ -13,18 +13,18 @@ let maxFarms = 50,
     ],
     rampThresholds = [{
       level: 1,
-      powerChange: 1,
+      powerChange: 2,
       timeSpan: 60,
       color: "yellow"
     },{
       level: 2,
-      powerChange: 2,
+      powerChange: 3,
       timeSpan: 120,
       color: "orange"
     },{
       level: 3,
-      powerChange: 3,
-      timeSpan: 120,
+      powerChange: 4,
+      timeSpan: 180,
       color: "red"
     }];
 
