@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import CONFIG from '../../data/config';
 import Forecast from '../../data/forecast';
+import WindFarm from '../../data/windFarm';
 import './AppSettings.scss';
 import {mapStateToProps, mapDispatchToProps} from './selectors';
 
@@ -29,11 +30,22 @@ class AppSettings extends React.Component {
     });
   }
 
+  // Validates that all fields are non-blank, converts strings to numbers as
+  // needed, and sorts by level
   getRampConfigFromState() {
     let userConf = this.state.rampConfigs;
     return userConf.filter(c=>{
-      return c.level !== '' && c.powerChange !== '' && c.timeSpan !== '' && c.color !== '';
-    });
+        return c.level !== '' && c.powerChange !== '' && c.timeSpan !== '' && c.color !== '';
+      })
+      .map(c=>{
+        return {
+          level: parseInt(c.level, 10),
+          powerChange: parseFloat(c.powerChange, 10),
+          timeSpan: parseFloat(c.timeSpan, 10),
+          color: c.color
+        }
+      })
+      .sort((a, b)=>{return (a.level-b.level);});
   }
 
   getStateFromConfig() {
@@ -41,7 +53,8 @@ class AppSettings extends React.Component {
     this.setState({
       rampConfigs: rampConfigs,
       forecastHorizon: CONFIG.get('forecastHorizon'),
-      forecastHorizonOptions: [0.5, 1, 2, 3, 5, 7]
+      // FIXME this should come from the forecast model details from the API
+      forecastHorizonOptions: [1]
     });
   }
 
@@ -63,8 +76,38 @@ class AppSettings extends React.Component {
       // settings pane is being navigated away from... apply changes to config
       this.getConfigFromState();
       Forecast.resetAlerts();
-      this.props.onAlertDisplay(Forecast.getAllAlerts());
+      this.props.onAlertDisplay([]);
+      this.props.onAlertDisplay(WindFarm.getFarms().map(f=>f.id));
     }
+  }
+
+  handleRampChange(idx, property, val) {
+    let rampConfigs = this.state.rampConfigs;
+    rampConfigs[idx][property] = val;
+    if(property === 'level') {
+      if(val === '1') {
+        rampConfigs[idx]['color'] = "yellow";
+      } else if (val === '2') {
+        rampConfigs[idx]['color'] = 'orange';
+      } else if ( val === '3') {
+        rampConfigs[idx]['color'] = 'red';
+      } else {
+        rampConfigs[idx]['color'] = '';
+      }
+    } else if(property === 'color') {
+      if(val === 'yellow') {
+        rampConfigs[idx]['level'] = '1';
+      } else if(val === 'orange') {
+        rampConfigs[idx]['level'] = '2';
+      } else if(val === 'red') {
+        rampConfigs[idx]['level']  = '3';
+      } else {
+        rampConfigs[idx]['level'] = '';
+      }
+    }
+    this.setState({
+      "rampConfigs": rampConfigs
+    });
   }
 
   handleChange(e) {
@@ -74,11 +117,7 @@ class AppSettings extends React.Component {
 
     switch(category) {
       case 'ramp':
-        let rampConfigs = this.state.rampConfigs;
-        rampConfigs[idx][property] = val;
-        this.setState({
-          "rampConfigs": rampConfigs
-        });
+        this.handleRampChange(idx, property, val);
         break;
       case 'horizon':
         this.setState({
@@ -128,7 +167,12 @@ class AppSettings extends React.Component {
           </label><br/>
           <label>
             <span>Alert Color</span>
-            <select id={`ramp-${conf.id}-color`} className="alert-color" name="select" value={conf.color} onChange={(e)=>this.handleChange(e)}>
+            <select
+                id={`ramp-${conf.id}-color`}
+                className="alert-color"
+                name="select"
+                value={conf.color}
+                onChange={(e)=>this.handleChange(e)}>
               <option value=""></option>
               <option value="yellow">Yellow</option>
               <option value="orange">Orange</option>
