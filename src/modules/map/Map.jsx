@@ -274,13 +274,13 @@ export class Map extends React.Component {
 
       map.addLayer({
         id: 'windfarms-symbol',
-        type: 'symbol',
+        type: 'circle',
         source: 'windfarms',
-        layout: {
-          'icon-image': 'windfarm',
-          'icon-size': .3,
-          'icon-allow-overlap': true,
-          'icon-keep-upright': true
+        paint: {
+          'circle-color': 'hsla(250, 100%, 50%, .8)',
+          'circle-stroke-color': 'hsla(360, 100%, 100%, .8)',
+          'circle-stroke-width': 1,
+          'circle-radius': 10,
         },
         filter: [
           'all',
@@ -288,46 +288,41 @@ export class Map extends React.Component {
           ['!=', 'disabled', true],
           ['!=', 'suspectData', true]
         ],
-        paint: {
-          'icon-opacity': 1
-        }
+
       });
 
       // This icon layer shows a different icon for the selected farm
+
       map.addLayer({
         id: 'windfarms-selected-symbol',
-        type: 'symbol',
+        type: 'circle',
         source: 'windfarms',
-        layout: {
-          'icon-image': 'windfarm-selected',
-          'icon-size': .40,
-          'icon-allow-overlap': true,
-          'icon-keep-upright': true
+        paint: {
+          'circle-color': 'hsla(360, 100%, 100%, .8)',
+          'circle-stroke-color': 'hsla(250, 100%, 50%, .8)',
+          'circle-stroke-width': 1,
+          'circle-radius': 10,
         },
         filter: [
           'all',
           ['==', 'selected', true],
           ['!=', 'disabled', true],
         ],
-        paint: {
-          'icon-opacity': 1
-        }
+
       });
 
       map.addLayer({
         id: 'windfarms-disabled-symbol',
-        type: 'symbol',
+        type: 'circle',
         source: 'windfarms',
-        layout: {
-          'icon-image': 'windfarm-disabled',
-          'icon-size': .3,
-          'icon-allow-overlap': true,
-          'icon-keep-upright': true
+        paint: {
+          'circle-color': 'hsla(360, 0%, 50%, .8)',
+          'circle-stroke-color': 'hsla(360, 100%, 100%, .8)',
+          'circle-stroke-width': 1,
+          'circle-radius': 10,
         },
         filter: ['==', 'disabled', true],
-        paint: {
-          'icon-opacity': 1
-        }
+
       });
 
       map.addLayer({
