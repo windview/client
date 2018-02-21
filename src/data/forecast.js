@@ -148,11 +148,11 @@ let _formatProbabilisticForecastDataPoint = (dataPoint) => {
   return {
     type: 'probabilistic',
     timestamp: timestamp,
-    prob1stQuantForecastMW: dataPoint[1] > 0 ? Math.round(dataPoint[1]*1000)/1000 : null,
-    prob25thQuantForecastMW: dataPoint[1] > 0 ? Math.round(dataPoint[2]*1000)/1000 : null,
+    prob1stQuantForecastMW: Math.round(dataPoint[1]*1000)/1000,
+    prob25thQuantForecastMW: Math.round(dataPoint[2]*1000)/1000,
     prob50thQuantForecastMW: best,
-    prob75thQuantForecastMW: dataPoint[1] > 0 ? Math.round(dataPoint[4]*1000)/1000 : null,
-    prob99thQuantForecastMW: dataPoint[1] > 0 ? Math.round(dataPoint[5]*1000)/1000 : null,
+    prob75thQuantForecastMW: Math.round(dataPoint[4]*1000)/1000,
+    prob99thQuantForecastMW: Math.round(dataPoint[5]*1000)/1000,
     bestForecastMW: best,
     actual: actual,
     // ramping
@@ -168,7 +168,7 @@ let _formatPointForecastDataPoint = (dataPoint) => {
       actual = null;
 
   if(CONFIG.fakeActuals) {
-    actual = best;
+    actual = best+.2;
   }
 
   return {
@@ -229,8 +229,9 @@ let _postProcessForecastData = (forecast) => {
   * @return a fetch promise
   */
 let fetchForecast = (farm) => {
-  let forecasts = getForecasts();
-  return API.goFetch(`/forecasts/latest?type=probabilistic&farm_id=${farm.id}`)
+  let forecasts = getForecasts(),
+      type = CONFIG.get('forecastType');
+  return API.goFetch(`/forecasts/latest?type=${type}&farm_id=${farm.id}`)
     .then(
       response => {
         if(response.ok) {
