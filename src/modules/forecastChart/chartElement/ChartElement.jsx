@@ -186,9 +186,30 @@ export class ChartElement extends React.Component {
 
     const rampBins = forecastData.alerts.rampBins;
     rampBins.forEach((bin)=>{
-      const color = bin.increments[bin.increments.length-1] > 0 ? "rgba(205, 186, 45, 0.63)" : "rgba(117, 140, 225, 0.53)",
-            borderColor = bin.severity > 1 ? "rgba(255, 0, 0, 0.7" : color;
+      let color, borderColor, label;
+      switch(bin.severity) {
+        case 1:
+          color = "hsla(53, 100%, 54%, 0.4)";
+          borderColor = "hsla(53, 100%, 54%, 1)";
+          break;
+        case 2:
+          color = "hsla(31, 100%, 54%, 0.4)";
+          borderColor = "hsla(31, 100%, 54%, 1)";
+          break;
+        default:
+          color = " hsla(0, 100%, 37%, 0.4)";
+          borderColor = "hsla(0, 100%, 37%, 1)";
+      }
+      label =  bin.direction === 'up' ? '<<<<<<<<<<<': '>>>>>>>>>>>';
+
       chart.xAxis[0].addPlotBand({
+        label: {
+          text: label,
+          rotation: 90,
+          verticalAlign: 'middle',
+          x: -3,
+          y: 2
+        },
         color: color,
         borderColor: borderColor,
         borderWidth: 2,
@@ -212,7 +233,9 @@ export class ChartElement extends React.Component {
 
   componentDidUpdate(prevProps) {
     if(this.props.selectedFarmId || this.props.multiChart) {
-      if(prevProps.selectedFarmId) {
+      if(prevProps.settingsTimestamp !== this.props.settingsTimestamp) {
+        this.chartIt();
+      } else if(prevProps.selectedFarmId) {
         // if the currently selected feature is not the same as the previously selected
         if(this.props.selectedFarmId !== prevProps.selectedFarmId
           || this.props.index !== prevProps.index) {

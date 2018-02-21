@@ -14,14 +14,15 @@ export class FarmDetail extends React.Component {
     if ((!prevProps.forecastLoaded) && (this.props.forecastLoaded)) {
       this.setInitialAlertDisplay()
     }
+    if(prevProps.settingsTimestamp !== this.props.settingsTimestamp) {
+      this.render();
+    }
   }
 
   setInitialAlertDisplay() {
     this.props.onAlertDisplay(WindFarm.getFarms().map(f=>f.id))
   }
 
-
-  // FIXME
   handleAcknowledgeAlert(e) {
     e.preventDefault();
     if (e.target.className === "hideAlert") {
@@ -38,14 +39,13 @@ export class FarmDetail extends React.Component {
         appendRows = [],
         farm = WindFarm.getWindFarmById(this.props.selectedFarmId),
         forecastData = Forecast.getForecastForFarm(farm.id);
-    // FIXME make sure this is the right property accessor
     if(forecastData.alerts.hasRamp) {
       if (this.props.alertArray.includes(this.props.selectedFarmId)) {
         forecastData.alerts.rampBins.forEach((rampBin) => {
           const startTime = moment.utc(rampBin.startTime).format('HH:mm UTC'),
-              endTime = moment.utc(rampBin.endTime).format('HH:mm UTC'),
-              severity = rampBin.severity > 1 ? "severe ramp" : "moderate ramp",
-              className = rampBin.severity > 1 ? "severe" : "moderate";
+                endTime = moment.utc(rampBin.endTime).format('HH:mm UTC'),
+                severity = rampBin.severity > 2 ? "severe ramp" : rampBin.severity > 1 ? 'moderate ramp' : 'low ramp',
+                className = rampBin.severity > 2 ? "severe" : rampBin.severity > 1 ? 'moderate' : 'low';
 
           prependRows.push(<tr key={rampBin.startTime.getTime()} className={className}><td>RAMP ALERT</td><td className="right">A {severity} event is forecast starting at {startTime} and ending at {endTime}</td></tr>);
 

@@ -126,6 +126,11 @@ export const selectTimezoom = (timezoom) => ({
   timezoom: timezoom
 });
 
+export const updateSettingsTS = (timestamp) => ({
+  type: t.UPDATE_SETTINGS_TS,
+  timestamp: timestamp
+});
+
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // thunk action creators for async actions a la

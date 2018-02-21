@@ -99,6 +99,22 @@ export const initializeStyle = (map, layerSource) => {
   });
   layerIds.push('forecast-y-halo');
 
+  map.addLayer({
+    id: 'forecast-o-halo',
+    type: 'circle',
+    source: 'windfarms',
+    paint: {
+      'circle-radius': initialRadius,
+      'circle-color': 'hsla(31, 100%, 54%, 0.8)',
+      'circle-opacity': 0.8
+    },
+    filter: ["all",["==", "rampSeverity", 2],["==", 'displayAlerts', true]],
+    layout: {
+      visibility: 'none'
+    }
+  });
+  layerIds.push('forecast-o-halo');
+
   // Red halo when it's going down right now
   map.addLayer({
     id: 'forecast-r-halo',
@@ -109,12 +125,62 @@ export const initializeStyle = (map, layerSource) => {
       'circle-color': '#B00',
       'circle-opacity': 0.8,
     },
-    filter: ["all",[">=", "rampSeverity", 2],["==", 'displayAlerts', true]],
+    filter: ["all",[">=", "rampSeverity", 3],["==", 'displayAlerts', true]],
     layout: {
       visibility: 'none'
     }
   });
   layerIds.push('forecast-r-halo');
+
+  map.addLayer({
+    id: 'forecast-up-arrow',
+    type: 'symbol',
+    source: 'windfarms',
+    filter: ["all",
+      [">=", "rampSeverity", 1],
+      ["==", 'displayAlerts', true],
+      ["==", 'rampDirection', 'up']
+    ],
+    paint: {
+      "text-color": "hsla(85, 100%, 50%, .6)"
+    },
+    layout: {
+      visibility: "none",
+      "text-field": "<",
+      "text-font": ["Raanana", "PT Sans Narrow", "Optima", "Arial"],
+      "text-size": 80,
+      "text-offset": [-0.1, -0.015],
+      "text-anchor": "center",
+      "text-rotate": 90,
+      "text-allow-overlap": true
+    }
+  });
+  layerIds.push('forecast-up-arrow');
+
+  map.addLayer({
+    id: 'forecast-down-arrow',
+    type: 'symbol',
+    source: 'windfarms',
+    filter: ["all",
+      [">=", "rampSeverity", 1],
+      ["==", 'displayAlerts', true],
+      ["==", 'rampDirection', 'down']
+    ],
+    paint: {
+      "text-color": "hsla(85, 100%, 50%, .6)"
+    },
+    layout: {
+      visibility: "none",
+      "text-field": ">",
+      "text-font": ["Raanana", "PT Sans Narrow", "Optima", "Arial"],
+      "text-size": 80,
+      "text-offset": [0.08, -0.01],
+      "text-anchor": "center",
+      "text-rotate": 90,
+      "text-allow-overlap": true
+    }
+  });
+  layerIds.push('forecast-down-arrow');
 };
 
 // const toggleAnimation = (map, visibility) => {

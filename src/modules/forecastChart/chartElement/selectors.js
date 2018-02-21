@@ -7,7 +7,9 @@ export const mapStateToProps = (state, ownProps) => {
     selectedFarmId: state.analysis.selectedFeature,
     selectedTimestamp: state.analysis.selectedTimestamp,
     multiChartMap: state.analysis.multiChartMap,
-    chartType: state.nav.botChartType
+    chartType: state.nav.botChartType,
+    alertArray: state.analysis.alertArray,
+    settingsTimestamp: state.data.settingsTimestamp
   }
 }
 

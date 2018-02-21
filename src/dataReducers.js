@@ -13,7 +13,8 @@ const defaultValue = {
   windFarmsLoadingError: null,
   forecastLoaded: null,
   forecastLoading: false,
-  forecastLoadingError: null
+  forecastLoadingError: null,
+  settingsTimestamp: new Date().getTime()
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -57,6 +58,11 @@ export default (state=defaultValue, action) => {
         windFarmsLoading: false,
         windFarmsLoaded: true
       };
+    case t.UPDATE_SETTINGS_TS:
+      return {
+        ...state,
+        settingsTimestamp: action.timestamp
+      }
     default:
       return state;
   }

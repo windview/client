@@ -142,6 +142,7 @@ let getGeoJsonForFarms = (selectedTimestamp, alertArray) => {
       if(forecast) {
         forecastProps.maxRampSeverity = forecast.alerts.maxRampSeverity;
         forecastProps.displayAlerts = alertArray.includes(farm.id);
+        forecastProps.overallRampDirection = forecast.alerts.rampDirection;
         forecastForTime = Forecast.getForecastForTime(selectedTimestamp, forecast);
         if(forecastForTime) {
           Object.assign(forecastProps, {
@@ -151,7 +152,7 @@ let getGeoJsonForFarms = (selectedTimestamp, alertArray) => {
             prob75thQuantForecastMW: forecastForTime.prob75thQuantForecastMW,
             prob99thQuantForecastMW: forecastForTime.prob99thQuantForecastMW,
             rampSeverity: forecastForTime.rampSeverity,
-            maxRampSeverity: forecast.alerts.maxRampSeverity
+            rampDirection: forecastForTime.rampDirection
           });
         }
       } else {
