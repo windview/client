@@ -62,7 +62,7 @@ export const initializeStyle = (map, layerSource) => {
     },
     filter: ["all",["==", "maxRampSeverity", 2],["==", 'displayAlerts', true]],
     layout: {
-      visibility: 'none'
+      visibility: "none"
     }
   });
   layerIds.push('windfarms-o-halo');
@@ -83,6 +83,56 @@ export const initializeStyle = (map, layerSource) => {
     }
   });
   layerIds.push('windfarms-r-halo');
+
+  map.addLayer({
+    id: 'windfarms-up-arrow',
+    type: 'symbol',
+    source: 'windfarms',
+    filter: ["all",
+      [">=", "maxRampSeverity", 1],
+      ["==", 'displayAlerts', true],
+      ["==", 'overallRampDirection', 'up']
+    ],
+    paint: {
+      "text-color": "hsla(85, 100%, 50%, .6)"
+    },
+    layout: {
+      visibility: "none",
+      "text-field": "<",
+      "text-font": ["Raanana", "PT Sans Narrow", "Optima", "Arial"],
+      "text-size": 80,
+      "text-offset": [-0.1, -0.015],
+      "text-anchor": "center",
+      "text-rotate": 90,
+      "text-allow-overlap": true
+    }
+  });
+  layerIds.push('windfarms-up-arrow');
+
+  map.addLayer({
+    id: 'windfarms-down-arrow',
+    type: 'symbol',
+    source: 'windfarms',
+    filter: ["all",
+      [">=", "maxRampSeverity", 1],
+      ["==", 'displayAlerts', true],
+      ["==", 'overallRampDirection', 'down']
+    ],
+    paint: {
+      "text-color": "hsla(85, 100%, 50%, .6)"
+    },
+    layout: {
+      visibility: "none",
+      "text-field": ">",
+      "text-font": ["Raanana", "PT Sans Narrow", "Optima", "Arial"],
+      "text-size": 80,
+      "text-offset": [0.08, -0.01],
+      "text-anchor": "center",
+      "text-rotate": 90,
+      "text-allow-overlap": true
+    }
+  });
+  layerIds.push('windfarms-down-arrow');
 };
 
 // const toggleAnimation = (map, visibility) => {
