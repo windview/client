@@ -159,6 +159,7 @@ let _formatProbabilisticForecastDataPoint = (dataPoint) => {
     rampForecastMW: best,
     ramp: false,
     rampSeverity: null,
+    rampDirection: null
   };
 }
 

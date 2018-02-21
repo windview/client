@@ -41,7 +41,7 @@ let calculateRampBins = forecastData => {
         endTime: null,
         severity: 0,
         direction: null,
-        increments: [0],
+        //increments: [0],
       }
       // now the sneaky part... hijack the value for i and loop through subsequent
       // timeslices to find each increment and eventualy the end of the ramp event
@@ -55,7 +55,7 @@ let calculateRampBins = forecastData => {
         if(rampBin.direction === direction) {
           rampBin.severity = rampBin.severity < nextTimeslice.rampSeverity ? nextTimeslice.rampSeverity : rampBin.severity;
           rampBin.endTime = nextTimeslice.timestamp;
-          rampBin.increments.push(increment);
+          //rampBin.increments.push(increment);
           timeslice = nextTimeslice;
           nextTimeslice = forecastData[++i];
         } else {
@@ -69,6 +69,20 @@ let calculateRampBins = forecastData => {
     }
   }
   return rampBins;
+}
+
+let calculateCumulativeRampDirection = (forecastData) => {
+  let upCount = 0,
+      downCount = 0,
+      direction = null;
+  forecastData.data.forEach(d=>{
+    if(d.rampDirection === "up") upCount++;
+    if(d.rampDirection === "down") downCount++;
+  });
+  if(upCount > 0 || downCount > 0) {
+    direction = upCount > downCount ? "up" : "down";
+  }
+  return direction;
 }
 
 /** Calculates if each timeslice represents a ramp of some severity
@@ -93,7 +107,8 @@ let detectRampsInForecast = timeslices => {
       time, // time between time slices used to determine a ramp
       distance, // difference in index # of time slices used to determine a ramp
       threshold, // ramping threshold
-      diff; // calculated difference in forecast power
+      diff, // calculated difference in forecast power
+      direction; // calculated direction of ramp event (up/down)
 
   // Assuming that ramp configs go from less severe to more severe. This
   // means we allow ourselves to overwrite ramps from previous iterations
@@ -111,15 +126,19 @@ let detectRampsInForecast = timeslices => {
       // possible yet depending on the distance between relevant slices
       if(i-distance > -1) {
         previous = timeslices[i-distance];
-        diff = timeslice.rampForecastMW - previous.rampForecastMW;
+        diff = parseFloat(timeslice.rampForecastMW - previous.rampForecastMW);
+        direction = diff > 0 ? 'up' : 'down';
         // if the change in power is greater than r going up or down
         if(Math.abs(diff) >= threshold) {
           timeslice.ramp = true;
           timeslice.rampSeverity = level;
+          timeslice.rampDirection = direction;
           // the previous timeslice(s) represents the beginning of the ramp event. Since we
           // don't know how many steps are between we loop it
           for(let x=i-distance; x<i; x++) {
             timeslices[x].ramp = true;
+            timeslices[x].rampSeverity = level;
+            timeslices[x].rampDirection = direction;
           }
         }
       }
@@ -165,17 +184,26 @@ let hasRamp = forecastData => {
 // at various points in the app. Does some calculations via invoking
 // calculateRampBins
 let getAlertsForForecast = forecastData => {
-  let alerts = {
-    rampStart: getFirstRampStart(forecastData),
-    hasRamp: hasRamp(forecastData),
-    maxRampSeverity: getMaxRampSeverity(forecastData),
-    rampBins: calculateRampBins(forecastData)
+  let ramp = hasRamp(forecastData),
+      alerts = {
+        rampStart: null,
+        hasRamp: ramp,
+        maxRampSeverity: null,
+        rampBins: [],
+        rampDirection: null
+      };
+  if(ramp) {
+    alerts.rampStart = getFirstRampStart(forecastData);
+    alerts.maxRampSeverity = getMaxRampSeverity(forecastData);
+    alerts.rampBins =calculateRampBins(forecastData);
+    alerts.rampDirection = calculateCumulativeRampDirection(forecastData);
   }
   return alerts;
 }
 
 module.exports = {
   calculateRampBins: calculateRampBins,
+  calculateCumulativeRampDirection: calculateCumulativeRampDirection,
   clearAlerts: clearAlerts,
   detectRampsInForecast: detectRampsInForecast,
   getAlertsForForecast: getAlertsForForecast,
