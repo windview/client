@@ -94,7 +94,7 @@ export const initializeStyle = (map, layerSource) => {
       ["==", 'overallRampDirection', 'up']
     ],
     paint: {
-      "text-color": "hsla(250, 100%, 50%, .8)"
+      "text-color": "hsla(85, 100%, 50%, .6)"
     },
     layout: {
       visibility: "none",
@@ -119,7 +119,7 @@ export const initializeStyle = (map, layerSource) => {
       ["==", 'overallRampDirection', 'down']
     ],
     paint: {
-      "text-color": "hsla(250, 100%, 50%, .8)"
+      "text-color": "hsla(85, 100%, 50%, .6)"
     },
     layout: {
       visibility: "none",
