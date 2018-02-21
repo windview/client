@@ -185,7 +185,6 @@ export class ChartElement extends React.Component {
     });
 
     const rampBins = forecastData.alerts.rampBins;
-    console.log(rampBins);
     rampBins.forEach((bin)=>{
       let color, borderColor, label;
       switch(bin.severity) {
