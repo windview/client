@@ -1,6 +1,7 @@
 
 let maxFarms = 50,
-    farmIds = [16, 17, 18, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 34, 35, 39, 40, 42, 43, 45, 46, 48, 50, 51, 52, 53, 56, 57, 58, 59, 60, 62, 63, 64, 65, 67, 68, 69, 71, 72, 83, 84, 86, 87, 88, 89, 90, 91, 92, 94, 95, 96, 106, 111, 115, 116, 117, 118, 119, 121, 125, 126, 127, 132, 134, 142, 156, 157, 158, 159, 164, 165, 166, 171, 172, 173, 174, 176, 177, 179, 180, 181, 183, 185, 186, 187, 188, 204, 208, 209, 216, 217, 218, 220, 223, 225, 227, 229],
+    //farmIds = [16, 17, 18, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 34, 35, 39, 40, 42, 43, 45, 46, 48, 50, 51, 52, 53, 56, 57, 58, 59, 60, 62, 63, 64, 65, 67, 68, 69, 71, 72, 83, 84, 86, 87, 88, 89, 90, 91, 92, 94, 95, 96, 106, 111, 115, 116, 117, 118, 119, 121, 125, 126, 127, 132, 134, 142, 156, 157, 158, 159, 164, 165, 166, 171, 172, 173, 174, 176, 177, 179, 180, 181, 183, 185, 186, 187, 188, 204, 208, 209, 216, 217, 218, 220, 223, 225, 227, 229],
+    farmIds = [230],
     forecastInterval = 60,
     forecastHorizon = 1,
     fakeNow = getFakeNow(),
@@ -57,13 +58,13 @@ function getQueryParam(paramName) {
   */
 function getFakeNow() {
   const useFakeNow = true;
-  let fakeNow = new Date("2018-02-28T07:00:00Z"),
-      now =     new Date(),
+  let fakeNow = new Date("2018-02-28T06:00:00Z"),
+      //now =     new Date(),
       n =       getQueryParam("n");
 
   if(useFakeNow) {
-    fakeNow.setHours(now.getHours());
-    fakeNow.setMinutes(now.getMinutes());
+    //fakeNow.setHours(now.getHours());
+    //fakeNow.setMinutes(now.getMinutes());
     fakeNow = fakeNow.getTime();
     n = (n !== null) ? parseInt(n, 10) : 0;
     fakeNow += 1000*60*60*n;
