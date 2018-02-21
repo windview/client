@@ -8,6 +8,7 @@ import BotChartSelector from '../botChartSelector/BotChartSelector';
 import Slider from '../slider/Slider';
 import AppSettings from '../appSettings/AppSettings';
 import Help from '../help/Help';
+import LoadingBar from '../loadingBar/LoadingBar';
 import WindFarm from '../../data/windFarm';
 import { mapStateToProps } from './selectors';
 import { connect } from 'react-redux';
@@ -18,11 +19,12 @@ import './App.scss';
 export const App = ({ activePane, selectedFeature }) => {
 
   let farmName = selectedFeature ? WindFarm.getWindFarmById(selectedFeature).name : null;
-  
+
   return (
     <div id="app" className="">
       <NavBar appTitle="Wind View" buttons={NAV_BAR_BUTTONS} />
       <div className='main-content-container'>
+      <LoadingBar />
         <div className={classNames({'hidden': activePane!=='map-view'})}>
           <section id="map" className="main-pane-left">
             <Map />
