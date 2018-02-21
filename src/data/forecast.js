@@ -148,11 +148,11 @@ let _formatProbabilisticForecastDataPoint = (dataPoint) => {
   return {
     type: 'probabilistic',
     timestamp: timestamp,
-    prob1stQuantForecastMW: Math.round(dataPoint[1]*1000)/1000,
-    prob25thQuantForecastMW: Math.round(dataPoint[2]*1000)/1000,
+    prob1stQuantForecastMW: dataPoint[1] > 0 ? Math.round(dataPoint[1]*1000)/1000 : null,
+    prob25thQuantForecastMW: dataPoint[1] > 0 ? Math.round(dataPoint[2]*1000)/1000 : null,
     prob50thQuantForecastMW: best,
-    prob75thQuantForecastMW: Math.round(dataPoint[4]*1000)/1000,
-    prob99thQuantForecastMW: Math.round(dataPoint[5]*1000)/1000,
+    prob75thQuantForecastMW: dataPoint[1] > 0 ? Math.round(dataPoint[4]*1000)/1000 : null,
+    prob99thQuantForecastMW: dataPoint[1] > 0 ? Math.round(dataPoint[5]*1000)/1000 : null,
     bestForecastMW: best,
     actual: actual,
     // ramping
