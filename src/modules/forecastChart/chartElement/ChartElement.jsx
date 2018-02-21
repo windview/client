@@ -38,6 +38,7 @@ export class ChartElement extends React.Component {
     forecastData = feature ? Forecast.getForecastForFarm(feature.id) : null;
 
     const data = this.getChartData(forecastData),
+          forecastType = forecastData.type,
           forecast = data[0],
           range = data[1],
           twentyFive = data[2],
@@ -96,8 +97,8 @@ export class ChartElement extends React.Component {
         name: 'Forecast',
         data: forecast,
         zIndex: 4,
-        color: '#fff',
-        lineWidth: 3.5,
+        color: forecastType === "point" ? "#000" : "#fff",
+        lineWidth: forecastType === "point" ? 2 : 3.5,
         dashStyle: 'Solid',
         marker: {
           lineWidth: 1,
