@@ -23,7 +23,7 @@ export const initializeStyle = (map, layerSource) => {
       'circle-stroke-width': 11,
       'circle-stroke-color': 'hsla(240, 100%, 80%, .9)',
     },
-    filter: [">=", "bestForecastMW", 20],
+    filter: [">=", "bestForecastMW", 6],
     layout: {
       visibility: 'none'
     }
@@ -41,7 +41,7 @@ export const initializeStyle = (map, layerSource) => {
       'circle-stroke-width': 8,
       'circle-stroke-color': 'hsla(240, 100%, 60%, .7)',
     },
-    filter: ["all",[">=", 'bestForecastMW', 10],["<", 'bestForecastMW', 20]],
+    filter: ["all",[">=", 'bestForecastMW', 4],["<", 'bestForecastMW', 6]],
     layout: {
       visibility: 'none'
     }
@@ -58,7 +58,7 @@ export const initializeStyle = (map, layerSource) => {
       'circle-stroke-width': 5,
       'circle-stroke-color': 'hsla(240, 100%, 40%, .7)',
     },
-    filter: ["all",[">=", 'bestForecastMW', 3],["<", 'bestForecastMW', 10]],
+    filter: ["all",[">=", 'bestForecastMW', 2],["<", 'bestForecastMW', 4]],
     layout: {
       visibility: 'none'
     }
@@ -75,7 +75,7 @@ export const initializeStyle = (map, layerSource) => {
       'circle-stroke-width': 2,
       'circle-stroke-color': 'hsla(240, 100%, 25%, 1)',
     },
-    filter: ["all",[">", 'bestForecastMW', 0],["<", 'bestForecastMW', 3]],
+    filter: ["all",[">", 'bestForecastMW', 0],["<", 'bestForecastMW', 2]],
     layout: {
       visibility: 'none'
     }
