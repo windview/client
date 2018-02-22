@@ -6,7 +6,7 @@ import turf from '../../node_modules/@turf/turf/turf.min.js';
 let windFarms = [];
 
 // FIXME for debugging only
-window.FARMS = ()=>windFarms;
+// window.FARMS = ()=>windFarms;
 
 let getFarms = ()=>windFarms;
 

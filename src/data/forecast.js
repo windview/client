@@ -7,8 +7,8 @@ let forecasts = [],
     meta = {};
 
 // FIXME for debugging only
-window.FORECASTS = ()=>forecasts;
-window.FORECAST_META = ()=>meta;
+// window.FORECASTS = ()=>forecasts;
+// window.FORECAST_META = ()=>meta;
 
 
 let forecastInterval = CONFIG.forecastInterval;

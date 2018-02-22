@@ -20,7 +20,7 @@ if(process.env.LOG_ACTIONS === 'true') {
 const store = createStore(rootReducer, applyMiddleware.apply(this, middlewares));
 
 // FIXME for development/debugging only
-window.STORE = store;
+// window.STORE = store;
 
 render(
   <Provider store={store}>
