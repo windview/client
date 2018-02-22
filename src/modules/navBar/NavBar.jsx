@@ -12,9 +12,7 @@ export class NavBar extends React.Component {
 
   modelOptionElements() {
     const modelOptions = [
-      { value: 'best', label: 'Best/Most Recent'},
-      { value: 'one', label: 'Forecaster 1'},
-      { value: 'local', label: 'Forecaster 2'}
+      { value: 'best', label: 'Best/Most Recent'}
     ];
 
     return modelOptions.map((option) => {
