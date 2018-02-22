@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import './LoadingBar.scss';
-import {mapStateToProps, mapDispatchToProps} from './selectors';
+import {mapStateToProps} from './selectors';
 
 class LoadingBar extends React.Component {
 
