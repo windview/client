@@ -171,7 +171,8 @@ export class Map extends React.Component {
       return (<span key={s.id}><input id={s.id} type='radio' name='rtoggle' value={s.id} checked={this.props.selectedStyle === s.id} onChange={this.whenStyleChecked}></input>
               <label>{s.label}</label><br/></span>)
     });
-    els.push(<span id='timezoom' key='timezoom'><input type='range' min="8" max="24" step="8" value={this.props.timezoom} onChange={this.whenTimezoomChanged}></input><div>{this.props.timezoom} Hours Ahead</div></span>)
+    
+    //els.push(<span id='timezoom' key='timezoom'><input type='range' min="8" max="24" step="8" value={this.props.timezoom} onChange={this.whenTimezoomChanged}></input><div>{this.props.timezoom} Hours Ahead</div></span>)
 
     return (
       <span>
