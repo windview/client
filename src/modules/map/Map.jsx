@@ -15,6 +15,7 @@ import { mapStateToProps, mapDispatchToProps } from './selectors';
 import WindFarm from '../../data/windFarm';
 import Forecast from '../../data/forecast';
 import * as tlinesStyle from './mapStyles/transmissionLines';
+import * as openeiFarmStyle from './mapStyles/openeiFarms';
 import * as wfActualStyle from './mapStyles/windFarmActual';
 import * as wfForecastStyle from './mapStyles/windFarmForecast';
 import * as wfRampStyle from './mapStyles/windFarmRamp';
@@ -105,6 +106,7 @@ export class Map extends React.Component {
     super(props);
     this.onChangeVisibleExtent = this.onChangeVisibleExtent.bind(this);
     this.whenFeatureClicked = this.whenFeatureClicked.bind(this);
+    this.whenOEIFarmClicked = this.whenOEIFarmClicked.bind(this);
     this.whenFeatureMouseOver = this.whenFeatureMouseOver.bind(this);
     this.whenFeatureMouseOut = this.whenFeatureMouseOut.bind(this);
     this.whenStyleChecked = this.whenStyleChecked.bind(this);
@@ -171,7 +173,7 @@ export class Map extends React.Component {
       return (<span key={s.id}><input id={s.id} type='radio' name='rtoggle' value={s.id} checked={this.props.selectedStyle === s.id} onChange={this.whenStyleChecked}></input>
               <label>{s.label}</label><br/></span>)
     });
-    
+
     //els.push(<span id='timezoom' key='timezoom'><input type='range' min="8" max="24" step="8" value={this.props.timezoom} onChange={this.whenTimezoomChanged}></input><div>{this.props.timezoom} Hours Ahead</div></span>)
 
     return (
@@ -246,6 +248,11 @@ export class Map extends React.Component {
           type: "vector",
           url: process.env.TILE_SERVER_URL + "/osm-translines/metadata.json"
       });
+      // Add OpenEI wind farm points
+     map.addSource('openei-farms', {
+       type: "vector",
+       url: process.env.TILE_SERVER_URL + "/openei-farms/metadata.json"
+     });
 
       let farmData = WindFarm.getGeoJsonForFarms(this.props.selectedTimestamp, this.props.alertArray);
       // TODO move app alerting to own module
@@ -262,12 +269,14 @@ export class Map extends React.Component {
 
       // Initialize all of the layers
       tlinesStyle.initializeStyle(map, 'translines');
+      openeiFarmStyle.initializeStyle(map, 'openei-farms');
       wfSizeStyle.initializeStyle(map, 'windfarms');
       wfForecastStyle.initializeStyle(map, 'windfarms');
       wfRampStyle.initializeStyle(map, 'windfarms', this.props.forecast);
 
       // Show these layers
       this.toggleStyle('tlines');
+      this.toggleStyle('openei-farms')
       this.toggleStyle(this.props.selectedStyle);
 
       // The icon layer is always present, and needs to be for all the
@@ -380,6 +389,9 @@ export class Map extends React.Component {
       }.bind(this))
 
 
+      // OpenEI Farm events for testing and debuggin
+      map.on('click', 'openei-farms', this.whenOEIFarmClicked);
+
       // Handle the relevant events on the windfarms layer
       map.on('click', 'windfarms-symbol', this.whenFeatureClicked);
       map.on('click', 'windfarms-selected-symbol', this.whenFeatureClicked);
@@ -432,9 +444,16 @@ export class Map extends React.Component {
       case "tlines":
         tlinesStyle.toggleVisibility(this.map);
         break;
+      case "openei-farms":
+        openeiFarmStyle.toggleVisibility(this.map);
+        break;
       default:
         break;
     }
+  }
+
+  whenOEIFarmClicked(e, feature) {
+    console.log(e.features[0].properties, e.lngLat);
   }
 
   whenFeatureClicked(e, feature) {
@@ -471,8 +490,5 @@ export class Map extends React.Component {
     this.props.onSelectTimezoom(e.target.value);
   }
 }
-
-
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(Map);
