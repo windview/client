@@ -16,6 +16,7 @@ import WindFarm from '../../data/windFarm';
 import Forecast from '../../data/forecast';
 import * as tlinesStyle from './mapStyles/transmissionLines';
 import * as openeiFarmStyle from './mapStyles/openeiFarms';
+import * as noaaStationStyle from './mapStyles/noaaStations';
 import * as wfActualStyle from './mapStyles/windFarmActual';
 import * as wfForecastStyle from './mapStyles/windFarmForecast';
 import * as wfRampStyle from './mapStyles/windFarmRamp';
@@ -249,10 +250,16 @@ export class Map extends React.Component {
           url: process.env.TILE_SERVER_URL + "/osm-translines/metadata.json"
       });
       // Add OpenEI wind farm points
-     map.addSource('openei-farms', {
-       type: "vector",
-       url: process.env.TILE_SERVER_URL + "/openei-farms/metadata.json"
-     });
+      map.addSource('openei-farms', {
+        type: "vector",
+        url: process.env.TILE_SERVER_URL + "/openei-farms/metadata.json"
+      });
+      // Add OpenEI wind farm points
+      map.addSource('noaa-stations', {
+        type: "vector",
+        url: process.env.TILE_SERVER_URL + "/noaa-stations/metadata.json"
+      });
+
 
       let farmData = WindFarm.getGeoJsonForFarms(this.props.selectedTimestamp, this.props.alertArray);
       // TODO move app alerting to own module
@@ -270,6 +277,7 @@ export class Map extends React.Component {
       // Initialize all of the layers
       tlinesStyle.initializeStyle(map, 'translines');
       openeiFarmStyle.initializeStyle(map, 'openei-farms');
+      noaaStationStyle.initializeStyle(map, 'noaa-stations');
       wfSizeStyle.initializeStyle(map, 'windfarms');
       wfForecastStyle.initializeStyle(map, 'windfarms');
       wfRampStyle.initializeStyle(map, 'windfarms', this.props.forecast);
@@ -277,6 +285,7 @@ export class Map extends React.Component {
       // Show these layers
       this.toggleStyle('tlines');
       this.toggleStyle('openei-farms')
+      this.toggleStyle('noaa-stations')
       this.toggleStyle(this.props.selectedStyle);
 
       // The icon layer is always present, and needs to be for all the
@@ -391,6 +400,7 @@ export class Map extends React.Component {
 
       // OpenEI Farm events for testing and debuggin
       map.on('click', 'openei-farms', this.whenOEIFarmClicked);
+      map.on('click', 'noaa-stations', this.whenOEIFarmClicked);
 
       // Handle the relevant events on the windfarms layer
       map.on('click', 'windfarms-symbol', this.whenFeatureClicked);
@@ -447,13 +457,26 @@ export class Map extends React.Component {
       case "openei-farms":
         openeiFarmStyle.toggleVisibility(this.map);
         break;
+      case "noaa-stations":
+        noaaStationStyle.toggleVisibility(this.map);
+        break;
       default:
         break;
     }
   }
 
   whenOEIFarmClicked(e, feature) {
-    console.log(e.features[0].properties, e.lngLat);
+    let props = e.features[0].properties,
+        lnglat = e.lngLat,
+        fid = props.fid,
+        label = props.label,
+        manu = props.manufacturers,
+        cap = props.total_capacity_mw,
+        unit_count = 28,
+        lon = lnglat.lng,
+        lat = lnglat.lat;
+
+    console.log(`${fid},${label},${manu},${cap},${unit_count},${lon},${lat}`);
   }
 
   whenFeatureClicked(e, feature) {
