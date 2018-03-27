@@ -52,6 +52,37 @@ export class NavBar extends React.Component {
     });
   }
 
+  analysisElements() {
+    let elements = [],
+        activePane = this.props.activePane;
+
+    if(activePane === 'map-view') {
+      elements = [
+        (<li key="forecastModel">
+          <p className="selectbox">Forecast Model</p>
+          <select>
+            {this.modelOptionElements()}
+          </select>
+        </li>),
+        (<li key="aggregatedForecastModel">
+          <p className="selectbox">Aggregation Set</p>
+          <select id="aggregatedSource" onChange={()=>this.handleChangeEvent()}>
+            {this.aggregatedOptionElements()}
+          </select>
+        </li>),
+        (<li key="groupedFarmsSelect" className="groupedFarmsDropdown hidden">
+          <p className="selectbox">Presets</p>
+          <select id="groupedFarmsSelect" onChange={()=>this.setGroupedFarms()}>
+            {this.groupedFarmsOptionsElements()}
+          </select>
+        </li>)
+      ];
+    }
+
+    return elements;
+  }
+
+
   handleChangeEvent() {
     let e = document.getElementById("aggregatedSource");
     let source = e.options[e.selectedIndex]
@@ -93,24 +124,7 @@ export class NavBar extends React.Component {
             <div className="collapse navbar-collapse" id="#wv-navbar-collapse-1">
                 <ul className="nav navbar-nav">
                   {this.buttonElements()}
-                  <li key="forecastModel">
-                    <p className="selectbox">Forecast Model</p>
-                    <select>
-                      {this.modelOptionElements()}
-                    </select>
-                  </li>
-                  <li key="aggregatedForecastModel">
-                    <p className="selectbox">Aggregation Set</p>
-                    <select id="aggregatedSource" onChange={()=>this.handleChangeEvent()}>
-                      {this.aggregatedOptionElements()}
-                    </select>
-                  </li>
-                  <li key="groupedFarmsSelect" className="groupedFarmsDropdown hidden">
-                    <p className="selectbox">Presets</p>
-                    <select id="groupedFarmsSelect" onChange={()=>this.setGroupedFarms()}>
-                      {this.groupedFarmsOptionsElements()}
-                    </select>
-                  </li>
+                  {this.analysisElements()}
                 </ul>
             </div>
         </div>
