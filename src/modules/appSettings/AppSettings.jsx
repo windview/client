@@ -313,10 +313,10 @@ class AppSettings extends React.Component {
     return <span id="power-display-settings">
       <h3>Power Display Range</h3>
       <div className="settings-description">
-        Set the minimum and maximum power (mw) used for styling how power is displayed on the map. If <code>(max-min)</code> is evenly divisible by 3 the display bins will be whole numbers.
+        Set the minimum and maximum power used for styling how power is displayed on the map. If <code>(max-min)%3 = 0</code> the display bins will be whole numbers.
         <div className="power-display-inputs">
-          <label>Minimum</label> <input type='text' id="mappow-min-change" value={minMax.min} onChange={e=>this.handleChange(e)} /><br/>
-          <label>Maximum</label> <input type='text' id="mappow-max-change" value={minMax.max} onChange={e=>this.handleChange(e)} />
+          <label>Minimum (MW)</label> <input type='text' id="mappow-min-change" value={minMax.min} onChange={e=>this.handleChange(e)} /><br/>
+          <label>Maximum (MW)</label> <input type='text' id="mappow-max-change" value={minMax.max} onChange={e=>this.handleChange(e)} />
         </div>
       </div>
     </span>
