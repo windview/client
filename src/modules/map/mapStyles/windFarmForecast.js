@@ -1,3 +1,5 @@
+import {getMapPowerDisplayBins} from '../../../data/config';
+
 let layerIds = [],
     initialRadius = 26;
 
@@ -11,9 +13,37 @@ let layerIds = [],
       animate = false;
 */
 
-export const initializeStyle = (map, layerSource) => {
+const updateFilters = (map) => {
+  if(layerIds.length > 0){
+    let filter = null,
+        bins = getMapPowerDisplayBins();
+    layerIds.forEach(lid=>{
+      switch(lid) {
+        case 'forecast-mega':
+          filter = [">=", "bestForecastMW", bins[3]];
+          break;
+        case 'forecast-big':
+          filter = ["all",[">=", 'bestForecastMW', bins[2]],["<", 'bestForecastMW', bins[3]]];
+          break;
+        case 'forecast-medium':
+          filter = ["all",[">=", 'bestForecastMW', bins[1]],["<", 'bestForecastMW', bins[2]]];
+          break;
+        case 'forecast-small':
+          filter = ["all",[">=", 'bestForecastMW', bins[0]],["<", 'bestForecastMW', bins[1]]];
+          break;
+        default:
+          filter = null;
+      }
+      if(filter) map.setFilter(lid, filter);
+    });
+  }
+}
 
-// Mega winds
+const addLayers = (map, layerSource) => {
+
+  let bins = getMapPowerDisplayBins();
+
+  // Mega winds
   map.addLayer({
     id: 'forecast-mega',
     type: 'circle',
@@ -23,7 +53,7 @@ export const initializeStyle = (map, layerSource) => {
       'circle-stroke-width': 11,
       'circle-stroke-color': 'hsla(240, 100%, 80%, .9)',
     },
-    filter: [">=", "bestForecastMW", 6],
+    filter: [">=", "bestForecastMW", bins[3]],
     layout: {
       visibility: 'none'
     }
@@ -41,7 +71,7 @@ export const initializeStyle = (map, layerSource) => {
       'circle-stroke-width': 8,
       'circle-stroke-color': 'hsla(240, 100%, 60%, .7)',
     },
-    filter: ["all",[">=", 'bestForecastMW', 4],["<", 'bestForecastMW', 6]],
+    filter: ["all",[">=", 'bestForecastMW', bins[2]],["<", 'bestForecastMW', bins[3]]],
     layout: {
       visibility: 'none'
     }
@@ -58,7 +88,7 @@ export const initializeStyle = (map, layerSource) => {
       'circle-stroke-width': 5,
       'circle-stroke-color': 'hsla(240, 100%, 40%, .7)',
     },
-    filter: ["all",[">=", 'bestForecastMW', 2],["<", 'bestForecastMW', 4]],
+    filter: ["all",[">=", 'bestForecastMW', bins[1]],["<", 'bestForecastMW', bins[2]]],
     layout: {
       visibility: 'none'
     }
@@ -75,7 +105,7 @@ export const initializeStyle = (map, layerSource) => {
       'circle-stroke-width': 2,
       'circle-stroke-color': 'hsla(240, 100%, 25%, 1)',
     },
-    filter: ["all",[">", 'bestForecastMW', 0],["<", 'bestForecastMW', 2]],
+    filter: ["all",[">", 'bestForecastMW', bins[0]],["<", 'bestForecastMW', bins[1]]],
     layout: {
       visibility: 'none'
     }
@@ -181,6 +211,14 @@ export const initializeStyle = (map, layerSource) => {
     }
   });
   layerIds.push('forecast-down-arrow');
+};
+
+export const initializeStyle = (map, layerSource) => {
+  if(layerIds.length > 0){
+    updateFilters(map);
+  } else {
+    addLayers(map, layerSource);
+  }
 };
 
 // const toggleAnimation = (map, visibility) => {

@@ -55,7 +55,8 @@ class AppSettings extends React.Component {
       forecastHorizon: CONFIG.get('forecastHorizon'),
       // FIXME this should come from the forecast model details from the API
       forecastHorizonOptions: [1],
-      aggregationGroups: CONFIG.get('groupedFarmOpts')
+      aggregationGroups: CONFIG.get('groupedFarmOpts'),
+      mapPowerDisplayRange: CONFIG.get('mapPowerDisplayRange')
     });
   }
 
@@ -63,6 +64,7 @@ class AppSettings extends React.Component {
     CONFIG.set('rampThresholds', this.getRampConfigFromState());
     CONFIG.set('forecastHorizon', this.state.forecastHorizon);
     CONFIG.set('groupedFarmOpts', this.state.aggregationGroups);
+    CONFIG.set('mapPowerDisplayRange', this.state.mapPowerDisplayRange);
   }
 
   componentWillMount() {
@@ -133,7 +135,7 @@ class AppSettings extends React.Component {
       let vals = []
       for(let i=0; i<options.length; i++) {
         if(options[i].selected) {
-          vals.push(parseInt(options[i].value));
+          vals.push(parseInt(options[i].value, 10));
         }
       }
       if(vals.length === 0) {
@@ -144,6 +146,20 @@ class AppSettings extends React.Component {
 
     this.setState({
       "aggregationGroups": aggConfigs
+    });
+  }
+
+  handleMapPowerDisplayChange(idx, property, val) {
+    let minMax = this.state.mapPowerDisplayRange;
+    val = parseInt(val, 10);
+
+    if(isNaN(val)) {
+      val = '';
+    }
+
+    minMax[idx] = val;
+    this.setState({
+      mapPowerDisplayRange: minMax
     });
   }
 
@@ -163,6 +179,9 @@ class AppSettings extends React.Component {
         break;
       case 'agggroup':
         this.handleAggregationGroupChange(idx, property, val, e.target.options);
+        break;
+      case 'mappow':
+        this.handleMapPowerDisplayChange(idx, property, val);
         break;
       default:
         console.log(`${category} was changed but no settings handler exists`);
@@ -288,16 +307,35 @@ class AppSettings extends React.Component {
     return settings;
   }
 
+  getMapPowerDisplaySettings() {
+    let minMax = this.state.mapPowerDisplayRange;
+
+    return <span id="power-display-settings">
+      <h3>Power Display Range</h3>
+      <div className="settings-description">
+        Set the minimum and maximum power (mw) used for styling how power is displayed on the map. If <code>(max-min)</code> is evenly divisible by 3 the display bins will be whole numbers.
+        <div className="power-display-inputs">
+          <label>Minimum</label> <input type='text' id="mappow-min-change" value={minMax.min} onChange={e=>this.handleChange(e)} /><br/>
+          <label>Maximum</label> <input type='text' id="mappow-max-change" value={minMax.max} onChange={e=>this.handleChange(e)} />
+        </div>
+      </div>
+    </span>
+  }
+
   render() {
     const alertSettings = this.getAlertSettings()
     const forecastTimeSettings = this.getForecastTimeSettings()
     const aggregationGroupSettings = this.getAggregationGroupSettings()
+    const mapPowerSettings = this.getMapPowerDisplaySettings()
 
     return (
       <div className="settings-container">
       <section>
       <h3>Ramp Alerts</h3>
         {alertSettings}
+      </section>
+      <section>
+        {mapPowerSettings}
       </section>
       <section>
         {forecastTimeSettings}

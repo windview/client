@@ -33,7 +33,12 @@ let maxFarms = 50,
       powerChange: 4,
       timeSpan: 180,
       color: "red"
-    }];
+    }],
+    mapPowerDisplayRange = {
+      min: 0,
+      max: 9
+    },
+    mapPowerDisplayBins = getMapPowerDisplayBins();
 
 
 function get(prop) {
@@ -90,6 +95,19 @@ function getGlobalNow() {
   return ts;
 }
 
+function getMapPowerDisplayBins() {
+  let min = mapPowerDisplayRange.min,
+      max = mapPowerDisplayRange.max,
+      step = (max-min)/3,
+      bins;
+
+  bins = [0,1,2,3].map(i=> {
+    return parseInt((step*i+min)*10, 10)/10;
+  });
+
+  return bins;
+}
+
 module.exports = {
   get: get,
   set: set,
@@ -102,5 +120,8 @@ module.exports = {
   getQueryParam: getQueryParam,
   groupedFarmOpts: groupedFarmOpts,
   fakeActuals: fakeActuals,
-  rampThresholds: rampThresholds
+  rampThresholds: rampThresholds,
+  mapPowerDisplayRange: mapPowerDisplayRange,
+  mapPowerDisplayBins: mapPowerDisplayBins,
+  getMapPowerDisplayBins: getMapPowerDisplayBins
 }

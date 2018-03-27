@@ -14,7 +14,8 @@ export const mapStateToProps = (state, ownProps) => {
     windFarmsLoadingError: state.data.windFarmsLoadingError,
     forecastLoaded: state.data.forecastLoaded,
     forecastLoading: state.data.forecastLoading,
-    forecastLoadingError: state.data.forecastLoadingError
+    forecastLoadingError: state.data.forecastLoadingError,
+    settingsTimestamp: state.data.settingsTimestamp
   }
 }
 

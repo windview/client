@@ -40,6 +40,19 @@ span.select {
   margin: 20px 0 20px 0;
 }
 
+#power-display-settings {
+  .power-display-inputs {
+    margin-top: 15px;
+    
+    label {
+      width: 70px;
+    }
+    input {
+      width: 50px;
+    }
+  }
+}
+
 .settings-description {
   font-weight: bold;
   margin-bottom: 10px;
