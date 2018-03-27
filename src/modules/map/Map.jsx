@@ -284,8 +284,8 @@ export class Map extends React.Component {
 
       // Show these layers
       this.toggleStyle('tlines');
-      this.toggleStyle('openei-farms')
-      this.toggleStyle('noaa-stations')
+      //this.toggleStyle('openei-farms')
+      //this.toggleStyle('noaa-stations')
       this.toggleStyle(this.props.selectedStyle);
 
       // The icon layer is always present, and needs to be for all the

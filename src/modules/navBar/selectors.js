@@ -5,6 +5,7 @@ import { activateView, selectAggregation, selectFeaturesByGroup } from '../../ac
 export const mapStateToProps = (state, ownProps) => {
   return {
     activePane: state.nav.activePane,
+    settingsTimestamp: state.data.settingsTimestamp
   }
 }
 

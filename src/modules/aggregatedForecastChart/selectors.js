@@ -8,6 +8,7 @@ export const mapStateToProps = (state, ownProps) => {
     selectedFarmIdsByPolygon: state.analysis.selectedFarmIdsByPolygon,
     selectedFarmIdsByGroup: state.analysis.selectedFarmIdsByGroup,
     aggregatedSource: state.analysis.dataSource,
-    chartTitle: state.analysis.chartTitle
+    chartTitle: state.analysis.chartTitle,
+    settingsTimestamp: state.data.settingsTimestamp
   }
 }

@@ -9,6 +9,11 @@ import CONFIG from '../../data/config';
 
 export class NavBar extends React.Component {
 
+  componentDidUpdate(prevProps) {
+    if(prevProps.settingsTimestamp !== this.props.settingsTimestamp) {
+      this.render();
+    }
+  }
 
   modelOptionElements() {
     const modelOptions = [
@@ -61,17 +66,14 @@ export class NavBar extends React.Component {
   }
 
   setGroupedFarms() {
-    // FIXME these will be replaced with the groups set by the user in config
-    const groupedFarmOptions = CONFIG.get('groupedFarmOpts')
+    const groupedFarmOptions = CONFIG.get('groupedFarmOpts');
+    let e = document.getElementById("groupedFarmsSelect"),
+        source = e.options[e.selectedIndex],
+        selectedGroupId = source.value,
+        selectedGroup;
 
-    let e = document.getElementById("groupedFarmsSelect")
-    let source = e.options[e.selectedIndex]
-    groupedFarmOptions.map(function(group) {
-      if (group.id === source.value) {
-        this.props.onSelectFeaturesByGroup(group.value);
-      }
-      return group;
-    }, this)
+    selectedGroup =  groupedFarmOptions.find(g=>g.id === selectedGroupId)
+    this.props.onSelectFeaturesByGroup(selectedGroup.value);
   }
 
   render() {
@@ -113,7 +115,6 @@ export class NavBar extends React.Component {
             </div>
         </div>
         </nav>
-
     )
   };
 };

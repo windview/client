@@ -9,10 +9,15 @@ let maxFarms = 50,
     fakeNow = getFakeNow(),
     fakeActuals = true,
     now = getGlobalNow(),
-    groupedFarmOpts = [
-      {id: 'one', label: 'San Antonio', value: [37, 38, 39, 40, 41, 42, 43, 32, 33, 34, 35, 36]},
-      {id: 'two', label: 'Houston', value: [16,17]},
-    ],
+    groupedFarmOpts = [{
+      id: 'one',
+      label: 'San Antonio',
+      value: [37, 38, 39, 40, 41, 42, 43, 32, 33, 34, 35, 36]
+    },{
+      id: 'two',
+      label: 'Houston',
+      value: [16,17]
+    }],
     rampThresholds = [{
       level: 1,
       powerChange: 2,

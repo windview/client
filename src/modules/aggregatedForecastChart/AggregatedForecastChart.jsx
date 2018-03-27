@@ -140,7 +140,7 @@ export class AggregatedForecastChart extends React.Component {
           borderColor = "hsla(0, 100%, 37%, 1)";
       }
       label =  bin.direction === 'up' ? '<<<<<<': '>>>>>>';
-      
+
       chart.xAxis[0].addPlotBand({
         label: {
           text: label,
@@ -202,6 +202,9 @@ export class AggregatedForecastChart extends React.Component {
       }
       if(this.props.selectedTimestamp && this.chart) {
         this.drawPlotLine(this.props.selectedTimestamp);
+      }
+      if(prevProps.settingsTimestamp !== this.props.settingsTimestamp) {
+        this.chartIt();
       }
     }
   }

@@ -54,13 +54,15 @@ class AppSettings extends React.Component {
       rampConfigs: rampConfigs,
       forecastHorizon: CONFIG.get('forecastHorizon'),
       // FIXME this should come from the forecast model details from the API
-      forecastHorizonOptions: [1]
+      forecastHorizonOptions: [1],
+      aggregationGroups: CONFIG.get('groupedFarmOpts')
     });
   }
 
   getConfigFromState() {
     CONFIG.set('rampThresholds', this.getRampConfigFromState());
-    CONFIG.set('forecastHorizon', this.state.forecastHorizon)
+    CONFIG.set('forecastHorizon', this.state.forecastHorizon);
+    CONFIG.set('groupedFarmOpts', this.state.aggregationGroups);
   }
 
   componentWillMount() {
@@ -110,6 +112,41 @@ class AppSettings extends React.Component {
     });
   }
 
+  handleAggregationGroupChange(idx, property, val, options) {
+    let aggConfigs = this.state.aggregationGroups,
+        conf = aggConfigs.find(c=>c.id=idx);
+
+    if(property === 'label') {
+      if(val === '') {
+        alert("Please give the group a name");
+      }
+      conf['label'] = val;
+    } else if(property === 'delete') {
+      aggConfigs = aggConfigs.filter(c=>c.id !== idx);
+    } else if(property === 'add') {
+      aggConfigs.unshift({
+        id: `id+${Math.random().toString(36).substr(2,16)}`,
+        label: "New Group",
+        value: []
+      });
+    } else {
+      let vals = []
+      for(let i=0; i<options.length; i++) {
+        if(options[i].selected) {
+          vals.push(parseInt(options[i].value));
+        }
+      }
+      if(vals.length === 0) {
+        alert("Please select at least one farm for this group");
+      }
+      conf.value = vals;
+    }
+
+    this.setState({
+      "aggregationGroups": aggConfigs
+    });
+  }
+
   handleChange(e) {
     let id = e.target.id,
         [category, idx, property] = id.split("-"),
@@ -123,6 +160,9 @@ class AppSettings extends React.Component {
         this.setState({
           forecastHorizon: val
         });
+        break;
+      case 'agggroup':
+        this.handleAggregationGroupChange(idx, property, val, e.target.options);
         break;
       default:
         console.log(`${category} was changed but no settings handler exists`);
@@ -205,27 +245,53 @@ class AppSettings extends React.Component {
       </div>
   }
 
-  render() {
-    const alertSettings = this.getAlertSettings()
-    const forecastTimeSettings = this.getForecastTimeSettings()
+  getAggregationGroupSettings() {
+    let groups = this.state.aggregationGroups,
+        farms = WindFarm.getFarms(),
+        groupSettings,
+        settings;
 
-    const aggregationGroups =
-      <div id="aggreagation-group-settings">
-        <h3>Aggregation Groups</h3>
-        <div className="settings-description">Create groups of wind farms for the aggregated forecast. Once created, these groups can be selected in the top navigation bar.</div>
+    groupSettings = groups.map(conf=>{
+      let farmOpts = farms.map(f=>{
+        return <option key={`grp-agg-opt-${f.id}`} value={f.id}>{f.name}</option>
+      })
+
+      return <div id="aggregation-group-settings" key={`ramp-${conf.id}`}>
         <form>
           <label>
             <span>Group Name</span>
-            <input type="text" name="group-name"/>
+            <input type="text" id={`agggroup-${conf.id}-label`} name="group-name" value={conf.label} onChange={e=>this.handleChange(e)}/> <a href="#" id={`agggroup-${conf.id}-delete`} onClick={e=>this.handleChange(e)}><i id={`agggroup-${conf.id}-delete`} className="fa fa-trash-o fa-lg" aria-hidden="true"></i></a>
           </label><br/>
           <label>
             <span>Wind Farms</span>
-            <select className="select-windfarms" name="select">
-              <option value="select">Select Wind Farms</option>
+            <select multiple id={`agggroup-${conf.id}-farms`} className="select-windfarms" name="select" value={conf.value} onChange={(e)=>this.handleChange(e)}>
+              {farmOpts}
             </select>
           </label>
         </form>
       </div>
+    })
+
+    settings = <span>
+      <h3>Aggregation Groups</h3>
+      <div className="settings-description">
+        Create groups of wind farms for the aggregated forecast. Once created, these groups can be selected in the top navigation bar.
+        <p>
+          <a href="#" id={`agggroup-new-add`} onClick={e=>this.handleChange(e)}>
+            <i id={`agggroup-new-add`} className="fa fa-plus fa-lg" aria-hidden="true">Add New Group</i>
+          </a>
+        </p>
+      </div>
+      {groupSettings}
+    </span>
+
+    return settings;
+  }
+
+  render() {
+    const alertSettings = this.getAlertSettings()
+    const forecastTimeSettings = this.getForecastTimeSettings()
+    const aggregationGroupSettings = this.getAggregationGroupSettings()
 
     return (
       <div className="settings-container">
@@ -237,7 +303,7 @@ class AppSettings extends React.Component {
         {forecastTimeSettings}
       </section>
       <section>
-        {aggregationGroups}
+        {aggregationGroupSettings}
       </section>
       </div>
   )}
