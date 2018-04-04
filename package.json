@@ -2,7 +2,7 @@
   "name": "WindView",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://2lv11windv01.nrel.gov",
+  "homepage": "https://1lv11windv01.nrel.gov",
   "devDependencies": {
     "autoprefixer": "6.5.1",
     "babel-core": "6.17.0",
@@ -65,7 +65,6 @@
     "font-awesome": "^4.7.0",
     "highcharts": "^5.0.10",
     "jquery": "^3.1.1",
-    "leaflet": "^1.0.1",
     "mapbox-gl": "^0.36.0",
     "moment": "^2.16.0",
     "nouislider": "^9.0.0",
