@@ -166,6 +166,10 @@ export const initializeStyle = (map, layerSource) => {
 //   }
 // }
 
+export const getLayerIds = () => {
+  return layerIds;
+}
+
 export const toggleVisibility = (map) => {
   if(layerIds.length === 0) { return; }
   const visible = map.getLayoutProperty(layerIds[0], 'visibility') === 'visible' ? 'none' : 'visible';

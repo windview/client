@@ -1,7 +1,11 @@
-const layerIds = [];
+let layerIds = [];
 
 export const initializeStyle = (map, layerSource) => {
 
+}
+
+export const getLayerIds = () => {
+  return layerIds;
 }
 
 export const toggleVisibility = (map) => {

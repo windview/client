@@ -213,6 +213,10 @@ const addLayers = (map, layerSource) => {
   layerIds.push('forecast-down-arrow');
 };
 
+export const getLayerIds = () => {
+  return layerIds;
+}
+
 export const initializeStyle = (map, layerSource) => {
   if(layerIds.length > 0){
     updateFilters(map);

@@ -154,11 +154,14 @@ export class Map extends React.Component {
   }
 
   onChangeVisibleExtent(e) {
-    let features = this.map.queryRenderedFeatures({layers:['windfarms-symbol', 'windfarms-selected-symbol', 'windfarms-disabled-symbol']});
+    let searchableLayerIds = this.state.searchableLayerIds,
+        features = this.map.queryRenderedFeatures({layers:searchableLayerIds});
     if (features) {
       let uniqueFeatures = this.getUniqueFeatures(features, "fid"),
           uniqFeatureIds = uniqueFeatures.map(f=>f.properties.fid);
       this.props.onMapMove(uniqFeatureIds);
+    } else {
+      //console.err("No features in visible extent");
     }
   }
 
@@ -285,6 +288,17 @@ export class Map extends React.Component {
       wfSizeStyle.initializeStyle(map, 'windfarms');
       wfForecastStyle.initializeStyle(map, 'windfarms');
       wfRampStyle.initializeStyle(map, 'windfarms', this.props.forecast);
+
+
+      let localLayerIds = ['windfarms-symbol', 'windfarms-selected-symbol', 'windfarms-disabled-symbol', 'windfarms-suspect-data-symbol', 'windfarms-selected-suspect-data-symbol', 'windfarms-down-arrow', 'windfarms-up-arrow'],
+      searchableLayerIds = []
+          .concat(localLayerIds)
+          .concat(wfSizeStyle.getLayerIds())
+          .concat(wfForecastStyle.getLayerIds())
+          .concat(wfRampStyle.getLayerIds());
+      this.setState({
+        searchableLayerIds: searchableLayerIds
+      });
 
       // Show these layers
       this.toggleStyle('tlines');
