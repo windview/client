@@ -21,8 +21,8 @@ function getClientEnvironment(publicUrl) {
       // images into the `src` and `import` them in code to get their paths.
       'PUBLIC_URL': JSON.stringify(publicUrl),
       // Apply some app defaults for when .env is not present
-      'API_URL': JSON.stringify(process.env.API_URL || 'https://1lv11windv01.nrel.gov/data/api'),
-      'TILE_SERVER_URL': JSON.stringify(process.env.TILE_SERVER_URL || 'https://1lv11windv01.nrel.gov/tiles')
+      'API_URL': JSON.stringify(process.env.API_URL || 'https://windview-beta.nrel.gov/data/api'),
+      'TILE_SERVER_URL': JSON.stringify(process.env.TILE_SERVER_URL || 'https://windview-beta.nrel.gov/tiles')
     });
   return {'process.env': processEnv};
 }
