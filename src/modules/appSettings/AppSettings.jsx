@@ -256,7 +256,7 @@ class AppSettings extends React.Component {
 
       return <div id="forecast-time-settings">
         <h3>Forecast Time Horizon</h3>
-        <div className="settings-description">Set the desired number of days to forecast ahead.</div>
+        <div className="settings-description">Set the desired number of days to forecast ahead. (not every forecaster supports the full time range)</div>
         <select id="horizon-0-time" className="1-30" value={horizon} onChange={(e)=>this.handleChange(e)}>
           {options}
         </select>

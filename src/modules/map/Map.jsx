@@ -200,7 +200,7 @@ export class Map extends React.Component {
     let map = new mapboxgl.Map({
       container: 'wind-map', // container id
       style: 'https://free.tilehosting.com/styles/darkmatter/style.json?key=o6iGgsKYC7Ry7Y0VhZwY', //mapboxStyle,
-      center: [-99.902, 31.969], // starting position
+      center: [-104.902, 33.969], // starting position
       zoom: 4.5, // starting zoom
       hash: false
     });
