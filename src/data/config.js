@@ -11,37 +11,30 @@ let maxFarms = 50,
     forecastType = "point",
     forecastInterval = 60,
     forecastHorizon = 1,
+    useFakeNow = false,
     fakeNow = getFakeNow(),
     fakeActuals = false,
     now = getGlobalNow(),
-    groupedFarmOpts = [{
-      id: 'one',
-      label: 'San Antonio',
-      value: [37, 38, 39, 40, 41, 42, 43, 32, 33, 34, 35, 36]
-    },{
-      id: 'two',
-      label: 'Houston',
-      value: [16,17]
-    }],
+    groupedFarmOpts = [],
     rampThresholds = [{
       level: 1,
-      powerChange: 2,
+      powerChange: 5,
       timeSpan: 60,
       color: "yellow"
     },{
       level: 2,
-      powerChange: 3,
-      timeSpan: 120,
+      powerChange: 10,
+      timeSpan: 60,
       color: "orange"
     },{
       level: 3,
-      powerChange: 4,
-      timeSpan: 180,
+      powerChange: 15,
+      timeSpan: 60,
       color: "red"
     }],
     mapPowerDisplayRange = {
       min: 0,
-      max: 9
+      max: 180
     },
     mapPowerDisplayBins = getMapPowerDisplayBins();
 
@@ -74,7 +67,6 @@ function getQueryParam(paramName) {
   * is screwy
   */
 function getFakeNow() {
-  const useFakeNow = true;
   let fakeNow = new Date("2018-02-28T06:00:00Z"),
       //now =     new Date(),
       n =       getQueryParam("n");
