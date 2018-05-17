@@ -114,6 +114,7 @@ module.exports = {
   forecastHorizon: forecastHorizon,
   forecastType: forecastType,
   now: now,
+  getGlobalNow: getGlobalNow,
   getQueryParam: getQueryParam,
   groupedFarmOpts: groupedFarmOpts,
   fakeActuals: fakeActuals,
