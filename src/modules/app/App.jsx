@@ -20,11 +20,23 @@ class App extends React.Component {
 
   componentDidMount() {
     let fetchForecasts = this.props.fetchForecasts,
-        fiveMinutes = 1000*60*5;
+        fiveMinutes = 1000*60*5,
+        intervalHandle;
 
-    setInterval(()=> {
+    intervalHandle = setInterval(()=> {
       fetchForecasts(WindFarm.getFarms());
     }, (fiveMinutes));
+
+    this.setState({
+      intervalHandle: intervalHandle
+    });
+  }
+
+  componentWillUnmount() {
+    let intervalHandle = this.state.intervalHandle;
+    if(intervalHandle) {
+      clearInterval(intervalHandle);
+    }
   }
 
   render() {
