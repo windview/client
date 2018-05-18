@@ -11,6 +11,8 @@ let maxFarms = 50,
     forecastType = "point",
     forecastInterval = 60,
     forecastHorizon = 1,
+    forecastRefreshRate = (1000*20), //20 seconds
+    //forecastRefreshRate = (1000*60*5), //5 minutes
     useFakeNow = false,
     fakeNow = getFakeNow(),
     fakeActuals = false,
@@ -112,6 +114,7 @@ module.exports = {
   maxFarms: maxFarms,
   forecastInterval: forecastInterval,
   forecastHorizon: forecastHorizon,
+  forecastRefreshRate: forecastRefreshRate,
   forecastType: forecastType,
   now: now,
   getGlobalNow: getGlobalNow,
