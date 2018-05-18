@@ -17,7 +17,7 @@ export class NavBar extends React.Component {
 
   modelOptionElements() {
     const modelOptions = [
-      { value: 'best', label: 'Best/Most Recent'}
+      { value: 'best', label: 'M3'}
     ];
 
     return modelOptions.map((option) => {
