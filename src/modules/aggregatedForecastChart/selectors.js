@@ -9,6 +9,7 @@ export const mapStateToProps = (state, ownProps) => {
     selectedFarmIdsByGroup: state.analysis.selectedFarmIdsByGroup,
     aggregatedSource: state.analysis.dataSource,
     chartTitle: state.analysis.chartTitle,
-    settingsTimestamp: state.data.settingsTimestamp
+    settingsTimestamp: state.data.settingsTimestamp,
+    forecastTimestamp: state.data.forecastTimestamp
   }
 }

@@ -234,7 +234,9 @@ export class ChartElement extends React.Component {
 
   componentDidUpdate(prevProps) {
     if(this.props.selectedFarmId || this.props.multiChart) {
-      if(prevProps.settingsTimestamp !== this.props.settingsTimestamp) {
+      if(prevProps.forecastTimestamp !== this.props.forecastTimestamp) {
+        this.chartIt();
+      }else if(prevProps.settingsTimestamp !== this.props.settingsTimestamp) {
         this.chartIt();
       } else if(prevProps.selectedFarmId) {
         // if the currently selected feature is not the same as the previously selected

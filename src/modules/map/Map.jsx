@@ -101,7 +101,8 @@ export class Map extends React.Component {
         }
       }, this);
     }
-    if(prevProps.settingsTimestamp !== this.props.settingsTimestamp) {
+    if((prevProps.settingsTimestamp !== this.props.settingsTimestamp)
+        || (prevProps.forecastTimestamp !== this.props.forecastTimestamp)){
       wfSizeStyle.initializeStyle(this.map, 'windfarms');
       wfForecastStyle.initializeStyle(this.map, 'windfarms');
     }

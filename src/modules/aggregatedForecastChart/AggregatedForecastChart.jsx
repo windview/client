@@ -203,7 +203,8 @@ export class AggregatedForecastChart extends React.Component {
       if(this.props.selectedTimestamp && this.chart) {
         this.drawPlotLine(this.props.selectedTimestamp);
       }
-      if(prevProps.settingsTimestamp !== this.props.settingsTimestamp) {
+      if((prevProps.settingsTimestamp !== this.props.settingsTimestamp)
+          || (prevProps.forecastTimestamp !== this.props.forecastTimestamp)){
         this.chartIt();
       }
     }

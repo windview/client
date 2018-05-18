@@ -9,7 +9,8 @@ export const mapStateToProps = (state, ownProps) => {
     multiChartMap: state.analysis.multiChartMap,
     chartType: state.nav.botChartType,
     alertArray: state.analysis.alertArray,
-    settingsTimestamp: state.data.settingsTimestamp
+    settingsTimestamp: state.data.settingsTimestamp,
+    forecastTimestamp: state.data.forecastTimestamp
   }
 }
 
