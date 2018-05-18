@@ -10,6 +10,7 @@ import AppSettings from '../appSettings/AppSettings';
 import Help from '../help/Help';
 import LoadingBar from '../loadingBar/LoadingBar';
 import WindFarm from '../../data/windFarm';
+import Forecast from '../../data/forecast';
 import Config from '../../data/config';
 import { mapStateToProps, mapDispatchToProps } from './selectors';
 import { connect } from 'react-redux';
@@ -21,14 +22,14 @@ class App extends React.Component {
 
   componentDidMount() {
     let fetchForecasts = this.props.fetchForecasts,
-        fiveMinutes = 1000*60*5,
-        //thirtySeconds = 1000*30,
+        refreshRate = Config.get('forecastRefreshRate'),
         intervalHandle;
 
     intervalHandle = setInterval(()=> {
       Config.set('now', Config.getGlobalNow());
+      Forecast.clearForecasts();
       fetchForecasts(WindFarm.getFarms());
-    }, (fiveMinutes));
+    }, (refreshRate));
 
     this.setState({
       intervalHandle: intervalHandle

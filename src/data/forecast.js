@@ -50,6 +50,9 @@ let getDataStart = () => {
 }
 
 let getForecasts = () => forecasts;
+let clearForecasts = () => {
+  forecasts = []
+}
 
 let getForecastById = (fid) => {
   return getForecasts().find((forecast)=>{ return forecast.id === fid; });
@@ -391,6 +394,7 @@ let getAllAlerts = () => {
 }
 
 module.exports = {
+  clearForecasts: clearForecasts,
   fetchBatchForecast: fetchBatchForecast,
   fetchForecast: fetchForecast,
   getForecasts: getForecasts,
