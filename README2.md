@@ -1,6 +1,6 @@
 # WindView
 
-<table style="border:0px;"><tr><td style="border: 0px;"><img width="220" src="./public/images/doe_logo.png"></td><td style="border: 0px;"><img width="220" src="./public/images/anl_logo.png"></td><td style="border: 0px;">
+<table style="border:0px;"><tr><td style="vertical-align: middle; border: 0px;"><img width="220" src="./public/images/doe_logo.png"></td><td style="vertical-align: middle; border: 0px;"><img width="220" src="./public/images/anl_logo.png"></td><td style="vertical-align: middle; border: 0px;">
 <img width="220" src="./public/images/nrel_logo.png"></td></tr></table>
 
 WindView is a collaborative effort between the National Renewable Energy Lab [[NREL]](https://www.nrel.gov) and Argonne National Lab [[ANL]](https://www.anl.gov). WindView is wind power visualization software which enables power system operators to better understand static and forecast information on their power system, relating to wind.
