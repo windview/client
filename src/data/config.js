@@ -6,7 +6,7 @@ let maxFarms = 50,
     //farmIds = [230],
     // OpenEI farms
     //farmIds = [234,235,236,237,238,239,240,241,242],
-    farmIds = [231,232,233,234,235,236,237,238,239],
+    farmIds = [1,2,3,4,5,6,7,8,9],
     //forecastType = "probabilistic",
     forecastType = "point",
     forecastInterval = 60,
