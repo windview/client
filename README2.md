@@ -136,7 +136,7 @@ $ rails s
 
 ### Deployment
 
-Full notes on deploying a Rails web application are beyond the scope of this document. In our test environment we are using Foreman to create a `systemd` installation. ea
+Full notes on deploying a Rails web application are beyond the scope of this document. In our test environment we are using Foreman to create a `systemd` installation. For more details and documentation please visit [the Rails homepage](https://rubyonrails.org/).
 
 
 ## Data Streams
@@ -275,7 +275,8 @@ Probabilistic forecast data
       ]
     ]
   }
-}```
+}
+```
 
 Forecast as fetched from the API
 ```json
@@ -334,7 +335,5 @@ TODO - Add license when it is finalized
 
 ## Links
 TODO - Add links to
-  - Argus Prima
-  - M3
   - Any working installations/demo sites/partner links
 
