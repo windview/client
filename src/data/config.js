@@ -7,8 +7,8 @@ let maxFarms = 50,
     // OpenEI farms
     //farmIds = [234,235,236,237,238,239,240,241,242],
     farmIds = [1,2,3,4,5,6,7,8,9],
-    //forecastType = "probabilistic",
-    forecastType = "point",
+    forecastType = "probabilistic",
+    //forecastType = "point",
     forecastInterval = 60,
     forecastHorizon = 1,
     //forecastRefreshRate = (1000*20), //20 seconds
