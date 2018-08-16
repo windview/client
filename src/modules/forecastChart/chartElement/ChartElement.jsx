@@ -119,7 +119,7 @@ export class ChartElement extends React.Component {
           symbol: "square"
         }
       }, {
-        name: '1% Probability',
+        name: '1st Percentile',
         data: one,
         color: '#bbb',
         zIndex: 3,
@@ -130,7 +130,7 @@ export class ChartElement extends React.Component {
           symbol: "triangle-down"
         }
       }, {
-        name: '25% Probability',
+        name: '25nd Percentile',
         data: twentyFive,
         color: '#bbb',
         zIndex: 3,
@@ -141,7 +141,7 @@ export class ChartElement extends React.Component {
           symbol: "triangle-down"
         }
       }, {
-        name: '75% Probability',
+        name: '75th Percentile',
         data: seventyFive,
         color: '#bbb',
         zIndex: 3,
@@ -152,7 +152,7 @@ export class ChartElement extends React.Component {
           symbol: "triangle"
         }
       }, {
-        name: '99% Probability',
+        name: '99th Percentile',
         data: ninetynine,
         color: '#bbb',
         zIndex: 3,
