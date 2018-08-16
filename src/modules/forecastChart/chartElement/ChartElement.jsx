@@ -130,7 +130,7 @@ export class ChartElement extends React.Component {
           symbol: "triangle-down"
         }
       }, {
-        name: '25nd Percentile',
+        name: '25th Percentile',
         data: twentyFive,
         color: '#bbb',
         zIndex: 3,
