@@ -39,7 +39,7 @@ const ChartElement = () => {
 export class AggregatedForecastChart extends React.Component {
 
   chartIt() {
-    let aggData = Forecast.getAggregatedForecast(this.getForecasts())
+    let aggData = Forecast.getAggregatedForecast(this.getForecasts());
     if(!aggData) {
       if(this.chart) {
         this.clearChart();
@@ -57,8 +57,6 @@ export class AggregatedForecastChart extends React.Component {
     // add a 10% buffer on the top of the chart just in case
     yAxisMax = Math.ceil(yAxisMax*.1 + yAxisMax);
     let yAxisMin = 0;
-
-    console.log(data);
 
     let chart = Highcharts.chart('aggregated-chart', {
       chart: {
@@ -170,6 +168,9 @@ export class AggregatedForecastChart extends React.Component {
     }, this);
 
     this.chart = chart;
+
+    let forecastTimestamp = Forecast.getForecastTimestamp();
+    this.drawForecastTime(forecastTimestamp);
   }
 
   clearChart() {
@@ -185,7 +186,7 @@ export class AggregatedForecastChart extends React.Component {
     if(aggDataSource && this.props.forecastLoaded) {
       this.chartIt();
       if(this.props.selectedTimestamp) {
-        this.drawPlotLine(this.props.selectedTimestamp);
+        this.drawSelectedTime(this.props.selectedTimestamp);
       }
     }
   }
@@ -212,7 +213,7 @@ export class AggregatedForecastChart extends React.Component {
         this.chartIt();
       }
       if(this.props.selectedTimestamp && this.chart) {
-        this.drawPlotLine(this.props.selectedTimestamp);
+        this.drawSelectedTime(this.props.selectedTimestamp);
       }
       if((prevProps.settingsTimestamp !== this.props.settingsTimestamp)
           || (prevProps.forecastTimestamp !== this.props.forecastTimestamp)){
@@ -221,7 +222,7 @@ export class AggregatedForecastChart extends React.Component {
     }
   }
 
-  drawPlotLine(timestamp) {
+  drawSelectedTime(timestamp) {
     if(this.chart.xAxis) {
       this.chart.xAxis[0].removePlotLine('selectedTimestamp');
       this.chart.xAxis[0].addPlotLine({
@@ -231,6 +232,20 @@ export class AggregatedForecastChart extends React.Component {
         width: 2,
         zIndex: 5,
         dashStyle: "Dash"
+      });
+    }
+  }
+
+  drawForecastTime(timestamp) {
+    if(this.chart.xAxis) {
+      this.chart.xAxis[0].removePlotLine('forecastTimestamp');
+      this.chart.xAxis[0].addPlotLine({
+        id: 'forecastTimestamp',
+        color: "#00750c",
+        value: timestamp,
+        width: 3,
+        zIndex: 5,
+        dashStyle: "ShortDash"
       });
     }
   }

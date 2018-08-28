@@ -1,4 +1,3 @@
-
 import API from './api';
 import Alerts from './alerts';
 import CONFIG from './config';
@@ -393,6 +392,20 @@ let getAllAlerts = () => {
   return alertDisplayArray
 }
 
+let getForecastTimestamp = (fid) => {
+  let ts;
+  if(fid) {
+    ts = _convertTimestampToDate(getForecastById(fid).generated_at).getTime();
+  } else {
+    // Calculate the earliest timestamp in the set
+    ts = getForecasts().reduce((min, f) => {
+      const tmp = _convertTimestampToDate(f.generated_at).getTime();
+      return ts < tmp ? ts : tmp;
+    }, 2222222222222222);
+  }
+  return ts;
+}
+
 module.exports = {
   clearForecasts: clearForecasts,
   fetchBatchForecast: fetchBatchForecast,
@@ -404,6 +417,7 @@ module.exports = {
   getDataStart: getDataStart,
   getForecastForFarm: getForecastForFarm,
   getForecastForTime: getForecastForTime,
+  getForecastTimestamp: getForecastTimestamp,
   getMasterTimeline: getMasterTimeline,
   getAllAlerts: getAllAlerts,
   resetAlerts: resetAlerts

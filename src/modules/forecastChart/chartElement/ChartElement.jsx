@@ -231,13 +231,16 @@ export class ChartElement extends React.Component {
     }, this);
 
     this.chart = chart;
+
+    let forecastTimestamp = Forecast.getForecastTimestamp(forecastData.id);
+    this.drawForecastTime(forecastTimestamp);
   }
 
   componentDidMount() {
     if(this.props.selectedFarmId || this.props.multiChart) {
       this.chartIt();
       if(this.props.selectedTimestamp) {
-        this.drawPlotLine(this.props.selectedTimestamp);
+        this.drawSelectedTime(this.props.selectedTimestamp);
       }
     }
   }
@@ -260,11 +263,11 @@ export class ChartElement extends React.Component {
       }
     }
     if(this.props.selectedTimestamp) {
-      this.drawPlotLine(this.props.selectedTimestamp);
+      this.drawSelectedTime(this.props.selectedTimestamp);
     }
   }
 
-  drawPlotLine(timestamp) {
+  drawSelectedTime(timestamp) {
     if(this.chart) {
       this.chart.xAxis[0].removePlotLine('selectedTimestamp');
       this.chart.xAxis[0].addPlotLine({
@@ -274,6 +277,20 @@ export class ChartElement extends React.Component {
         width: 2,
         zIndex: 5,
         dashStyle: "Dash"
+      });
+    }
+  }
+
+  drawForecastTime(timestamp) {
+    if(this.chart.xAxis) {
+      this.chart.xAxis[0].removePlotLine('forecastTimestamp');
+      this.chart.xAxis[0].addPlotLine({
+        id: 'forecastTimestamp',
+        color: "#00750c",
+        value: timestamp,
+        width: 3,
+        zIndex: 5,
+        dashStyle: "ShortDash"
       });
     }
   }
