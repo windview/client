@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import './AggregatedForecastChart.scss';
 import { mapStateToProps } from './selectors';
 import Forecast from '../../data/forecast';
+import Farms from '../../data/windFarm';
 import CONFIG from '../../data/config';
 import Highcharts from 'highcharts/highcharts';
 import HighchartsMore from 'highcharts/highcharts-more';
@@ -51,6 +52,13 @@ export class AggregatedForecastChart extends React.Component {
           actuals = data[1],
           now = CONFIG.now;
 
+    let yAxisMax = Farms.getTotalCapacity();
+    // Possible for forecast probability to exceed total farm capacity,
+    // add a 10% buffer on the top of the chart just in case
+    yAxisMax = Math.ceil(yAxisMax*.1 + yAxisMax);
+    let yAxisMin = 0;
+
+    console.log(data);
 
     let chart = Highcharts.chart('aggregated-chart', {
       chart: {
@@ -74,6 +82,9 @@ export class AggregatedForecastChart extends React.Component {
         }]
       },
       yAxis: {
+        min: yAxisMin,
+        max: yAxisMax,
+        minRange: yAxisMax-yAxisMin,
         opposite: true,
         title: {
           text: "Power (MW)"

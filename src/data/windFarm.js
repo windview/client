@@ -25,6 +25,12 @@ let getWindFarmById = (fid) => {
   return getFarms().find((farm)=>{ return farm.id === fid; });
 }
 
+let getTotalCapacity = () => {
+  return getFarms().reduce((total, farm) => {
+    return farm.capacity_mw + total;
+  }, 0);
+}
+
 /**
   * Loads a farm from the server by id
   *
@@ -178,6 +184,7 @@ let setSelectedFarm = (farm) => {
 module.exports = {
   getFarms: getFarms,
   getFarmsByPolygon: getFarmsByPolygon,
+  getTotalCapacity: getTotalCapacity,
   getWindFarmById: getWindFarmById,
   fetchFarm: fetchFarm,
   fetchBatchFarms: fetchBatchFarms,

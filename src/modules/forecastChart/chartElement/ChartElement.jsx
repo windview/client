@@ -37,6 +37,13 @@ export class ChartElement extends React.Component {
     feature = selectedFeatureId ? WindFarm.getWindFarmById(selectedFeatureId) : null;
     forecastData = feature ? Forecast.getForecastForFarm(feature.id) : null;
 
+    let yAxisMax = feature.capacity_mw;
+    // Possible for forecast probability to exceed total farm capacity,
+    // add a 10% buffer on the top of the chart just in case, or 500%
+    // buffer for very small capacity farms.
+    yAxisMax = yAxisMax < 3 ? Math.ceil(yAxisMax*5) : Math.ceil(yAxisMax*.1 + yAxisMax);
+    let yAxisMin = 0;
+
     const data = this.getChartData(forecastData),
           forecastType = forecastData.type,
           forecast = data[0],
@@ -79,6 +86,9 @@ export class ChartElement extends React.Component {
         }]
       },
       yAxis: {
+        min: yAxisMin,
+        max: yAxisMax,
+        minRange: yAxisMax-yAxisMin,
         title: {
           text: "Power (MW)"
         }
