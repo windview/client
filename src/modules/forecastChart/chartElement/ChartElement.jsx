@@ -234,6 +234,8 @@ export class ChartElement extends React.Component {
 
     let forecastTimestamp = Forecast.getForecastTimestamp(forecastData.id);
     this.drawForecastTime(forecastTimestamp);
+
+    $('[data-toggle="tooltip"]').tooltip()
   }
 
   componentDidMount() {
@@ -326,7 +328,7 @@ export class ChartElement extends React.Component {
     let selectedFeatureId = this.props.selectedFarmId,
         selectedFeature = selectedFeatureId ? WindFarm.getWindFarmById(selectedFeatureId) : null,
         container = "forecast-chart",
-        button = <button type="button" onClick={this.addMultiChart}>+</button>;
+        button = <button type="button" className="multibutton" data-toggle="tooltip" data-placement="bottom" title="Add to Multi Chart View" onClick={this.addMultiChart}>+</button>;
 
     //debugger;
 
@@ -334,7 +336,7 @@ export class ChartElement extends React.Component {
       selectedFeatureId = this.props.farmId;
       selectedFeature = selectedFeatureId ? WindFarm.getWindFarmById(selectedFeatureId) : null;
       container = this.props.container;
-      button = <button type="button" onClick={this.removeMultiChart}>-</button>;
+      button = <button type="button" className="multibutton" data-toggle="tooltip" data-placement="bottom" title="Remove From Multi Chart View" onClick={this.removeMultiChart}>-</button>;
     }
 
     return selectedFeature.loading ? <LoadingElement label={selectedFeature.name} /> :

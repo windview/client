@@ -58,7 +58,7 @@
     "@mapbox/mapbox-gl-draw": "^1.0.9",
     "@turf/turf": "^4.7.3",
     "babel-polyfill": "^6.23.0",
-    "bootstrap": "3.2",
+    "bootstrap": "^3.3",
     "classnames": "^2.2.5",
     "commafy": "^0.0.5",
     "d3": "^4.3.0",
