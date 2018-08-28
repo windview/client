@@ -4,12 +4,14 @@ import '../../../node_modules/mapbox-gl/dist/mapbox-gl.css';
 import Legend from '../legend/Legend';
 import mapboxgl from '../../../node_modules/mapbox-gl/dist/mapbox-gl.js';
 import MapboxDraw from '../../../node_modules/@mapbox/mapbox-gl-draw';
-import windFarmIcon from '../../images/windfarm.png';
-import windFarmDisabledIcon from '../../images/windfarm-disabled.png';
-import windFarmSelectedIcon from '../../images/windfarm-selected.png';
-import windFarmSuspectDataIcon from '../../images/windfarm-suspect-data.png'
-import windFarmSelectedSuspsectDataIcon from '../../images/windfarm-selected-suspect-data.png'
+import windFarmIcon from '../../images/windfarm-sm.png';
+import windFarmDisabledIcon from '../../images/windfarm-disabled-sm.png';
+import windFarmSelectedIcon from '../../images/windfarm-selected-sm.png';
+import windFarmSuspectDataIcon from '../../images/windfarm-suspect-data-sm.png';
+import windFarmSelectedSuspsectDataIcon from '../../images/windfarm-selected-suspect-data-sm.png';
 import './Map.scss';
+import chevronDown from '../../images/chevrons-down.svg';
+import chevronUp from '../../images/chevrons-up.svg';
 //import mapboxStyle from '../../styles/dark-matter-style';
 import { mapStateToProps, mapDispatchToProps } from './selectors';
 import WindFarm from '../../data/windFarm';
@@ -170,7 +172,7 @@ export class Map extends React.Component {
 
     const styleSelectors = [{
       id: 'ramp',
-      label: "All Forthcoming Alerts"
+      label: "Most Severe Forthcoming Alert"
     }, {
       id: 'forecast',
       label: 'Forecast at Selected Time'
@@ -226,6 +228,16 @@ export class Map extends React.Component {
 
     // after map initializes itself, go to work adding all the things
     map.on('load', function(){
+
+      // Can't use SVG directly in MapboxGL, but can create an
+      // img DOM element and use that
+      let img = new Image(33,45);
+      img.onload = ()=>map.addImage('chevronDown', img);
+      img.src = chevronDown;
+
+      let img2 = new Image(33,45);
+      img2.onload = ()=>map.addImage('chevronUp', img2);
+      img2.src = chevronUp;
 
       // Add the custom image icon for wind farms to use later
       map.loadImage(windFarmIcon, (err, image) => {
@@ -316,7 +328,7 @@ export class Map extends React.Component {
         source: 'windfarms',
         layout: {
           'icon-image': 'windfarm',
-          'icon-size': .3,
+          'icon-size': 1,
           'icon-allow-overlap': true,
           'icon-keep-upright': true
         },
@@ -338,7 +350,7 @@ export class Map extends React.Component {
         source: 'windfarms',
         layout: {
           'icon-image': 'windfarm-selected',
-          'icon-size': .40,
+          'icon-size': 1,
           'icon-allow-overlap': true,
           'icon-keep-upright': true
         },
@@ -358,7 +370,7 @@ export class Map extends React.Component {
         source: 'windfarms',
         layout: {
           'icon-image': 'windfarm-disabled',
-          'icon-size': .3,
+          'icon-size': 1,
           'icon-allow-overlap': true,
           'icon-keep-upright': true
         },
@@ -374,7 +386,7 @@ export class Map extends React.Component {
         source: 'windfarms',
         layout: {
           'icon-image': 'windfarm-suspect-data',
-          'icon-size': .3,
+          'icon-size': 1,
           'icon-allow-overlap': true,
           'icon-keep-upright': true
         },
@@ -395,7 +407,7 @@ export class Map extends React.Component {
         source: 'windfarms',
         layout: {
           'icon-image': 'windfarm-selected-suspect-data',
-          'icon-size': .4,
+          'icon-size': 1,
           'icon-allow-overlap': true,
           'icon-keep-upright': true
         },

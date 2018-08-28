@@ -94,17 +94,14 @@ export const initializeStyle = (map, layerSource) => {
       ["==", 'overallRampDirection', 'up']
     ],
     paint: {
-      "text-color": "hsla(85, 100%, 50%, .6)"
+      "icon-opacity": 1
     },
     layout: {
       visibility: "none",
-      "text-field": "<",
-      "text-font": ["Raanana", "PT Sans Narrow", "Optima", "Arial"],
-      "text-size": 80,
-      "text-offset": [-0.1, -0.015],
-      "text-anchor": "center",
-      "text-rotate": 90,
-      "text-allow-overlap": true
+      'icon-image': 'chevronUp',
+      'icon-size': 1,
+      'icon-offset': [0,-2],
+      'icon-allow-overlap': true
     }
   });
   layerIds.push('windfarms-up-arrow');
@@ -119,17 +116,14 @@ export const initializeStyle = (map, layerSource) => {
       ["==", 'overallRampDirection', 'down']
     ],
     paint: {
-      "text-color": "hsla(85, 100%, 50%, .6)"
+      "icon-opacity": 1
     },
     layout: {
       visibility: "none",
-      "text-field": ">",
-      "text-font": ["Raanana", "PT Sans Narrow", "Optima", "Arial"],
-      "text-size": 80,
-      "text-offset": [0.08, -0.01],
-      "text-anchor": "center",
-      "text-rotate": 90,
-      "text-allow-overlap": true
+      'icon-image': 'chevronDown',
+      'icon-size': 1,
+      'icon-offset': [0,1],
+      'icon-allow-overlap': true
     }
   });
   layerIds.push('windfarms-down-arrow');
