@@ -18,6 +18,8 @@ export class ChartElement extends React.Component {
     super(props);
     this.addMultiChart = this.addMultiChart.bind(this);
     this.removeMultiChart = this.removeMultiChart.bind(this);
+    this.onMouseOver = this.onMouseOver.bind(this);
+    this.onMouseOut = this.onMouseOut.bind(this);
   }
 
   chartIt() {
@@ -342,7 +344,7 @@ export class ChartElement extends React.Component {
     return selectedFeature.loading ? <LoadingElement label={selectedFeature.name} /> :
       (
         <BaseElement multiChart={this.props.multiChart}>
-          <div className='chart-title'>{selectedFeature.name} {button}
+          <div className='chart-title' onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut}>{selectedFeature.name} {button}
           </div>
           <div id={container} className={this.props.multiChart ? 'multi-forecast-chart':''}></div>
         </BaseElement>
@@ -355,6 +357,16 @@ export class ChartElement extends React.Component {
 
   removeMultiChart(){
     this.props.onRemoveMultiChart(this.props.farmId);
+  }
+
+  onMouseOver() {
+    let farmId = this.props.multiChart ? this.props.farmId : this.props.selectedFarmId;
+    this.props.onTitleHover(farmId);
+  }
+
+  onMouseOut() {
+    let farmId = this.props.multiChart ? this.props.farmId : this.props.selectedFarmId;
+    this.props.unTitleHover(farmId);
   }
 }
 

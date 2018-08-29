@@ -7,7 +7,7 @@ import ChartElement from './chartElement/ChartElement';
 // internal use only display components.
 export const BaseElement = (props) => {
   return (
-    <div id="chart-wrapper" className={props.multiChart ? "multi-forecast-chart-wrapper": "chart-wrapper"}>
+    <div id="chart-wrapper" className={props.multiChart ? "multi-forecast-chart-wrapper": "chart-wrapper"} onMouseOver={props.onMouseOver} onMouseOut={props.onMouseOut}>
       {props.children}
     </div>
   )

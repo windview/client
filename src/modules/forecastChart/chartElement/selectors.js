@@ -1,6 +1,6 @@
 // forecastChart/chartElement/selectors
 
-import {addMultiChart, removeMultiChart} from '../../../actionCreators';
+import {addMultiChart, removeMultiChart, highlightFeature, unhighlightFeature} from '../../../actionCreators';
 
 export const mapStateToProps = (state, ownProps) => {
   return {
@@ -21,6 +21,12 @@ export const mapDispatchToProps = (dispatch) => {
     },
     onRemoveMultiChart: (selectedFeatureId) => {
       dispatch(removeMultiChart(selectedFeatureId));
+    },
+    onTitleHover: (featureId) => {
+      dispatch(highlightFeature(featureId));
+    },
+    unTitleHover: (featureId) => {
+      dispatch(unhighlightFeature(featureId));
     }
   }
 }
