@@ -108,10 +108,14 @@ export class Map extends React.Component {
       wfSizeStyle.initializeStyle(this.map, 'windfarms');
       wfForecastStyle.initializeStyle(this.map, 'windfarms');
     }
+    if((prevProps.highlightedFeatureId !== this.props.highlightedFeatureId) && this.map) {
+      this.highlightFeature(this.props.highlightedFeatureId);
+    }
   }
 
   constructor(props) {
     super(props);
+    this.highlightFeature = this.highlightFeature.bind(this);
     this.onChangeVisibleExtent = this.onChangeVisibleExtent.bind(this);
     this.whenFeatureClicked = this.whenFeatureClicked.bind(this);
     this.whenOEIFarmClicked = this.whenOEIFarmClicked.bind(this);
@@ -136,6 +140,10 @@ export class Map extends React.Component {
     });
 
     return uniqueFeatures;
+  }
+
+  highlightFeature(featureId) {
+    console.log("Highlight Feature", featureId);
   }
 
   onChangeAggregationDrawing(e) {
