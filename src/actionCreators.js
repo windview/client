@@ -190,3 +190,12 @@ export const removeMultiChart = (selectedFeatureId) => ({
   type: t.REMOVE_MULTI_CHART,
   selectedFeatureId: selectedFeatureId
 });
+export const highlightFeature = (featureId) => ({
+  type: t.HIGHLIGHT_FEATURE,
+  featureId: featureId
+});
+export const unhighlightFeature = (featureId) => ({
+  type: t.UNHIGHLIGHT_FEATURE,
+  featureId: featureId
+});
+

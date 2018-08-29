@@ -22,7 +22,8 @@ const defaultValue = {
   selectedFarmIdsByGroup: [],
   aggregationGroups: [],
   rampThresholds: [],
-  forecastHorizon: 24
+  forecastHorizon: 24,
+  highlightedFeatureId: null
 }
 
 
@@ -148,6 +149,16 @@ export default (state=defaultValue, action) => {
         ...state,
         multiChartMap: removeFromArray(state.multiChartMap, action.selectedFeatureId)
       };
+    case t.HIGHLIGHT_FEATURE:
+      return {
+        ...state,
+        highlightedFeatureId: action.featureId
+      }
+    case t.UNHIGHLIGHT_FEATURE:
+      return {
+        ...state,
+        highlightedFeatureId: null
+      }
     default:
       return state;
   }
