@@ -13,8 +13,8 @@ class AppSettings extends React.Component {
   // of this component for driving the UI. We have a pre-determined max of
   // 3 so we just create 3 blank backfilling properties from CONFIG where
   // present
-  getRampStateFromConfig() {
-    let preConfigured = CONFIG.get('rampThresholds'),
+  getRampStateFromConfig(configKey) {
+    let preConfigured = CONFIG.get(configKey),
         empty = {
           level: '',
           powerChange: '',
@@ -32,8 +32,8 @@ class AppSettings extends React.Component {
 
   // Validates that all fields are non-blank, converts strings to numbers as
   // needed, and sorts by level
-  getRampConfigFromState() {
-    let userConf = this.state.rampConfigs;
+  getRampConfigFromState(stateKey) {
+    let userConf = this.state[stateKey];
     return userConf.filter(c=>{
         return c.level !== '' && c.powerChange !== '' && c.timeSpan !== '' && c.color !== '';
       })
@@ -49,9 +49,11 @@ class AppSettings extends React.Component {
   }
 
   getStateFromConfig() {
-    let rampConfigs = this.getRampStateFromConfig();
+    let rampConfigs = this.getRampStateFromConfig('rampThresholds'),
+        aggregationRampConfigs = this.getRampStateFromConfig('aggregationRampThresholds');
     this.setState({
       rampConfigs: rampConfigs,
+      aggregationRampConfigs: aggregationRampConfigs,
       forecastHorizon: CONFIG.get('forecastHorizon'),
       // FIXME this should come from the forecast model details from the API
       forecastHorizonOptions: [1],
@@ -61,7 +63,8 @@ class AppSettings extends React.Component {
   }
 
   getConfigFromState() {
-    CONFIG.set('rampThresholds', this.getRampConfigFromState());
+    CONFIG.set('rampThresholds', this.getRampConfigFromState('rampConfigs'));
+    CONFIG.set('aggregationRampThresholds', this.getRampConfigFromState('aggregationRampConfigs'));
     CONFIG.set('forecastHorizon', this.state.forecastHorizon);
     CONFIG.set('groupedFarmOpts', this.state.aggregationGroups);
     CONFIG.set('mapPowerDisplayRange', this.state.mapPowerDisplayRange);
@@ -85,8 +88,8 @@ class AppSettings extends React.Component {
     }
   }
 
-  handleRampChange(idx, property, val) {
-    let rampConfigs = this.state.rampConfigs;
+  handleRampChange(idx, property, val, stateKey) {
+    let rampConfigs = this.state[stateKey];
     rampConfigs[idx][property] = val;
     if(property === 'level') {
       if(val === '1') {
@@ -170,7 +173,10 @@ class AppSettings extends React.Component {
 
     switch(category) {
       case 'ramp':
-        this.handleRampChange(idx, property, val);
+        this.handleRampChange(idx, property, val, 'rampConfigs');
+        break;
+      case 'aggramp':
+        this.handleRampChange(idx, property, val, 'aggregationRampConfigs');
         break;
       case 'horizon':
         this.setState({
@@ -188,10 +194,11 @@ class AppSettings extends React.Component {
     }
   }
 
-  getAlertSettings() {
+  getRampThresholdSettings(stateKey) {
 
-    let rampConfigs = this.state.rampConfigs,
+    let rampConfigs = this.state[stateKey],
         forecastInterval = CONFIG.get('forecastInterval'),
+        units = stateKey === 'rampConfigs' ? 'MW' : '% Total Capacity',
         intervalOpts,
         settings;
 
@@ -214,7 +221,7 @@ class AppSettings extends React.Component {
           <label>
             <span>Change in forecast power by</span>
             <input id={`ramp-${conf.id}-powerChange`} type="text" name="power" value={conf.powerChange} onChange={(e)=>this.handleChange(e)}/>
-            <span>MW</span>
+            <span>{units}</span>
           </label>
           <label>
             <span>over</span>
@@ -323,16 +330,21 @@ class AppSettings extends React.Component {
   }
 
   render() {
-    const alertSettings = this.getAlertSettings()
-    const forecastTimeSettings = this.getForecastTimeSettings()
-    const aggregationGroupSettings = this.getAggregationGroupSettings()
-    const mapPowerSettings = this.getMapPowerDisplaySettings()
+    const rampThresholdSettings = this.getRampThresholdSettings('rampConfigs'),
+          aggRampThresholdSettings = this.getRampThresholdSettings('aggregationRampConfigs'),
+          forecastTimeSettings = this.getForecastTimeSettings(),
+          aggregationGroupSettings = this.getAggregationGroupSettings(),
+          mapPowerSettings = this.getMapPowerDisplaySettings();
 
     return (
       <div className="settings-container">
       <section>
-      <h3>Ramp Alerts</h3>
-        {alertSettings}
+      <h3>Ramp Thresholds For Farms</h3>
+        {rampThresholdSettings}
+      </section>
+      <section>
+      <h3>Ramp Thresholds For Aggregated Chart</h3>
+        {aggRampThresholdSettings}
       </section>
       <section>
         {mapPowerSettings}

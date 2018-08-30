@@ -26,6 +26,22 @@ let maxFarms = 50,
       label: "Test Group 2",
       value: [7,8,9]
     }],
+    aggregationRampThresholds = [{
+      level: 1,
+      powerChange: 10,
+      timeSpan: 60,
+      color: "yellow"
+    },{
+      level: 2,
+      powerChange: 20,
+      timeSpan: 60,
+      color: "orange"
+    },{
+      level: 3,
+      powerChange: 30,
+      timeSpan: 60,
+      color: "red"
+    }],
     rampThresholds = [{
       level: 1,
       powerChange: 5,
@@ -42,7 +58,7 @@ let maxFarms = 50,
       timeSpan: 60,
       color: "red"
     }],
-    
+
     mapPowerDisplayRange = {
       min: 0,
       max: 180
@@ -131,6 +147,7 @@ module.exports = {
   groupedFarmOpts: groupedFarmOpts,
   fakeActuals: fakeActuals,
   rampThresholds: rampThresholds,
+  aggregationRampThresholds: aggregationRampThresholds,
   mapPowerDisplayRange: mapPowerDisplayRange,
   mapPowerDisplayBins: mapPowerDisplayBins,
   getMapPowerDisplayBins: getMapPowerDisplayBins
