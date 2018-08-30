@@ -17,7 +17,15 @@ let maxFarms = 50,
     fakeNow = getFakeNow(),
     fakeActuals = false,
     now = getGlobalNow(),
-    groupedFarmOpts = [],
+    groupedFarmOpts = [{
+      id: '1',
+      label: "Test Group 1",
+      value: [1,2,3]
+    },{
+      id: '2',
+      label: "Test Group 2",
+      value: [7,8,9]
+    }],
     rampThresholds = [{
       level: 1,
       powerChange: 5,
@@ -34,6 +42,7 @@ let maxFarms = 50,
       timeSpan: 60,
       color: "red"
     }],
+    
     mapPowerDisplayRange = {
       min: 0,
       max: 180
