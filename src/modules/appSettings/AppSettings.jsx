@@ -116,7 +116,7 @@ class AppSettings extends React.Component {
 
   handleAggregationGroupChange(idx, property, val, options) {
     let aggConfigs = this.state.aggregationGroups,
-        conf = aggConfigs.find(c=>c.id=idx);
+        conf = aggConfigs.find(c=>c.id === idx);
 
     if(property === 'label') {
       if(val === '') {
@@ -275,7 +275,7 @@ class AppSettings extends React.Component {
         return <option key={`grp-agg-opt-${f.id}`} value={f.id}>{f.name}</option>
       })
 
-      return <div id="aggregation-group-settings" key={`ramp-${conf.id}`}>
+      return <div id="aggregation-group-settings" key={`grp-${conf.id}`}>
         <form>
           <label>
             <span>Group Name</span>
