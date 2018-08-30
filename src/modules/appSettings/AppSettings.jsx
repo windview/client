@@ -113,7 +113,7 @@ class AppSettings extends React.Component {
       }
     }
     this.setState({
-      "rampConfigs": rampConfigs
+      stateKey: rampConfigs
     });
   }
 
@@ -199,6 +199,7 @@ class AppSettings extends React.Component {
     let rampConfigs = this.state[stateKey],
         forecastInterval = CONFIG.get('forecastInterval'),
         units = stateKey === 'rampConfigs' ? 'MW' : '% Total Capacity',
+        key = stateKey === 'rampConfigs' ? 'ramp' : 'aggramp',
         intervalOpts,
         settings;
 
@@ -207,11 +208,11 @@ class AppSettings extends React.Component {
     });
 
     settings = rampConfigs.map(conf=>{
-      return <div id="alert-settings" key={`ramp-${conf.id}`}>
+      return <div id="alert-settings" key={`${key}-${conf.id}`}>
         <form>
           <label>
             <span>Alert Level</span>
-            <select id={`ramp-${conf.id}-level`} className="alert-severity" name="select" value={conf.level} onChange={(e)=>this.handleChange(e)}>
+            <select id={`${key}-${conf.id}-level`} className="alert-severity" name="select" value={conf.level} onChange={(e)=>this.handleChange(e)}>
               <option value=""></option>
               <option value="1">Low</option>
               <option value="2">Moderate</option>
@@ -220,12 +221,12 @@ class AppSettings extends React.Component {
           </label><br/>
           <label>
             <span>Change in forecast power by</span>
-            <input id={`ramp-${conf.id}-powerChange`} type="text" name="power" value={conf.powerChange} onChange={(e)=>this.handleChange(e)}/>
+            <input id={`${key}-${conf.id}-powerChange`} type="text" name="power" value={conf.powerChange} onChange={(e)=>this.handleChange(e)}/>
             <span>{units}</span>
           </label>
           <label>
             <span>over</span>
-            <select id={`ramp-${conf.id}-timeSpan`} name="time" value={conf.timeSpan} onChange={(e)=>this.handleChange(e)}>
+            <select id={`${key}-${conf.id}-timeSpan`} name="time" value={conf.timeSpan} onChange={(e)=>this.handleChange(e)}>
               <option value=""></option>
               {intervalOpts}
             </select>
@@ -234,7 +235,7 @@ class AppSettings extends React.Component {
           <label>
             <span>Alert Color</span>
             <select
-                id={`ramp-${conf.id}-color`}
+                id={`${key}-${conf.id}-color`}
                 className="alert-color"
                 name="select"
                 value={conf.color}
