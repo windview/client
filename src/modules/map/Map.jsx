@@ -23,6 +23,7 @@ import * as wfActualStyle from './mapStyles/windFarmActual';
 import * as wfForecastStyle from './mapStyles/windFarmForecast';
 import * as wfRampStyle from './mapStyles/windFarmRamp';
 import * as wfSizeStyle from './mapStyles/windFarmSize';
+import * as wfHighlightStyle from './mapStyles/windFarmHighlight';
 
 
 export class Map extends React.Component {
@@ -31,6 +32,12 @@ export class Map extends React.Component {
     this.onChangeVisibleExtent({type:'manual'});
     // select first farm
     this.whenFeatureClicked(null, WindFarm.getFarms()[0]);
+  }
+
+  applyHighlightToFeature(featureId) {
+    WindFarm.setHighlightedFarm(featureId);
+    this.bumpMapFarms();
+    this.toggleStyle('wind-farm-highlights');
   }
 
   applySelectedFeature(feature, forcePopup) {
@@ -109,13 +116,14 @@ export class Map extends React.Component {
       wfForecastStyle.initializeStyle(this.map, 'windfarms');
     }
     if((prevProps.highlightedFeatureId !== this.props.highlightedFeatureId) && this.map) {
-      this.highlightFeature(this.props.highlightedFeatureId);
+      this.applyHighlightToFeature(this.props.highlightedFeatureId);
     }
   }
 
   constructor(props) {
     super(props);
-    this.highlightFeature = this.highlightFeature.bind(this);
+    this.applySelectedFeature = this.applySelectedFeature.bind(this);
+    this.applyHighlightToFeature = this.applyHighlightToFeature.bind(this);
     this.onChangeVisibleExtent = this.onChangeVisibleExtent.bind(this);
     this.whenFeatureClicked = this.whenFeatureClicked.bind(this);
     this.whenOEIFarmClicked = this.whenOEIFarmClicked.bind(this);
@@ -140,10 +148,6 @@ export class Map extends React.Component {
     });
 
     return uniqueFeatures;
-  }
-
-  highlightFeature(featureId) {
-    console.log("Highlight Feature", featureId);
   }
 
   onChangeAggregationDrawing(e) {
@@ -309,7 +313,7 @@ export class Map extends React.Component {
       wfSizeStyle.initializeStyle(map, 'windfarms');
       wfForecastStyle.initializeStyle(map, 'windfarms');
       wfRampStyle.initializeStyle(map, 'windfarms', this.props.forecast);
-
+      wfHighlightStyle.initializeStyle(map, 'windfarms');
 
       let localLayerIds = ['windfarms-symbol', 'windfarms-selected-symbol', 'windfarms-disabled-symbol', 'windfarms-suspect-data-symbol', 'windfarms-selected-suspect-data-symbol', 'windfarms-down-arrow', 'windfarms-up-arrow'],
       searchableLayerIds = []
@@ -475,7 +479,6 @@ export class Map extends React.Component {
     }.bind(this));
   }
 
-
   toggleStyle(styleName) {
     switch(styleName) {
       case "size":
@@ -498,6 +501,9 @@ export class Map extends React.Component {
         break;
       case "noaa-stations":
         noaaStationStyle.toggleVisibility(this.map);
+        break;
+      case "wind-farm-highlights":
+        wfHighlightStyle.toggleVisibility(this.map);
         break;
       default:
         break;

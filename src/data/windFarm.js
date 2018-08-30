@@ -126,6 +126,7 @@ let fetchAllFarms = () => {
   * - maxRampSeverity
   * - rampSeverity
   * - selected
+  * - highlighted
   * - disabled
   * - suspectData
   */
@@ -143,6 +144,7 @@ let getGeoJsonForFarms = (selectedTimestamp, alertArray) => {
             disabled: false,
             suspectData: false,
             selected: farm.selected,
+            highlighted: farm.highlighted
           }
 
       if(forecast) {
@@ -175,6 +177,13 @@ let getGeoJsonForFarms = (selectedTimestamp, alertArray) => {
   return json;
 }
 
+let setHighlightedFarm = (farmId) => {
+  let farms = getFarms();
+  farms.forEach(f=>{
+    f.highlighted = (f.id === farmId);
+  });
+}
+
 let setSelectedFarm = (farm) => {
   getFarms().forEach(f=>{f.selected = false});
   farm.selected = true;
@@ -190,5 +199,6 @@ module.exports = {
   fetchBatchFarms: fetchBatchFarms,
   fetchAllFarms: fetchAllFarms,
   getGeoJsonForFarms: getGeoJsonForFarms,
-  setSelectedFarm: setSelectedFarm
+  setSelectedFarm: setSelectedFarm,
+  setHighlightedFarm: setHighlightedFarm
 }
