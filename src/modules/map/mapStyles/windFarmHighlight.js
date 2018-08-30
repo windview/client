@@ -1,17 +1,17 @@
 // initialize properties
 let layerIds = [],
-// animation props
+    // style props
     initialRadius = 20,
-    initialStroke = 2,
+    initialStroke = 0,
     radius = initialRadius,
     stroke = initialStroke,
     finalRadius = 33,
-    finalStroke = 9,
+    finalStroke = 7,
+    // animation props
     framesPerSecond = 10,
     radiusStep = (finalRadius - initialRadius) / framesPerSecond,
     strokeStep = (finalStroke - initialStroke) / framesPerSecond,
-    timeStep = 400/framesPerSecond,
-    animate = true;
+    timeStep = 400/framesPerSecond;
 
 export const initializeStyle = (map, layerSource) => {
 
@@ -21,20 +21,14 @@ export const initializeStyle = (map, layerSource) => {
     type: 'circle',
     source: layerSource,
     paint: {
-      'circle-radius': initialRadius,
-      'circle-radius-transition': {
-        duration: 0,
-        delay: 0
-      },
+      'circle-radius': radius,
+      'circle-radius-transition': { duration: 0 },
       'circle-opacity': .7,
       'circle-color': '#000',
-      'circle-stroke-width': initialStroke,
-      'circle-stroke-width-transition': {
-        duration: 0,
-        delay: 0
-      },
+      'circle-stroke-width': stroke,
+      'circle-stroke-width-transition': { duration: 0 },
       'circle-stroke-opacity': .7,
-      'circle-stroke-color': '#62bb62',
+      'circle-stroke-color': '#45c845',
     },
     filter: ["==", "highlighted", true],
     layout: {
@@ -57,28 +51,20 @@ const setInitialStyle = (layerId, map) => {
 }
 
 const setSecondaryStyle = (layerId, map) => {
-
+  // Self invoking inner function conducts the animated transition
   function animateMarker() {
     setTimeout(function(){
-      if(animate) {
-
-        radius += radiusStep;
-        stroke += strokeStep;
-
-        map.setPaintProperty(layerId, 'circle-radius', radius);
-        map.setPaintProperty(layerId, 'circle-stroke-width', stroke);
-
-        if(radius >= finalRadius) {
-          animate = false;
-        } else {
-          animateMarker();
-        }
+      radius += radiusStep;
+      stroke += strokeStep;
+      map.setPaintProperty(layerId, 'circle-radius', radius);
+      map.setPaintProperty(layerId, 'circle-stroke-width', stroke);
+      if(radius < finalRadius) {
+        animateMarker();
       }
     }, timeStep);
   }
 
   // Start the animation.
-  animate = true;
   animateMarker();
 }
 
