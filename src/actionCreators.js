@@ -24,19 +24,9 @@ export const activateView = (viewName) => {
   }
 }
 
-export const addAggregationGroup = (groupId) => ({
-  type: t.ADD_AGGREGATION_GROUP,
-  groupId
-})
-
 export const addAlert = (farmId) => ({
   type: t.ADD_ALERT,
   farmId
-})
-
-export const addRampThreshold = (rampId) => ({
-  type: t.ADD_RAMP_THRESHOLD,
-  rampId
 })
 
 export const fetchForecastFail = (error) => ({
@@ -70,19 +60,9 @@ export const mapMove = (visibleFarmIds) => ({
   farmIds: visibleFarmIds
 });
 
-export const removeAggregationGroup = (groupId) => ({
-  type: t.REMOVE_AGGREGATION_GROUP,
-  groupId
-})
-
 export const removeAlert = (farmId) => ({
   type: t.REMOVE_ALERT,
   farmId
-})
-
-export const removeRampThreshold = (rampId) => ({
-  type: t.REMOVE_RAMP_THRESHOLD,
-  rampId
 })
 
 export const selectAggregation = (dataSource) => ({
@@ -198,4 +178,3 @@ export const unhighlightFeature = (featureId) => ({
   type: t.UNHIGHLIGHT_FEATURE,
   featureId: featureId
 });
-
