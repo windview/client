@@ -1,5 +1,6 @@
 import CONFIG from './config';
-
+const POWER_RAMP = 'rampThresholds',
+      PERCENT_CAPACITY_RAMP = 'aggregationRampThresholds';
 
 let clearAlerts = forecast => {
   delete forecast.alerts;
@@ -99,9 +100,10 @@ let calculateCumulativeRampDirection = (forecastData) => {
     color: "red"
   }];
   */
-let detectRampsInForecast = timeslices => {
+let detectRampsInForecast = (timeslices, rampConfigType) => {
 
-  let rampConfigs = CONFIG.get('rampThresholds'),
+  let rampConfigs = CONFIG.get(rampConfigType),
+      totalCapacity = CONFIG.totalCapacity,
       previous, // a placeholder for the comparison timeslice
       level, // the severity of the ramp in question
       time, // time between time slices used to determine a ramp
@@ -128,6 +130,10 @@ let detectRampsInForecast = timeslices => {
         previous = timeslices[i-distance];
         diff = parseFloat(timeslice.rampForecastMW - previous.rampForecastMW);
         direction = diff > 0 ? 'up' : 'down';
+        if(rampConfigType === PERCENT_CAPACITY_RAMP) {
+          // Calc the difference in terms of a percentage of total capacity
+          diff = Math.abs(diff)/totalCapacity*100;
+        }
         // if the change in power is greater than r going up or down
         if(Math.abs(diff) >= threshold) {
           timeslice.ramp = true;
@@ -210,5 +216,7 @@ module.exports = {
   getFirstRamp: getFirstRamp,
   getFirstRampStart: getFirstRampStart,
   getMaxRampSeverity: getMaxRampSeverity,
-  hasRamp: hasRamp
+  hasRamp: hasRamp,
+  POWER_RAMP: POWER_RAMP,
+  PERCENT_CAPACITY_RAMP: PERCENT_CAPACITY_RAMP
 }

@@ -75,6 +75,7 @@ let fetchBatchFarms = (windFarmIds) => {
         })
         .then(() => {
           if(--queueCount === 0) {
+            CONFIG.totalCapacity = Math.ceil(getTotalCapacity());
             resolve ({
               data: getFarms(),
             });

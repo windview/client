@@ -3,14 +3,8 @@ import Alerts from './alerts';
 import CONFIG from './config';
 
 let forecasts = [],
-    meta = {};
-
-// FIXME for debugging only
-// window.FORECASTS = ()=>forecasts;
-// window.FORECAST_META = ()=>meta;
-
-
-let forecastInterval = CONFIG.forecastInterval;
+    meta = {},
+    forecastInterval = CONFIG.forecastInterval;
 
 // The latest timestamp in all the data for all the farms
 let getDataEnd = () => {
@@ -78,7 +72,7 @@ let resetAlerts = () => {
   let forecasts = getForecasts();
   forecasts.forEach(f=>{
     f = Alerts.clearAlerts(f);
-    f.data = Alerts.detectRampsInForecast(f.data);
+    f.data = Alerts.detectRampsInForecast(f.data, Alerts.POWER_RAMP);
     f.alerts = Alerts.getAlertsForForecast(f);
   });
 }
@@ -220,7 +214,7 @@ let _getBatchForecastMeta = (forecasts) => {
 
 let _postProcessForecastData = (forecast) => {
   let formattedData = _formatForecastData(forecast);
-  forecast.data = Alerts.detectRampsInForecast(formattedData);
+  forecast.data = Alerts.detectRampsInForecast(formattedData, Alerts.POWER_RAMP);
   forecast.alerts = Alerts.getAlertsForForecast(forecast);
   return forecast;
 }
@@ -360,7 +354,7 @@ let getAggregatedForecast = (forecasts) => {
     });
   });
 
-  aggregatedForecast.data = Alerts.detectRampsInForecast(aggregatedForecast.data);
+  aggregatedForecast.data = Alerts.detectRampsInForecast(aggregatedForecast.data, Alerts.PERCENT_CAPACITY_RAMP);
   aggregatedForecast.alerts = Alerts.getAlertsForForecast(aggregatedForecast);
 
   return aggregatedForecast;
