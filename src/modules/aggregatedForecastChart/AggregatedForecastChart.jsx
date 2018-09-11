@@ -56,7 +56,6 @@ export class AggregatedForecastChart extends React.Component {
     // Possible for forecast probability to exceed total farm capacity,
     // add a 10% buffer on the top of the chart just in case
     yAxisMax = Math.ceil(yAxisMax);
-    console.log(yAxisMax);
     let yAxisMin = 0.1;
 
     let chart = Highcharts.chart('aggregated-chart', {

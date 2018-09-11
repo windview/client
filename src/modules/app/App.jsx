@@ -44,9 +44,9 @@ class App extends React.Component {
   }
 
   render() {
-    let selectedFeature = this.props.selectedFeature,
-        activePane = this.props.activePane,
-        farmName = selectedFeature ? WindFarm.getWindFarmById(selectedFeature).name : null;
+    let //selectedFeature = this.props.selectedFeature,
+        activePane = this.props.activePane;
+        //farmName = selectedFeature ? WindFarm.getWindFarmById(selectedFeature).name : null;
 
     return (
       <div id="app" className="">
@@ -58,7 +58,7 @@ class App extends React.Component {
               <Map />
             </section>
             <section id="map-sidebar" className="main-pane-right">
-              
+
               <ForecastChart />
               <FarmDetail />
               <ForecastMeta />
