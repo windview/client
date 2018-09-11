@@ -52,11 +52,12 @@ export class AggregatedForecastChart extends React.Component {
           actuals = data[1],
           now = CONFIG.now;
 
-    let yAxisMax = Farms.getTotalCapacity();
+    let yAxisMax = this.getAggregateCapacity();
     // Possible for forecast probability to exceed total farm capacity,
     // add a 10% buffer on the top of the chart just in case
-    yAxisMax = Math.ceil(yAxisMax*.1 + yAxisMax);
-    let yAxisMin = 0;
+    yAxisMax = Math.ceil(yAxisMax);
+    console.log(yAxisMax);
+    let yAxisMin = 0.1;
 
     let chart = Highcharts.chart('aggregated-chart', {
       chart: {
@@ -288,6 +289,18 @@ export class AggregatedForecastChart extends React.Component {
       retval[1].push([row.timestamp.getTime(), row.actual]);
     });
     return retval;
+  }
+
+  getAggregateCapacity() {
+    let capacity = 0,
+        aggDataSource = this.getAggregatedDataIds(this.props);
+
+    if(aggDataSource.length > 0) {
+      capacity = aggDataSource.reduce((cap, farmId)=>{
+        return cap + Farms.getWindFarmById(farmId).capacity_mw;
+      }, 0);
+      return capacity;
+    }
   }
 
   getForecasts() {
