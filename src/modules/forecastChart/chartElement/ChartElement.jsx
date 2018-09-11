@@ -41,9 +41,8 @@ export class ChartElement extends React.Component {
 
     let yAxisMax = feature.capacity_mw;
     // Possible for forecast probability to exceed total farm capacity,
-    // add a 10% buffer on the top of the chart just in case, or 500%
-    // buffer for very small capacity farms.
-    yAxisMax = yAxisMax < 3 ? Math.ceil(yAxisMax*5) : Math.ceil(yAxisMax*.1 + yAxisMax);
+    // add a 5% buffer on the top of the chart just in case
+    yAxisMax = Math.ceil(yAxisMax*.05 + yAxisMax);
     let yAxisMin = 0;
 
     const data = this.getChartData(forecastData),
@@ -331,8 +330,6 @@ export class ChartElement extends React.Component {
         selectedFeature = selectedFeatureId ? WindFarm.getWindFarmById(selectedFeatureId) : null,
         container = "forecast-chart",
         button = <button type="button" className="multibutton" data-toggle="tooltip" data-placement="bottom" title="Add to Multi Chart View" onClick={this.addMultiChart}>+</button>;
-
-    //debugger;
 
     if(this.props.multiChart){
       selectedFeatureId = this.props.farmId;
