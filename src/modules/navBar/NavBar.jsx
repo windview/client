@@ -46,9 +46,12 @@ export class NavBar extends React.Component {
   }
 
   buttonElements() {
-    const buttons = Object.values({ NAV_BAR_BUTTONS })[0]
+    const buttons = Object.values({ NAV_BAR_BUTTONS })[0],
+          activePane = this.props.activePane;
+
     return buttons.map((btn) => {
-      return <li key={btn.id}><a href="#" key={btn.id} id={btn.id} onClick={e => {e.preventDefault(); this.props.onClick(btn.id);}}><i className={"fa " + btn.class + " fa-2x"} aria-hidden="true"></i><p>{btn.name}</p></a></li>
+      let className = btn.id === activePane ? "yababy" : "";
+      return <li key={btn.id}><a href="#" key={btn.id} id={btn.id} className={className} onClick={e => {e.preventDefault(); this.props.onClick(btn.id);}}><i className={"fa " + btn.class + " fa-2x"} aria-hidden="true"></i><p>{btn.name}</p></a></li>
     });
   }
 

@@ -15,8 +15,13 @@
             color: ghostwhite;
 
             &:hover {
-                color: #5998ff;
-             }
+              color: #5998ff;
+            }
+        }
+
+        .yababy {
+
+          background-color: rgba(255, 255, 255, 0.2);
         }
 
         p {
@@ -29,10 +34,10 @@
             margin-top: 11px;
             margin-right: 10px;
             margin-left: 30px;
-            color: ghostwhite;    
+            color: ghostwhite;
         }
 
-        select { 
+        select {
             margin-top: 14px;
         }
     }
