@@ -58,7 +58,7 @@ class App extends React.Component {
               <Map />
             </section>
             <section id="map-sidebar" className="main-pane-right">
-              <div className='detail-title'>{farmName}</div>
+              
               <ForecastChart />
               <FarmDetail />
               <ForecastMeta />
