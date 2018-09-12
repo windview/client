@@ -29,6 +29,11 @@ export default (state=defaultValue, action) => {
         ...state,
         botChartType: action.chartType
       };
+    case t.SET_AGG_HIGHLIGHT:
+    return {
+      ...state,
+      highlightAggSet: action.lightitup
+    };
     default:
       return state;
   }
