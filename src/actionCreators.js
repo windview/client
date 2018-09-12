@@ -76,9 +76,10 @@ export const selectFeature = (feature) => ({
   feature: feature
 });
 
-export const selectFeaturesByGroup = (groupFarmIds) => ({
+export const selectFeaturesByGroup = (group) => ({
   type: t.SELECT_FEATURES_BY_GROUP,
-  farmIds: groupFarmIds
+  farmIds: group.value,
+  groupLabel: group.label
 });
 
 export const selectFeaturesByPolygon = (selectedFarmIds) => ({
@@ -104,6 +105,11 @@ export const selectTimestamp = (timestamp) => ({
 export const selectTimezoom = (timezoom) => ({
   type: t.SELECT_TIME_ZOOM,
   timezoom: timezoom
+});
+
+export const setAggSetHighlight = (lightitup) => ({
+  type: t.SET_AGG_HIGHLIGHT,
+  lightitup: lightitup
 });
 
 export const updateSettingsTS = (timestamp) => ({

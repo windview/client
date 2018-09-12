@@ -112,7 +112,8 @@ export default (state=defaultValue, action) => {
     case t.SELECT_FEATURES_BY_GROUP:
       return {
         ...state,
-        selectedFarmIdsByGroup: action.farmIds
+        selectedFarmIdsByGroup: action.farmIds,
+        selectedGroupLabel: action.groupLabel
       };
     case t.SELECT_FEATURES_BY_POLYGON:
       return {
