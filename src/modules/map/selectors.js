@@ -17,7 +17,8 @@ export const mapStateToProps = (state, ownProps) => {
     forecastLoading: state.data.forecastLoading,
     forecastLoadingError: state.data.forecastLoadingError,
     forecastTimestamp: state.data.forecastTimestamp,
-    settingsTimestamp: state.data.settingsTimestamp
+    settingsTimestamp: state.data.settingsTimestamp,
+    highlightAggSet: state.nav.highlightAggSet
   }
 }
 

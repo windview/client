@@ -118,6 +118,9 @@ export class Map extends React.Component {
     if((prevProps.highlightedFeatureId !== this.props.highlightedFeatureId) && this.map) {
       this.applyHighlightToFeature(this.props.highlightedFeatureId);
     }
+    if((prevProps.highlightAggSet !== this.props.highlightAggSet) && this.map) {
+      // TODO highlight the aggregated farms on the map
+    }
   }
 
   constructor(props) {
