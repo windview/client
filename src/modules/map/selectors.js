@@ -18,7 +18,11 @@ export const mapStateToProps = (state, ownProps) => {
     forecastLoadingError: state.data.forecastLoadingError,
     forecastTimestamp: state.data.forecastTimestamp,
     settingsTimestamp: state.data.settingsTimestamp,
-    highlightAggSet: state.nav.highlightAggSet
+    highlightAggSet: state.nav.highlightAggSet,
+    visibleFarmIds: state.analysis.visibleFarmIds,
+    selectedFarmIdsByPolygon: state.analysis.selectedFarmIdsByPolygon,
+    selectedFarmIdsByGroup: state.analysis.selectedFarmIdsByGroup,
+    aggregatedSource: state.analysis.dataSource,
   }
 }
 

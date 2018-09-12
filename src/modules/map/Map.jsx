@@ -120,6 +120,11 @@ export class Map extends React.Component {
     }
     if((prevProps.highlightAggSet !== this.props.highlightAggSet) && this.map) {
       // TODO highlight the aggregated farms on the map
+      if(this.props.highlightAggSet) {
+        this.applyHighlightToFeature(this.getAggregatedDataIds(this.props));
+      } else {
+        this.applyHighlightToFeature(false);
+      }
     }
   }
 
@@ -134,6 +139,20 @@ export class Map extends React.Component {
     this.whenFeatureMouseOut = this.whenFeatureMouseOut.bind(this);
     this.whenStyleChecked = this.whenStyleChecked.bind(this);
     this.whenTimezoomChanged = this.whenTimezoomChanged.bind(this);
+  }
+
+  getAggregatedDataIds(props) {
+    let retVal = [];
+    if (this.props.aggregatedSource === 'visibleFarms') {
+      retVal = props.visibleFarmIds;
+    }
+    if (this.props.aggregatedSource === 'polygonFarms') {
+      retVal = props.selectedFarmIdsByPolygon;
+    }
+    if (this.props.aggregatedSource === 'groupedFarms') {
+      retVal = props.selectedFarmIdsByGroup;
+    }
+    return retVal;
   }
 
   getUniqueFeatures(array, comparatorProperty) {

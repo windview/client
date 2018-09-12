@@ -181,7 +181,11 @@ let getGeoJsonForFarms = (selectedTimestamp, alertArray) => {
 let setHighlightedFarm = (farmId) => {
   let farms = getFarms();
   farms.forEach(f=>{
-    f.highlighted = (f.id === farmId);
+    if(farmId instanceof Array) {
+      f.highlighted = farmId.includes(f.id);
+    } else {
+      f.highlighted = (f.id === farmId);
+    }
   });
 }
 
