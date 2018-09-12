@@ -11,30 +11,40 @@ export class BotChartSelector extends React.Component {
     super(props);
     this.whenAggregationChecked = this.whenAggregationChecked.bind(this);
     this.whenMultipleChecked = this.whenMultipleChecked.bind(this);
+    this.setAggHighlight = this.setAggHighlight.bind(this);
+    this.unsetAggHighlight = this.unsetAggHighlight.bind(this);
   }
 
 	getTitle() {
-		let text = "Aggregate";
+		let text = "Aggregate",
+        title = "";
 		if (this.props.aggregatedSource === 'polygonFarms') {
 			text = 'Select desired wind farms using the polygon selection tool in the upper right corner of the map.';
+      title = "Manual Selection";
 		}
 		if (this.props.aggregatedSource === 'visibleFarms') {
 			text= 'Currently displaying aggregation of all visible wind farms.';
+      title = "Visible Farms";
 		}
 		if (this.props.aggregatedSource === 'groupedFarms') {
 			text = 'Select the desired group of wind farms from the dropdown menu in the navigation bar.';
+      title = this.props.selectedGroupLabel;
 		}
-		return text;
+		return {
+      text,
+      title
+    };
 	}
 
   render() {
 
-    const el = (this.props.botChartType === "aggregation") ? <AggregatedForecastChart /> : <MultiChart />;
+    const el = (this.props.botChartType === "aggregation") ? <AggregatedForecastChart /> : <MultiChart />,
+          title = this.getTitle();
 
     return <div className="bot-chart-area">
 			<div className="bot-chart-header">
 				<div className="bot-chart-title">
-					{this.getTitle()}
+					<strong onMouseOver={this.setAggHighlight} onMouseOut={this.unsetAggHighlight}>{title.title}</strong> <em>{title.text}</em>
 				</div>
 	    	<div className="bot-chart-option">
 	    		<label>
@@ -51,6 +61,14 @@ export class BotChartSelector extends React.Component {
     		{el}
     	</div>
     </div>
+  }
+
+  setAggHighlight() {
+    this.props.onSetAggHighlight(true);
+  }
+
+  unsetAggHighlight() {
+    this.props.onSetAggHighlight(false);
   }
 
   whenAggregationChecked(e) {

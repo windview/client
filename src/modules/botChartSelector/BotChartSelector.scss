@@ -25,6 +25,16 @@
   color: #222;
   padding: 5px 0px 5px 5px;
   display: inline-block;
+
+  strong:hover {
+    color: rgb(11, 98, 23);
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 10px 0px;
+  }
+
+  em {
+    font-size: 11px;
+  }
 }
 
 .bot-chart-option{
