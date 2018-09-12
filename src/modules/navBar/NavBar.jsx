@@ -106,8 +106,8 @@ export class NavBar extends React.Component {
         selectedGroupId = source.value,
         selectedGroup;
 
-    selectedGroup =  groupedFarmOptions.find(g=>g.id === selectedGroupId)
-    this.props.onSelectFeaturesByGroup(selectedGroup.value);
+    selectedGroup =  groupedFarmOptions.find(g=>g.id === selectedGroupId);
+    this.props.onSelectFeaturesByGroup(selectedGroup);
   }
 
   render() {
