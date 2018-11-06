@@ -263,6 +263,9 @@ export class Map extends React.Component {
     // after map initializes itself, go to work adding all the things
     map.on('load', function(){
 
+      //TODO I believe that all of these async image loads should
+      // be allowed to complete before we start making layers
+
       // Can't use SVG directly in MapboxGL, but can create an
       // img DOM element and use that
       let img = new Image(33,45);
