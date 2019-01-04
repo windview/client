@@ -170,8 +170,7 @@ Forecast data is published by forecasters. This project does not provide any bui
 
 #### Forecast Implementations
 There are two reference implementations available. Information including installation details and integration with WindView can be found at their respective homepages:
-  * M3 [link when available](https://www.nrel.gov)
-  * Argus Prima [link when available](https://www.anl.gov)
+  * M3 [View on Github](https://github.com/UTD-DOES/M3)
 
 #### Forecast Formats
 Point forecast data as POSTed to the API, Forecast can contain as many data points as are available!
@@ -335,6 +334,5 @@ The format for this data is currently under development. *Watch this space for d
 [View License](LICENSE)
 
 ## Links
-TODO - Add links to
-  - Any working installations/demo sites/partner links
 
+[Demo Site](https://windview-beta.nrel.gov)
