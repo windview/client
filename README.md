@@ -331,7 +331,8 @@ WindView is designed to support the addition of arbitrary data fields provided b
 The format for this data is currently under development. *Watch this space for details.*
 
 ## License
-TODO - Add license when it is finalized
+
+[View License](LICENSE)
 
 ## Links
 TODO - Add links to
