@@ -100,46 +100,8 @@ This produces a `build` directory containing the full WindView client applicatio
 
 In order to facilitate the consumption of a varied set of data streams we have provided a set of API endpoints. API endpoints provide mechanisms for receiving, storing, searching, and delivering data to and from both a wide variety of data streams, as well as the WindView web client components.
 
-Our implementation of the API endpoints includes a means for extending the system by adding custom data streams. Generic data formats coupled with configurable data hooks in the user interface allow users of the software to add in their own data streams.
+Our implementation of the API endpoints includes a means for extending the system by adding custom data streams. Generic data formats coupled with configurable data hooks in the user interface allow users of the software to add in their own data streams. [Visit the README](https://github.com/wind-view/server)
 
-## Pre-requisites
-
-  * Ruby 2.5.0-p0
-  * Bundler 1.16.1
-  * PostgreSQL 9.6
-
-## First Build
-
-  * bundle
-  * rails db:create
-  * rails db:migrate
-  * rails db:seed
-
-## Run Tests
-
-```
-$ rake test
-```
-
-## Run server
-
-```
-$ rails s
-```
-
-## URLs
-
-  * API Root: http://localhost:3000/api
-  * to list the seeded forcasts http://localhost:3000/api/forecasts
-  * Swagger API Doc: http://localhost:3000/apidocs
-
-
-### Deployment
-
-Full notes on deploying a Rails web application are beyond the scope of this document. In our test environment we are using Foreman to create a `systemd` installation. For more details and documentation please visit [the Rails homepage](https://rubyonrails.org/).
-
-
-## Data Streams
 
 ### Wind Farms
 Wind farm data is stored in the database behind the API. Wind farms can contain as many arbitrary metadata fields as is desired. When adding metadata fields to the wind farm records keep in mind that these fields will be displayed in detail components within the web client, so exercise discretion with potentially sensitive data. The minimum required fields include:
@@ -326,8 +288,6 @@ WindView is designed to support the addition of arbitrary data fields provided b
   - additional site data
   - observational weather data
   - etc
-
-The format for this data is currently under development. *Watch this space for details.*
 
 ## License
 
