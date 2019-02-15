@@ -122,7 +122,7 @@ export class NavBar extends React.Component {
                 <span className="icon-bar"></span>
                 <span className="icon-bar"></span>
               </button>
-              <a className="navbar-brand" href="#">{appTitle}</a>
+            <a className="navbar-brand" href="https://github.com/windview/client/blob/master/README.md">{appTitle}</a>
             </div>
             <div className="collapse navbar-collapse" id="#wv-navbar-collapse-1">
                 <ul className="nav navbar-nav">
