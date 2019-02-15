@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import '../../../node_modules/mapbox-gl/dist/mapbox-gl.css';
+import async from 'async';
 import Legend from '../legend/Legend';
 import mapboxgl from '../../../node_modules/mapbox-gl/dist/mapbox-gl.js';
 import MapboxDraw from '../../../node_modules/@mapbox/mapbox-gl-draw';
@@ -232,8 +233,16 @@ export class Map extends React.Component {
     );
   }
 
+  
+  
+  /* 
+  * The map rendering takes place down a chain of nested callbacks. To
+  * try and make sense of this rendering is broken into several
+  * methods that represent links in the chain
+  */
   renderMap() {
-    //Create map
+   
+    //Create map instance
     let map = new mapboxgl.Map({
       container: 'wind-map', // container id
       style: 'https://free.tilehosting.com/styles/darkmatter/style.json?key=o6iGgsKYC7Ry7Y0VhZwY', //mapboxStyle,
@@ -246,13 +255,19 @@ export class Map extends React.Component {
     // Disable default box zooming.
     map.boxZoom.disable();
 
+    this.renderMapStepOne(map);
+  }
+  
+  // Adds map controls and waits for map to load
+  renderMapStepOne(map) {
+
     // Add tool for drawing polygon on map
     let draw = new MapboxDraw({
-        displayControlsDefault: false,
-        controls: {
-            polygon: true,
-            trash: true
-        }
+      displayControlsDefault: false,
+      controls: {
+        polygon: true,
+        trash: true
+      }
     });
     map.addControl(draw);
     this.draw = draw;
@@ -261,247 +276,303 @@ export class Map extends React.Component {
     map.addControl(new mapboxgl.NavigationControl());
 
     // after map initializes itself, go to work adding all the things
-    map.on('load', function(){
-
-      //TODO I believe that all of these async image loads should
-      // be allowed to complete before we start making layers
-
-      // Can't use SVG directly in MapboxGL, but can create an
-      // img DOM element and use that
-      let img = new Image(33,45);
-      img.onload = ()=>map.addImage('chevronDown', img);
-      img.src = chevronDown;
-
-      let img2 = new Image(33,45);
-      img2.onload = ()=>map.addImage('chevronUp', img2);
-      img2.src = chevronUp;
-
-      // Add the custom image icon for wind farms to use later
-      map.loadImage(windFarmIcon, (err, image) => {
-        if(err) return;
-        map.addImage('windfarm', image);
-      });
-      // Add the custom image icon for wind farms to use later
-      map.loadImage(windFarmSelectedIcon, (err, image) => {
-        if(err) return;
-        map.addImage('windfarm-selected', image);
-      });
-      // Add the custom image icon for wind farms to use later
-      map.loadImage(windFarmDisabledIcon, (err, image) => {
-        if(err) return;
-        map.addImage('windfarm-disabled', image);
-      });
-      // Add the custom image icon for wind farms to use later
-      map.loadImage(windFarmSuspectDataIcon, (err, image) => {
-        if(err) return;
-        map.addImage('windfarm-suspect-data', image);
-      });
-      // Add the custom image icon for wind farms to use later
-      map.loadImage(windFarmSelectedSuspsectDataIcon, (err, image) => {
-        if(err) return;
-        map.addImage('windfarm-selected-suspect-data', image);
-      });
-      // Add translines
-      map.addSource('translines', {
-          type: "vector",
-          url: process.env.TILE_SERVER_URL + "/osm-translines/metadata.json"
-      });
-      // Add OpenEI wind farm points
-      map.addSource('openei-farms', {
-        type: "vector",
-        url: process.env.TILE_SERVER_URL + "/openei-farms/metadata.json"
-      });
-      // Add OpenEI wind farm points
-      map.addSource('noaa-stations', {
-        type: "vector",
-        url: process.env.TILE_SERVER_URL + "/noaa-stations/metadata.json"
-      });
-
-
-      let farmData = WindFarm.getGeoJsonForFarms(this.props.selectedTimestamp, this.props.alertArray);
-      // TODO move app alerting to own module
-      if(farmData.features.length === 0) {
-        alert("Wind farm data could not be loaded.");
-        return;
-      }
-
-      // Add windfarms
-      map.addSource('windfarms', {
-        type: "geojson",
-        data: farmData
-      });
-
-      // Initialize all of the layers
-      tlinesStyle.initializeStyle(map, 'translines');
-      openeiFarmStyle.initializeStyle(map, 'openei-farms');
-      noaaStationStyle.initializeStyle(map, 'noaa-stations');
-      wfSizeStyle.initializeStyle(map, 'windfarms');
-      wfForecastStyle.initializeStyle(map, 'windfarms');
-      wfRampStyle.initializeStyle(map, 'windfarms', this.props.forecast);
-      wfHighlightStyle.initializeStyle(map, 'windfarms');
-
-      let localLayerIds = ['windfarms-symbol', 'windfarms-selected-symbol', 'windfarms-disabled-symbol', 'windfarms-suspect-data-symbol', 'windfarms-selected-suspect-data-symbol', 'windfarms-down-arrow', 'windfarms-up-arrow'],
-      searchableLayerIds = []
-          .concat(localLayerIds)
-          .concat(wfSizeStyle.getLayerIds())
-          .concat(wfForecastStyle.getLayerIds())
-          .concat(wfRampStyle.getLayerIds());
-      this.setState({
-        searchableLayerIds: searchableLayerIds
-      });
-
-      // Show these layers
-      this.toggleStyle('tlines');
-      //this.toggleStyle('openei-farms')
-      //this.toggleStyle('noaa-stations')
-      this.toggleStyle(this.props.selectedStyle);
-
-      // The icon layer is always present, and needs to be for all the
-      // event handlers so add it outside of the specific styles above
-
-      map.addLayer({
-        id: 'windfarms-symbol',
-        type: 'symbol',
-        source: 'windfarms',
-        layout: {
-          'icon-image': 'windfarm',
-          'icon-size': 1,
-          'icon-allow-overlap': true,
-          'icon-keep-upright': true
-        },
-        filter: [
-          'all',
-          ['!=', 'selected', true],
-          ['!=', 'disabled', true],
-          ['!=', 'suspectData', true]
-        ],
-        paint: {
-          'icon-opacity': 1
-        }
-      });
-
-      // This icon layer shows a different icon for the selected farm
-      map.addLayer({
-        id: 'windfarms-selected-symbol',
-        type: 'symbol',
-        source: 'windfarms',
-        layout: {
-          'icon-image': 'windfarm-selected',
-          'icon-size': 1,
-          'icon-allow-overlap': true,
-          'icon-keep-upright': true
-        },
-        filter: [
-          'all',
-          ['==', 'selected', true],
-          ['!=', 'disabled', true],
-        ],
-        paint: {
-          'icon-opacity': 1
-        }
-      });
-
-      map.addLayer({
-        id: 'windfarms-disabled-symbol',
-        type: 'symbol',
-        source: 'windfarms',
-        layout: {
-          'icon-image': 'windfarm-disabled',
-          'icon-size': 1,
-          'icon-allow-overlap': true,
-          'icon-keep-upright': true
-        },
-        filter: ['==', 'disabled', true],
-        paint: {
-          'icon-opacity': 1
-        }
-      });
-
-      map.addLayer({
-        id: 'windfarms-suspect-data-symbol',
-        type: 'symbol',
-        source: 'windfarms',
-        layout: {
-          'icon-image': 'windfarm-suspect-data',
-          'icon-size': 1,
-          'icon-allow-overlap': true,
-          'icon-keep-upright': true
-        },
-        filter: [
-          'all',
-          ['!=', 'selected', true],
-          ['!=', 'disabled', true],
-          ['==', 'suspectData', true]
-        ],
-        paint: {
-          'icon-opacity': 1
-        }
-      });
-
-      map.addLayer({
-        id: 'windfarms-selected-suspect-data-symbol',
-        type: 'symbol',
-        source: 'windfarms',
-        layout: {
-          'icon-image': 'windfarm-selected-suspect-data',
-          'icon-size': 1,
-          'icon-allow-overlap': true,
-          'icon-keep-upright': true
-        },
-        filter: [
-          'all',
-          ['==', 'selected', true],
-          ['!=', 'disabled', true],
-          ['==', 'suspectData', true]
-        ],
-        paint: {
-          'icon-opacity': 1
-        }
-      });
-
-      map.on('draw.create', this.onChangeAggregationDrawing.bind(this));
-      map.on('draw.update', this.onChangeAggregationDrawing.bind(this));
-      map.on('draw.delete', function(e) {
-        this.props.onSelectFeaturesByPolygon([]);
-      }.bind(this))
-
-
-      // OpenEI Farm events for testing and debuggin
-      map.on('click', 'openei-farms', this.whenOEIFarmClicked);
-      map.on('click', 'noaa-stations', this.whenOEIFarmClicked);
-
-      // Handle the relevant events on the windfarms layer
-      map.on('click', 'windfarms-symbol', this.whenFeatureClicked);
-      map.on('click', 'windfarms-selected-symbol', this.whenFeatureClicked);
-      map.on('click', 'windfarms-suspect-data-symbol', this.whenFeatureClicked);
-
-      // Change the cursor to a pointer when the mouse is over the places layer.
-      map.on('mouseenter', 'windfarms-symbol', this.whenFeatureMouseOver);
-      map.on('mouseenter', 'windfarms-selected-symbol', this.whenFeatureMouseOver);
-      map.on('mouseenter', 'windfarms-suspect-data-symbol', this.whenFeatureMouseOver);
-
-      // Change it back to a pointer when it leaves.
-      map.on('mouseleave', 'windfarms-symbol', this.whenFeatureMouseOut);
-      map.on('mouseleave', 'windfarms-selected-symbol', this.whenFeatureMouseOut);
-      map.on('mouseleave', 'windfarms-suspect-data-symbol', this.whenFeatureMouseOut);
-
-      // All the events that might change the visible extent are encapsulated in
-      // the moveend event
-      map.on('moveend', this.onChangeVisibleExtent)
-
-      // now that layers are added, create and invoke a method for determining
-      // when the map is loaded (all layers rendered) and then do post init
-      // stuff
-      const checkMap = (map)=>{
-        if(!map.loaded()) {
-          setTimeout(()=>{checkMap(map)}, 50)
-        } else {
-          this.afterMapRender(WindFarm.getFarms()[0]);
-        }
-      }
-      checkMap(map);
-
+    map.on('load', function () {
+      this.renderMapStepTwo(map);
     }.bind(this));
+  }
+
+  // Loads all image assets and waits for them to load
+  renderMapStepTwo(map) {
+
+    // Set up parallel image loading with async
+    let imageLoaders = [
+      function (cb) {
+        // Can't use SVG directly in MapboxGL, but can create an
+        // img DOM element and use that  
+        let img = new Image(33, 45);
+        img.onload = () => {
+          map.addImage('chevronDown', img);
+          cb(null, img);
+        }
+        img.src = chevronDown;
+      },
+      function (cb) {
+        let img2 = new Image(33, 45);
+        img2.onload = () => {
+          map.addImage('chevronUp', img2);
+          cb(null, img2);
+        }
+        img2.src = chevronUp;
+      },
+      function (cb) {
+        // Add the custom image icon for wind farms to use later
+        map.loadImage(windFarmIcon, (err, image) => {
+          if (err) cb(err, null);
+          map.addImage('windfarm', image);
+          cb(null, image);
+        });
+      },
+      function (cb) {
+        // Add the custom image icon for wind farms to use later
+        map.loadImage(windFarmSelectedIcon, (err, image) => {
+          if (err) cb(err, null);
+          map.addImage('windfarm-selected', image);
+          cb(null, image);
+        });
+      },
+      function (cb) {
+        map.loadImage(windFarmDisabledIcon, (err, image) => {
+          if (err) cb(err, null);
+          map.addImage('windfarm-disabled', image);
+          cb(null, image);
+        });
+      },
+      function (cb) {
+        // Add the custom image icon for wind farms to use later
+        map.loadImage(windFarmSuspectDataIcon, (err, image) => {
+          if (err) cb(err, null);
+          map.addImage('windfarm-suspect-data', image);
+          cb(null, image);
+        });
+      },
+      function (cb) {
+        // Add the custom image icon for wind farms to use later
+        map.loadImage(windFarmSelectedSuspsectDataIcon, (err, image) => {
+          if (err) cb(err, null);
+          // Add the custom image icon for wind farms to use later
+          map.addImage('windfarm-selected-suspect-data', image);
+          cb(null, image);
+        });
+      }
+    ]
+
+    async.parallel(imageLoaders, function (err, results) {
+      if (err) {
+        alert('There was an error while loading image assets. Map cannot be displayed');
+        if(console) { console.error(err) }
+      } else {
+        // resume map rendering
+        this.renderMapStepThree(map);
+      }
+    }.bind(this));
+  }
+
+  // Load data sources
+  renderMapStepThree(map) {
+    // Add translines
+    map.addSource('translines', {
+      type: "vector",
+      url: process.env.TILE_SERVER_URL + "/osm-translines/metadata.json"
+    });
+    // Add OpenEI wind farm points
+    map.addSource('openei-farms', {
+      type: "vector",
+      url: process.env.TILE_SERVER_URL + "/openei-farms/metadata.json"
+    });
+    // Add OpenEI wind farm points
+    map.addSource('noaa-stations', {
+      type: "vector",
+      url: process.env.TILE_SERVER_URL + "/noaa-stations/metadata.json"
+    });
+
+
+    let farmData = WindFarm.getGeoJsonForFarms(this.props.selectedTimestamp, this.props.alertArray);
+    // TODO move app alerting to own module
+    if (farmData.features.length === 0) {
+      alert("Wind farm data could not be loaded.");
+      return;
+    }
+
+    // Add windfarms
+    map.addSource('windfarms', {
+      type: "geojson",
+      data: farmData
+    });
+
+    this.renderMapStepFour(map);
+  }
+
+  // Initialize and add all the map layers
+  renderMapStepFour(map) {
+
+    // Initialize layer styles
+    tlinesStyle.initializeStyle(map, 'translines');
+    openeiFarmStyle.initializeStyle(map, 'openei-farms');
+    noaaStationStyle.initializeStyle(map, 'noaa-stations');
+    wfSizeStyle.initializeStyle(map, 'windfarms');
+    wfForecastStyle.initializeStyle(map, 'windfarms');
+    wfRampStyle.initializeStyle(map, 'windfarms', this.props.forecast);
+    wfHighlightStyle.initializeStyle(map, 'windfarms');
+
+    let localLayerIds = ['windfarms-symbol', 'windfarms-selected-symbol', 'windfarms-disabled-symbol', 'windfarms-suspect-data-symbol', 'windfarms-selected-suspect-data-symbol', 'windfarms-down-arrow', 'windfarms-up-arrow'],
+      searchableLayerIds = []
+        .concat(localLayerIds)
+        .concat(wfSizeStyle.getLayerIds())
+        .concat(wfForecastStyle.getLayerIds())
+        .concat(wfRampStyle.getLayerIds());
+    this.setState({
+      searchableLayerIds: searchableLayerIds
+    });
+
+    // Set these layers to be visible on first map render
+    this.toggleStyle('tlines');
+    //this.toggleStyle('openei-farms')
+    //this.toggleStyle('noaa-stations')
+    this.toggleStyle(this.props.selectedStyle);
+
+    // The icon layer is always present, and needs to be for all the
+    // event handlers so add it outside of the specific styles above
+
+    map.addLayer({
+      id: 'windfarms-symbol',
+      type: 'symbol',
+      source: 'windfarms',
+      layout: {
+        'icon-image': 'windfarm',
+        'icon-size': 1,
+        'icon-allow-overlap': true,
+        'icon-keep-upright': true
+      },
+      filter: [
+        'all',
+        ['!=', 'selected', true],
+        ['!=', 'disabled', true],
+        ['!=', 'suspectData', true]
+      ],
+      paint: {
+        'icon-opacity': 1
+      }
+    });
+
+    // This icon layer shows a different icon for the selected farm
+    map.addLayer({
+      id: 'windfarms-selected-symbol',
+      type: 'symbol',
+      source: 'windfarms',
+      layout: {
+        'icon-image': 'windfarm-selected',
+        'icon-size': 1,
+        'icon-allow-overlap': true,
+        'icon-keep-upright': true
+      },
+      filter: [
+        'all',
+        ['==', 'selected', true],
+        ['!=', 'disabled', true],
+      ],
+      paint: {
+        'icon-opacity': 1
+      }
+    });
+
+    map.addLayer({
+      id: 'windfarms-disabled-symbol',
+      type: 'symbol',
+      source: 'windfarms',
+      layout: {
+        'icon-image': 'windfarm-disabled',
+        'icon-size': 1,
+        'icon-allow-overlap': true,
+        'icon-keep-upright': true
+      },
+      filter: ['==', 'disabled', true],
+      paint: {
+        'icon-opacity': 1
+      }
+    });
+
+    map.addLayer({
+      id: 'windfarms-suspect-data-symbol',
+      type: 'symbol',
+      source: 'windfarms',
+      layout: {
+        'icon-image': 'windfarm-suspect-data',
+        'icon-size': 1,
+        'icon-allow-overlap': true,
+        'icon-keep-upright': true
+      },
+      filter: [
+        'all',
+        ['!=', 'selected', true],
+        ['!=', 'disabled', true],
+        ['==', 'suspectData', true]
+      ],
+      paint: {
+        'icon-opacity': 1
+      }
+    });
+
+    map.addLayer({
+      id: 'windfarms-selected-suspect-data-symbol',
+      type: 'symbol',
+      source: 'windfarms',
+      layout: {
+        'icon-image': 'windfarm-selected-suspect-data',
+        'icon-size': 1,
+        'icon-allow-overlap': true,
+        'icon-keep-upright': true
+      },
+      filter: [
+        'all',
+        ['==', 'selected', true],
+        ['!=', 'disabled', true],
+        ['==', 'suspectData', true]
+      ],
+      paint: {
+        'icon-opacity': 1
+      }
+    });
+
+    this.renderMapStepFive(map);
+  }
+
+  // Adds event handlers to map
+  renderMapStepFive(map) {
+
+    map.on('draw.create', this.onChangeAggregationDrawing.bind(this));
+    map.on('draw.update', this.onChangeAggregationDrawing.bind(this));
+    map.on('draw.delete', function (e) {
+      this.props.onSelectFeaturesByPolygon([]);
+    }.bind(this))
+
+
+    // OpenEI Farm events for testing and debuggin
+    map.on('click', 'openei-farms', this.whenOEIFarmClicked);
+    map.on('click', 'noaa-stations', this.whenOEIFarmClicked);
+
+    // Handle the relevant events on the windfarms layer
+    map.on('click', 'windfarms-symbol', this.whenFeatureClicked);
+    map.on('click', 'windfarms-selected-symbol', this.whenFeatureClicked);
+    map.on('click', 'windfarms-suspect-data-symbol', this.whenFeatureClicked);
+
+    // Change the cursor to a pointer when the mouse is over the places layer.
+    map.on('mouseenter', 'windfarms-symbol', this.whenFeatureMouseOver);
+    map.on('mouseenter', 'windfarms-selected-symbol', this.whenFeatureMouseOver);
+    map.on('mouseenter', 'windfarms-suspect-data-symbol', this.whenFeatureMouseOver);
+
+    // Change it back to a pointer when it leaves.
+    map.on('mouseleave', 'windfarms-symbol', this.whenFeatureMouseOut);
+    map.on('mouseleave', 'windfarms-selected-symbol', this.whenFeatureMouseOut);
+    map.on('mouseleave', 'windfarms-suspect-data-symbol', this.whenFeatureMouseOut);
+
+    // All the events that might change the visible extent are encapsulated in
+    // the moveend event
+    map.on('moveend', this.onChangeVisibleExtent);
+
+    this.renderMapStepSix(map);
+  }
+
+  // Finally, create and invoke a method for determining when the map is 
+  // loaded (all layers rendered) and then do final map rendering of state
+  renderMapStepSix(map) {    
+    const checkMap = (map) => {
+      if (!map.loaded()) {
+        setTimeout(() => { checkMap(map) }, 50)
+      } else {
+        this.afterMapRender(WindFarm.getFarms()[0]);
+      }
+    }
+    checkMap(map);
   }
 
   toggleStyle(styleName) {
