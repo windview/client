@@ -111,8 +111,11 @@ export class Map extends React.Component {
         }
       }, this);
     }
-    if((prevProps.settingsTimestamp !== this.props.settingsTimestamp)
-        || (prevProps.forecastTimestamp !== this.props.forecastTimestamp)){
+    if(this.props.windFarmsLoaded && (
+        prevProps.settingsTimestamp !== this.props.settingsTimestamp 
+        || prevProps.forecastTimestamp !== this.props.forecastTimestamp
+      )
+    ) {
       wfSizeStyle.initializeStyle(this.map, 'windfarms');
       wfForecastStyle.initializeStyle(this.map, 'windfarms');
     }
@@ -204,7 +207,6 @@ export class Map extends React.Component {
   }
 
   render() {
-
     const styleSelectors = [{
       id: 'ramp',
       label: "Most Severe Forthcoming Alert"
@@ -232,8 +234,6 @@ export class Map extends React.Component {
       </span>
     );
   }
-
-  
   
   /* 
   * The map rendering takes place down a chain of nested callbacks. To
