@@ -1,9 +1,22 @@
 import React from 'react';
 import './Help.scss';
 
+const aboutStyle = {
+  width: '800px'
+}
+
 const Help = () => (
   <div className="help">
     <section className="mapview-help">
+      <h3>About</h3>
+      <section style={aboutStyle}>
+      <strong>WindView</strong> is a collaborative effort between the National Renewable Energy Lab (<a href="https://www.nrel.gov/">NREL</a>) and Argonne National 
+      Lab (<a href="https://www.anl.gov/">ANL</a>) with support from the U.S. Department of Energy (<a href="https://www.energy.gov/">DOE</a>). 
+        <strong>WindViews</strong> is wind power visualization software which enables power system operators to better understand static and forecast information on their 
+        power system, relating to wind.<br />
+        <br />
+        For more information, please visit <a href="https://github.com/windview/client/blob/master/README.md">https://github.com/windview/client/blob/master/README.md</a>
+      </section>
       <h3>Map Views</h3>
       There are three different map views available:
       <ul>
