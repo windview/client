@@ -76,7 +76,7 @@ First create a configuration file for your instance. Copy `<PROJECT-ROOT>/settin
   - **TILE_SERVER_URL** - the URL of a tile server that will provide the map tiles to the viewer
   - **LOG_ACTIONS** - [true|false] Flag to enable/disable the [Logger for Redux](https://github.com/evgenyrodionov/redux-logger) middleware. Very useful for observing what's going on under the covers for informational and debugging purposes.
 
-In addition to the above please review the [react-app documentation](https://github.com/facebook/create-react-app/blob/next/README.md) for a plethora of additional tips and tricks for working within this web framework including
+In addition to the above please review the [react-app documentation](https://facebook.github.io/create-react-app/docs/getting-started) for a plethora of additional tips and tricks for working within this web framework including
   - the use of the public directory
   - custom environment variables
   - the `.env` file
